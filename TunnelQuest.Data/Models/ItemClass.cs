@@ -6,25 +6,22 @@ using System.Text;
 
 namespace TunnelQuest.Data.Models
 {
-    [Table("item_stat")]
-    public class ItemStat
+    [Table("item_class")]
+    public class ItemClass
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("item_stat_id")]
-        public int ItemStatId { get; set; }
+        [Column("item_class_id")]
+        public int ItemClassId { get; set; }
 
         [ForeignKey("Item")]
         [Column("item_name")]
         public string ItemName { get; set; }
         public Item Item { get; set; }
 
-        [ForeignKey("Stat")]
-        [Column("stat_code")]
-        public string StatCode { get; set; }
-        public Stat Stat { get; set; }
-
-        [Column("adjustment")]
-        public int Adjustment { get; set; }
+        [ForeignKey("Class")]
+        [Column("class_code")]
+        public string ClassCode { get; set; }
+        public Class Class { get; set; }
     }
 }

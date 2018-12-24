@@ -6,12 +6,12 @@ using System.Text;
 
 namespace TunnelQuest.Data.Models
 {
-    [Table("stat")]
-    public class Stat
+    [Table("weapon_skill")]
+    public class WeaponSkill
     {
         [Key]
-        [Column("stat_code")]
-        public string StatCode { get; set; }
+        [Column("weapon_skill_code")]
+        public string WeaponSkillCode { get; set; }
 
     }
 }

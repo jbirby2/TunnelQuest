@@ -6,12 +6,11 @@ using System.Text;
 
 namespace TunnelQuest.Data.Models
 {
-    [Table("stat")]
-    public class Stat
+    [Table("effect_type")]
+    public class EffectType
     {
         [Key]
-        [Column("stat_code")]
-        public string StatCode { get; set; }
-
+        [Column("effect_type_code")]
+        public string EffectTypeCode { get; set; }
     }
 }

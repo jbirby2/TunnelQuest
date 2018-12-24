@@ -34,9 +34,9 @@ namespace TunnelQuest.Web
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddCors();
-            services.AddDbContext<TunnelQuestContext>(options => 
+            services.AddDbContext<TunnelQuestContext>(/*options => 
                 options.UseMySQL(Configuration.GetConnectionString("TunnelQuest"))
-            );
+            */);
 
             // STUB add api throttling
 

@@ -2,7 +2,7 @@
   "profiles": {
     "TunnelQuest.DatabaseBuilder": {
       "commandName": "Project",
-      "commandLineArgs": "Build-Item-List \"C:\\Users\\joe\\source\\repos\\TunnelQuest\\TunnelQuest.Data\\Migrations\""
+      "commandLineArgs": "Build-Item-Details \"..\\..\\..\\..\\TunnelQuest.Data\\Migrations\\Data\" \"..\\..\\..\\..\\TunnelQuest.Web\\wwwroot\\images\" false"
     }
   }
 }

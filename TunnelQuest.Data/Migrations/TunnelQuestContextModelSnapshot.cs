@@ -14,7 +14,7 @@ namespace TunnelQuest.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024");
+                .HasAnnotation("ProductVersion", "2.2.0-rtm-35687");
 
             modelBuilder.Entity("TunnelQuest.Data.Models.Class", b =>
                 {
@@ -28,6 +28,17 @@ namespace TunnelQuest.Data.Migrations
                     b.HasKey("ClassCode");
 
                     b.ToTable("class");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.Deity", b =>
+                {
+                    b.Property<string>("DeityName")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("deity_name");
+
+                    b.HasKey("DeityName");
+
+                    b.ToTable("deity");
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.Effect", b =>
@@ -69,6 +80,9 @@ namespace TunnelQuest.Data.Migrations
 
                     b.Property<string>("CapacitySizeCode")
                         .HasColumnName("capacity_size_code");
+
+                    b.Property<string>("IconFileName")
+                        .HasColumnName("icon_file_name");
 
                     b.Property<bool>("IsExpendable")
                         .HasColumnName("is_expendable");
@@ -133,6 +147,27 @@ namespace TunnelQuest.Data.Migrations
                     b.HasIndex("ItemName");
 
                     b.ToTable("item_class");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.ItemDeity", b =>
+                {
+                    b.Property<int>("ItemDeityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("item_deity_id");
+
+                    b.Property<string>("DeityName")
+                        .HasColumnName("deity_name");
+
+                    b.Property<string>("ItemName")
+                        .HasColumnName("item_name");
+
+                    b.HasKey("ItemDeityId");
+
+                    b.HasIndex("DeityName");
+
+                    b.HasIndex("ItemName");
+
+                    b.ToTable("item_deity");
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemEffect", b =>
@@ -314,6 +349,17 @@ namespace TunnelQuest.Data.Migrations
 
                     b.HasOne("TunnelQuest.Data.Models.Item", "Item")
                         .WithMany("ItemClasses")
+                        .HasForeignKey("ItemName");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.ItemDeity", b =>
+                {
+                    b.HasOne("TunnelQuest.Data.Models.Deity", "Deity")
+                        .WithMany()
+                        .HasForeignKey("DeityName");
+
+                    b.HasOne("TunnelQuest.Data.Models.Item", "Item")
+                        .WithMany("Deities")
                         .HasForeignKey("ItemName");
                 });
 

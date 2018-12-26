@@ -8,10 +8,26 @@ namespace TunnelQuest.DatabaseBuilder
     {
         static void Main(string[] args)
         {
-            if (args.Length > 1 && args[0].Equals("Build-Item-List", StringComparison.InvariantCultureIgnoreCase))
+            // stub
+            TunnelQuest.Data.Migrations.InsertItemData.STUB();
+            return; // end stub
+
+            try
             {
-                WikiScraper.BuildItemList(args[1]);
+                if (args.Length == 4 && args[0].Equals("Build-Item-Details", StringComparison.InvariantCultureIgnoreCase))
+                    WikiScraper.BuildItemDetails(args[1], args[2], Convert.ToBoolean(args[3]));
+                else if (args.Length == 2 && args[0].Equals("List-Duplicate-Names", StringComparison.InvariantCultureIgnoreCase))
+                    WikiScraper.ListDuplicateNames(args[1]);
+                else
+                    Console.WriteLine("Invalid command arguments.");
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Unhandled Exception:" + Environment.NewLine + ex.ToString());
+            }
+
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
         }
     }
 }

@@ -13,6 +13,9 @@ namespace TunnelQuest.Data.Models
         [Column("item_name")]
         public string ItemName { get; set; }
 
+        [Column("icon_file_name")]
+        public string IconFileName { get; set; }
+
         [Column("is_magic")]
         public bool IsMagic { get; set; }
 
@@ -45,6 +48,7 @@ namespace TunnelQuest.Data.Models
         // equipment
 
         public ICollection<ItemSlot> ItemSlots { get; set; }
+        public ICollection<ItemDeity> Deities { get; set; }
 
 
         // weapons

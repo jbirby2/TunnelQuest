@@ -9,7 +9,7 @@ using TunnelQuest.Data.Models;
 namespace TunnelQuest.Data.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    [Migration("20181227032326_InsertItemData")]
+    [Migration("20181227044236_InsertItemData")]
     partial class InsertItemData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

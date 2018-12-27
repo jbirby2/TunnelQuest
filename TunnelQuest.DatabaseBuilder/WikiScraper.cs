@@ -139,10 +139,22 @@ namespace TunnelQuest.DatabaseBuilder
                 .OrderBy(item => item.ItemName)
                 .ToArray();
 
+            string lastName = null;
+            int uniqueNames = 1;
             foreach (WikiItemData item in duplicateItems)
             {
-                Console.WriteLine("[" + item.WikiPageId + "] " + item.ItemName);
+                if (lastName != null && !item.ItemName.Equals(lastName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    uniqueNames++;
+                    Console.WriteLine("--------------------------------------------------------------------" + Environment.NewLine);
+                }
+
+                Console.WriteLine("[" + item.WikiPageId + "] " + item.ItemName + Environment.NewLine + String.Join(Environment.NewLine, item.Stats) + Environment.NewLine);
+
+                lastName = item.ItemName;
             }
+
+            Console.WriteLine(duplicateItems.Length.ToString() + " total items, " + uniqueNames.ToString() + " unique names");
         }
 
 

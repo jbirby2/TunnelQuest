@@ -13,7 +13,7 @@ namespace TunnelQuest.Data.Models
     public class TunnelQuestContext : DbContext
     {
         // stub remove this
-        private static readonly LoggerFactory consoleLoggerFactory = new LoggerFactory(new[] { new ConsoleLoggerProvider((_, __) => true, true) });
+        //private static readonly LoggerFactory consoleLoggerFactory = new LoggerFactory(new[] { new ConsoleLoggerProvider((_, __) => true, true) });
 
         public DbSet<Class> Classes { get; set; }
         public DbSet<Effect> Effects { get; set; }
@@ -44,8 +44,9 @@ namespace TunnelQuest.Data.Models
             IConfigurationRoot configuration = builder.Build();
 
             optionsBuilder
-                .UseMySQL(configuration.GetConnectionString("TunnelQuest"))
-                .UseLoggerFactory(consoleLoggerFactory); // stub remove this
+                .UseMySql(configuration.GetConnectionString("TunnelQuest"))
+                .EnableSensitiveDataLogging(true);
+            //.UseLoggerFactory(consoleLoggerFactory) // stub remove this
         }
     }
 }

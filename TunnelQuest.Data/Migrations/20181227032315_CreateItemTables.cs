@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TunnelQuest.Data.Migrations
 {
@@ -113,11 +114,11 @@ namespace TunnelQuest.Data.Migrations
                 {
                     item_name = table.Column<string>(nullable: false),
                     icon_file_name = table.Column<string>(nullable: true),
-                    is_magic = table.Column<short>(nullable: false),
-                    is_lore = table.Column<short>(nullable: false),
-                    is_no_drop = table.Column<short>(nullable: false),
-                    is_temporary = table.Column<short>(nullable: false),
-                    is_quest_item = table.Column<short>(nullable: false),
+                    is_magic = table.Column<bool>(nullable: false),
+                    is_lore = table.Column<bool>(nullable: false),
+                    is_no_drop = table.Column<bool>(nullable: false),
+                    is_temporary = table.Column<bool>(nullable: false),
+                    is_quest_item = table.Column<bool>(nullable: false),
                     weight = table.Column<float>(nullable: false),
                     size_code = table.Column<string>(nullable: true),
                     weapon_skill_code = table.Column<string>(nullable: true),
@@ -126,7 +127,7 @@ namespace TunnelQuest.Data.Migrations
                     capacity = table.Column<int>(nullable: true),
                     capacity_size_code = table.Column<string>(nullable: true),
                     weight_reduction = table.Column<float>(nullable: true),
-                    is_expendable = table.Column<short>(nullable: false),
+                    is_expendable = table.Column<bool>(nullable: false),
                     max_charges = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -157,7 +158,7 @@ namespace TunnelQuest.Data.Migrations
                 columns: table => new
                 {
                     item_class_id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     item_name = table.Column<string>(nullable: true),
                     class_code = table.Column<string>(nullable: true)
                 },
@@ -175,7 +176,7 @@ namespace TunnelQuest.Data.Migrations
                         column: x => x.item_name,
                         principalTable: "item",
                         principalColumn: "item_name",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -183,7 +184,7 @@ namespace TunnelQuest.Data.Migrations
                 columns: table => new
                 {
                     item_deity_id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     item_name = table.Column<string>(nullable: true),
                     deity_name = table.Column<string>(nullable: true)
                 },
@@ -201,7 +202,7 @@ namespace TunnelQuest.Data.Migrations
                         column: x => x.item_name,
                         principalTable: "item",
                         principalColumn: "item_name",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -209,7 +210,7 @@ namespace TunnelQuest.Data.Migrations
                 columns: table => new
                 {
                     item_effect_id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     item_name = table.Column<string>(nullable: true),
                     effect_name = table.Column<string>(nullable: true),
                     effect_type_code = table.Column<string>(nullable: true),
@@ -236,7 +237,7 @@ namespace TunnelQuest.Data.Migrations
                         column: x => x.item_name,
                         principalTable: "item",
                         principalColumn: "item_name",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -244,7 +245,7 @@ namespace TunnelQuest.Data.Migrations
                 columns: table => new
                 {
                     item_race_id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     item_name = table.Column<string>(nullable: true),
                     race_code = table.Column<string>(nullable: true)
                 },
@@ -256,7 +257,7 @@ namespace TunnelQuest.Data.Migrations
                         column: x => x.item_name,
                         principalTable: "item",
                         principalColumn: "item_name",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_item_race_race_race_code",
                         column: x => x.race_code,
@@ -270,7 +271,7 @@ namespace TunnelQuest.Data.Migrations
                 columns: table => new
                 {
                     item_slot_id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     item_name = table.Column<string>(nullable: true),
                     slot_code = table.Column<string>(nullable: true)
                 },
@@ -282,7 +283,7 @@ namespace TunnelQuest.Data.Migrations
                         column: x => x.item_name,
                         principalTable: "item",
                         principalColumn: "item_name",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_item_slot_slot_slot_code",
                         column: x => x.slot_code,
@@ -296,7 +297,7 @@ namespace TunnelQuest.Data.Migrations
                 columns: table => new
                 {
                     item_stat_id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     item_name = table.Column<string>(nullable: true),
                     stat_code = table.Column<string>(nullable: true),
                     adjustment = table.Column<int>(nullable: false)
@@ -309,7 +310,7 @@ namespace TunnelQuest.Data.Migrations
                         column: x => x.item_name,
                         principalTable: "item",
                         principalColumn: "item_name",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_item_stat_stat_stat_code",
                         column: x => x.stat_code,

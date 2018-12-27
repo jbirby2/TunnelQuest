@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using TunnelQuest.Data.Migrations;
 
 namespace TunnelQuest.DatabaseBuilder
 {
@@ -8,10 +9,6 @@ namespace TunnelQuest.DatabaseBuilder
     {
         static void Main(string[] args)
         {
-            // stub
-            TunnelQuest.Data.Migrations.InsertItemData.STUB();
-            return; // end stub
-
             try
             {
                 if (args.Length == 4 && args[0].Equals("Build-Item-Details", StringComparison.InvariantCultureIgnoreCase))

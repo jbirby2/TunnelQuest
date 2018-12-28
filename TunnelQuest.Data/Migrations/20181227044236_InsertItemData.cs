@@ -15,6 +15,7 @@ namespace TunnelQuest.Data.Migrations
         {
             using (var context = new TunnelQuestContext())
             {
+                // insert static data
                 insertClasses(context);
                 insertRaces(context);
                 insertSizes(context);
@@ -23,8 +24,15 @@ namespace TunnelQuest.Data.Migrations
                 insertWeaponSkills(context);
                 insertStats(context);
                 insertDeities(context);
-                var items = insertItems(context);
-                var effectNameNormalizer = insertEffects(context, items);
+
+
+                // insert item and effect data scraped from the wiki
+
+                var wikiData = WikiItemData.ReadFromEmbeddedResource();
+                var items = parseWikiItems(wikiData);
+                var effectNameNormalizer = getEffectNameNormalizer(items);
+
+                insertEffects(context, effectNameNormalizer);
 
                 // use effectNameNormalizer to make sure all items use the most popular spelling of their effect names
                 foreach (var item in items)
@@ -38,6 +46,9 @@ namespace TunnelQuest.Data.Migrations
                     }
                 }
 
+                // insert items
+                context.AddRange(items);
+
                 context.SaveChanges();
             }
         }
@@ -50,11 +61,17 @@ namespace TunnelQuest.Data.Migrations
                 {
                     try
                     {
-                        var items = deleteItems(context);
+                        // delete item and effect data scraped from the wiki
+
+                        var wikiData = WikiItemData.ReadFromEmbeddedResource();
+                        var items = parseWikiItems(wikiData);
+                        var effectNameNormalizer = getEffectNameNormalizer(items);
+
+                        deleteItems(context, items);
                         context.SaveChanges();
+                        deleteEffects(context, effectNameNormalizer);
 
-                        deleteEffects(context, items);
-
+                        // delete static data
                         deleteClasses(context);
                         deleteRaces(context);
                         deleteSizes(context);
@@ -95,73 +112,73 @@ namespace TunnelQuest.Data.Migrations
         {
             return new Class[] {
                 new Class() {
-                    ClassCode = "ENC",
-                    ClassName = "Enchanter"
+                    ClassCode = ClassCodes.Enchanter,
+                    ClassName = ClassNames.Enchanter
                 },
                 new Class()
                 {
-                    ClassCode = "MAG",
-                    ClassName = "Magician"
+                    ClassCode = ClassCodes.Magician,
+                    ClassName = ClassNames.Magician
                 },
                 new Class()
                 {
-                    ClassCode = "NEC",
-                    ClassName = "Necromancer"
+                    ClassCode = ClassCodes.Necromancer,
+                    ClassName = ClassNames.Necromancer
                 },
                 new Class()
                 {
-                    ClassCode = "WIZ",
-                    ClassName = "Wizard"
+                    ClassCode = ClassCodes.Wizard,
+                    ClassName = ClassNames.Wizard
                 },
                 new Class()
                 {
-                    ClassCode = "CLR",
-                    ClassName = "Cleric"
+                    ClassCode = ClassCodes.Cleric,
+                    ClassName = ClassNames.Cleric
                 },
                 new Class()
                 {
-                    ClassCode = "DRU",
-                    ClassName = "Druid"
+                    ClassCode = ClassCodes.Druid,
+                    ClassName = ClassNames.Druid
                 },
                 new Class()
                 {
-                    ClassCode = "SHM",
-                    ClassName = "Shaman"
+                    ClassCode = ClassCodes.Shaman,
+                    ClassName = ClassNames.Shaman
                 },
                 new Class()
                 {
-                    ClassCode = "BRD",
-                    ClassName = "Bard"
+                    ClassCode = ClassCodes.Bard,
+                    ClassName = ClassNames.Bard
                 },
                 new Class()
                 {
-                    ClassCode = "MNK",
-                    ClassName = "Monk"
+                    ClassCode = ClassCodes.Monk,
+                    ClassName = ClassNames.Monk
                 },
                 new Class()
                 {
-                    ClassCode = "RNG",
-                    ClassName = "Ranger"
+                    ClassCode = ClassCodes.Ranger,
+                    ClassName = ClassNames.Ranger
                 },
                 new Class()
                 {
-                    ClassCode = "ROG",
-                    ClassName = "Rogue"
+                    ClassCode = ClassCodes.Rogue,
+                    ClassName = ClassNames.Rogue
                 },
                 new Class()
                 {
-                    ClassCode = "PAL",
-                    ClassName = "Paladin"
+                    ClassCode = ClassCodes.Paladin,
+                    ClassName = ClassNames.Paladin
                 },
                 new Class()
                 {
-                    ClassCode = "SHD",
-                    ClassName = "Shadow Knight"
+                    ClassCode = ClassCodes.ShadowKnight,
+                    ClassName = ClassNames.ShadowKnight
                 },
                 new Class()
                 {
-                    ClassCode = "WAR",
-                    ClassName = "Warrior"
+                    ClassCode = ClassCodes.Warrior,
+                    ClassName = ClassNames.Warrior
                 }
             };
         }
@@ -183,56 +200,56 @@ namespace TunnelQuest.Data.Migrations
         {
             return new Race[] {
                 new Race() {
-                    RaceCode = "BAR",
-                    RaceName = "Barbarian"
+                    RaceCode = RaceCodes.Barbarian,
+                    RaceName = RaceNames.Barbarian
                 },
                 new Race() {
-                    RaceCode = "DEF",
-                    RaceName = "Dark Elf"
+                    RaceCode = RaceCodes.DarkElf,
+                    RaceName = RaceNames.DarkElf
                 },
                 new Race() {
-                    RaceCode = "DWF",
-                    RaceName = "Dwarf"
+                    RaceCode = RaceCodes.Dwarf,
+                    RaceName = RaceNames.Dwarf
                 },
                 new Race() {
-                    RaceCode = "ERU",
-                    RaceName = "Erudite"
+                    RaceCode = RaceCodes.Erudite,
+                    RaceName = RaceNames.Erudite
                 },
                 new Race() {
-                    RaceCode = "GNM",
-                    RaceName = "Gnome"
+                    RaceCode = RaceCodes.Gnome,
+                    RaceName = RaceNames.Gnome
                 },
                 new Race() {
-                    RaceCode = "HEF",
-                    RaceName = "Half-Elf"
+                    RaceCode = RaceCodes.HalfElf,
+                    RaceName = RaceNames.HalfElf
                 },
                 new Race() {
-                    RaceCode = "HFL",
-                    RaceName = "Halfling"
+                    RaceCode = RaceCodes.Halfling,
+                    RaceName = RaceNames.Halfling
                 },
                 new Race() {
-                    RaceCode = "HIE",
-                    RaceName = "High Elf"
+                    RaceCode = RaceCodes.HighElf,
+                    RaceName = RaceNames.HighElf
                 },
                 new Race() {
-                    RaceCode = "HUM",
-                    RaceName = "Human"
+                    RaceCode = RaceCodes.Human,
+                    RaceName = RaceNames.Human
                 },
                 new Race() {
-                    RaceCode = "IKS",
-                    RaceName = "Iksar"
+                    RaceCode = RaceCodes.Iksar,
+                    RaceName = RaceNames.Iksar
                 },
                 new Race() {
-                    RaceCode = "OGR",
-                    RaceName = "Ogre"
+                    RaceCode = RaceCodes.Ogre,
+                    RaceName = RaceNames.Ogre
                 },
                 new Race() {
-                    RaceCode = "TRL",
-                    RaceName = "Troll"
+                    RaceCode = RaceCodes.Troll,
+                    RaceName = RaceNames.Troll
                 },
                 new Race() {
-                    RaceCode = "ELF",
-                    RaceName = "Wood Elf"
+                    RaceCode = RaceCodes.WoodElf,
+                    RaceName = RaceNames.WoodElf
                 },
             };
         }
@@ -254,19 +271,19 @@ namespace TunnelQuest.Data.Migrations
         {
             return new Size[] {
                 new Size() {
-                    SizeCode = "TINY"
+                    SizeCode = SizeCodes.Tiny
                 },
                 new Size() {
-                    SizeCode = "SMALL"
+                    SizeCode = SizeCodes.Small
                 },
                 new Size() {
-                    SizeCode = "MEDIUM"
+                    SizeCode = SizeCodes.Medium
                 },
                 new Size() {
-                    SizeCode = "LARGE"
+                    SizeCode = SizeCodes.Large
                 },
                 new Size() {
-                    SizeCode = "GIANT"
+                    SizeCode = SizeCodes.Giant
                 }
             };
         }
@@ -287,58 +304,58 @@ namespace TunnelQuest.Data.Migrations
         {
             return new Slot[] {
                 new Slot() {
-                    SlotCode = "ARMS"
+                    SlotCode = SlotCodes.Arms
                 },
                 new Slot() {
-                    SlotCode = "BACK"
+                    SlotCode = SlotCodes.Back
                 },
                 new Slot() {
-                    SlotCode = "CHEST"
+                    SlotCode = SlotCodes.Chest
                 },
                 new Slot() {
-                    SlotCode = "EAR"
+                    SlotCode = SlotCodes.Ear
                 },
                 new Slot() {
-                    SlotCode = "FACE"
+                    SlotCode = SlotCodes.Face
                 },
                 new Slot() {
-                    SlotCode = "FEET"
+                    SlotCode = SlotCodes.Feet
                 },
                 new Slot() {
-                    SlotCode = "FINGER"
+                    SlotCode = SlotCodes.Finger
                 },
                 new Slot() {
-                    SlotCode = "HANDS"
+                    SlotCode = SlotCodes.Hands
                 },
                 new Slot() {
-                    SlotCode = "HEAD"
+                    SlotCode = SlotCodes.Head
                 },
                 new Slot() {
-                    SlotCode = "LEGS"
+                    SlotCode = SlotCodes.Legs
                 },
                 new Slot() {
-                    SlotCode = "NECK"
+                    SlotCode = SlotCodes.Neck
                 },
                 new Slot() {
-                    SlotCode = "SHOULDERS"
+                    SlotCode = SlotCodes.Shoulders
                 },
                 new Slot() {
-                    SlotCode = "WAIST"
+                    SlotCode = SlotCodes.Waist
                 },
                 new Slot() {
-                    SlotCode = "WRIST"
+                    SlotCode = SlotCodes.Wrist
                 },
                 new Slot() {
-                    SlotCode = "PRIMARY"
+                    SlotCode = SlotCodes.Primary
                 },
                 new Slot() {
-                    SlotCode = "SECONDARY"
+                    SlotCode = SlotCodes.Secondary
                 },
                 new Slot() {
-                    SlotCode = "RANGE"
+                    SlotCode = SlotCodes.Range
                 },
                 new Slot() {
-                    SlotCode = "AMMO"
+                    SlotCode = SlotCodes.Ammo
                 }
             };
         }
@@ -359,16 +376,16 @@ namespace TunnelQuest.Data.Migrations
         {
             return new EffectType[] {
                 new EffectType() {
-                    EffectTypeCode = "Combat"
+                    EffectTypeCode = EffectTypeCodes.Combat
                 },
                 new EffectType() {
-                    EffectTypeCode = "Worn"
+                    EffectTypeCode = EffectTypeCodes.Worn
                 },
                 new EffectType() {
-                    EffectTypeCode = "ClickAnySlot"
+                    EffectTypeCode = EffectTypeCodes.ClickAnySlot
                 },
                 new EffectType() {
-                    EffectTypeCode = "ClickEquipped"
+                    EffectTypeCode = EffectTypeCodes.ClickEquipped
                 }
             };
         }
@@ -389,31 +406,31 @@ namespace TunnelQuest.Data.Migrations
         {
             return new WeaponSkill[] {
                 new WeaponSkill() {
-                    WeaponSkillCode = "1H Blunt"
+                    WeaponSkillCode = WeaponSkillCodes.OneHandBlunt
                 },
                 new WeaponSkill() {
-                    WeaponSkillCode = "2H Blunt"
+                    WeaponSkillCode = WeaponSkillCodes.TwoHandBlunt
                 },
                 new WeaponSkill() {
-                    WeaponSkillCode = "1H Slashing"
+                    WeaponSkillCode = WeaponSkillCodes.OneHandSlashing
                 },
                 new WeaponSkill() {
-                    WeaponSkillCode = "2H Slashing"
+                    WeaponSkillCode = WeaponSkillCodes.TwoHandSlashing
                 },
                 new WeaponSkill() {
-                    WeaponSkillCode = "Piercing"
+                    WeaponSkillCode = WeaponSkillCodes.OneHandPiercing
                 },
                 new WeaponSkill() {
-                    WeaponSkillCode = "2H Piercing"
+                    WeaponSkillCode = WeaponSkillCodes.TwoHandPiercing
                 },
                 new WeaponSkill() {
-                    WeaponSkillCode = "Archery"
+                    WeaponSkillCode = WeaponSkillCodes.Archery
                 },
                 new WeaponSkill() {
-                    WeaponSkillCode = "Throwingv2"
+                    WeaponSkillCode = WeaponSkillCodes.Throwing
                 },
                 new WeaponSkill() {
-                    WeaponSkillCode = "Hand to Hand"
+                    WeaponSkillCode = WeaponSkillCodes.HandToHand
                 }
             };
         }
@@ -434,49 +451,49 @@ namespace TunnelQuest.Data.Migrations
         {
             return new Stat[] {
                 new Stat() {
-                    StatCode = "STR"
+                    StatCode = StatCodes.Strength
                 },
                 new Stat() {
-                    StatCode = "STA"
+                    StatCode = StatCodes.Stamina
                 },
                 new Stat() {
-                    StatCode = "AGI"
+                    StatCode = StatCodes.Agility
                 },
                 new Stat() {
-                    StatCode = "DEX"
+                    StatCode = StatCodes.Dexterity
                 },
                 new Stat() {
-                    StatCode = "WIS"
+                    StatCode = StatCodes.Wisdom
                 },
                 new Stat() {
-                    StatCode = "INT"
+                    StatCode = StatCodes.Intelligence
                 },
                 new Stat() {
-                    StatCode = "CHA"
+                    StatCode = StatCodes.Charisma
                 },
                 new Stat() {
-                    StatCode = "HP"
+                    StatCode = StatCodes.HitPoints
                 },
                 new Stat() {
-                    StatCode = "MANA"
+                    StatCode = StatCodes.Mana
                 },
                 new Stat() {
-                    StatCode = "AC"
+                    StatCode = StatCodes.ArmorClass
                 },
                 new Stat() {
-                    StatCode = "SV MAGIC"
+                    StatCode = StatCodes.MagicResist
                 },
                 new Stat() {
-                    StatCode = "SV POISON"
+                    StatCode = StatCodes.PoisonResist
                 },
                 new Stat() {
-                    StatCode = "SV DISEASE"
+                    StatCode = StatCodes.DiseaseResist
                 },
                 new Stat() {
-                    StatCode = "SV FIRE"
+                    StatCode = StatCodes.FireResist
                 },
                 new Stat() {
-                    StatCode = "SV COLD"
+                    StatCode = StatCodes.ColdResist
                 }
             };
         }
@@ -497,113 +514,89 @@ namespace TunnelQuest.Data.Migrations
         {
             return new Deity[] {
                 new Deity() {
-                    DeityName = "Cazic Thule"
+                    DeityName = DeityNames.CazicThule
                 },
                 new Deity() {
-                    DeityName = "Tunare"
+                    DeityName = DeityNames.Tunare
                 },
                 new Deity() {
-                    DeityName = "Karana"
+                    DeityName = DeityNames.Karana
                 },
                 new Deity() {
-                    DeityName = "Brell Serilis"
+                    DeityName = DeityNames.BrellSerilis
                 },
                 new Deity() {
-                    DeityName = "Innoruuk"
+                    DeityName = DeityNames.Innoruuk
                 },
                 new Deity() {
-                    DeityName = "Quellious"
+                    DeityName = DeityNames.Quellious
                 },
                 new Deity() {
-                    DeityName = "Bertoxxulous"
+                    DeityName = DeityNames.Bertoxxulous
                 },
                 new Deity() {
-                    DeityName = "Erollisi Marr"
+                    DeityName = DeityNames.ErollisiMarr
                 },
                 new Deity() {
-                    DeityName = "Bristlebane"
+                    DeityName = DeityNames.Bristlebane
                 },
                 new Deity() {
-                    DeityName = "Mithaniel Marr"
+                    DeityName = DeityNames.MithanielMarr
                 },
                 new Deity() {
-                    DeityName = "Prexus"
+                    DeityName = DeityNames.Prexus
                 },
                 new Deity() {
-                    DeityName = "Rallos Zek"
+                    DeityName = DeityNames.RallosZek
                 },
                 new Deity() {
-                    DeityName = "Rodcet Nife"
+                    DeityName = DeityNames.RodcetNife
                 },
                 new Deity() {
-                    DeityName = "Solusek Ro"
+                    DeityName = DeityNames.SolusekRo
                 },
                 new Deity() {
-                    DeityName = "The Tribunal"
+                    DeityName = DeityNames.TheTribunal
                 }
             };
         }
         #endregion
 
         #region item
-
-        private IEnumerable<Item> insertItems(TunnelQuestContext context)
+        private void deleteItems(TunnelQuestContext context, IEnumerable<Item> items)
         {
-            var wikiData = WikiItemData.ReadFromEmbeddedResource();
-            var items = parseWikiItems(wikiData);
-
-            context.AddRange(items);
-
-            return items;
-        }
-
-        private IEnumerable<Item> deleteItems(TunnelQuestContext context)
-        {
-            var wikiData = WikiItemData.ReadFromEmbeddedResource();
-            var items = parseWikiItems(wikiData);
-
             // create a list of items with ONLY the names for use as deletion keys, and let the
             // cascading deletes on the foreign keys handle the deletions in the child tables
-            var itemsToDelete = new Item[items.Count];
-            for (int i = 0; i < items.Count; i++)
+            var itemsToDelete = new List<Item>();
+            foreach (var fullItem in items)
             {
-                itemsToDelete[i] = new Item() { ItemName = items[i].ItemName };
+                itemsToDelete.Add(new Item() { ItemName = fullItem.ItemName });
             }
             context.RemoveRange(itemsToDelete);
-
-            return items;
         }
         #endregion
 
         #region effect
-        private Dictionary<string, string> insertEffects(TunnelQuestContext context, IEnumerable<Item> items)
+        private void insertEffects(TunnelQuestContext context, Dictionary<string, string> effectNameNormalizer)
         {
-            var normalizer = getEffectNameNormalizer(items);
-
-            foreach (string effectName in normalizer.Values)
+            foreach (string effectName in effectNameNormalizer.Values)
             {
                 context.Add(new Effect()
                 {
                     EffectName = effectName
                 });
             }
-
-            return normalizer;
         }
 
-        private Dictionary<string, string> deleteEffects(TunnelQuestContext context, IEnumerable<Item> items)
+        private void deleteEffects(TunnelQuestContext context, Dictionary<string, string> effectNameNormalizer)
         {
-            var normalizer = getEffectNameNormalizer(items);
-
-            foreach (string effectName in normalizer.Values)
+            foreach (string effectName in effectNameNormalizer.Values)
             {
                 context.Remove(new Effect()
                 {
                     EffectName = effectName
                 });
             }
-
-            return normalizer;
         }
 
         private Dictionary<string, string> getEffectNameNormalizer(IEnumerable<Item> items)
@@ -639,153 +632,560 @@ namespace TunnelQuest.Data.Migrations
 
         private List<Item> parseWikiItems(IEnumerable<WikiItemData> wikiData)
         {
-            var items = new List<Item>();
-
-            foreach (WikiItemData wikiItem in wikiData)
-            {
-                if (wikiItem.Stats != null && !String.IsNullOrWhiteSpace(wikiItem.ItemName))
-                {
-                    var item = new Item();
-                    item.ItemName = wikiItem.ItemName.Trim();
-                    item.IconFileName = wikiItem.IconFileName.Trim();
-
-                    foreach (string statLine in wikiItem.Stats)
-                    {
-                        var lineTokens = statLine
-                            .Replace(")(", ") (") // make life easier when parsing Effect corner cases
-                            .Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                        parseStatLineTokens(lineTokens, item);
-                    }
-
-                    items.Add(item);
-                }
-            }
-
             // There will inevitably be a few dozen items on the wiki that are listed more than once.  99% of the time, it's
             // an item listed twice - once with the correct name capitalization, and once with a weird lowercase name.  So
             // our best-guess logic is that when there are duplicate wiki entries for an item, we'll use the one that
             // has the most capital letters in the item's name.  
             // (You can see this for yourself by running the List-Duplicate-Names command in TunnelQuest.DatabaseBuilder.)
-            var itemsWithoutDuplicates = items
+            var wikiItemsWithoutDuplicates = wikiData
+                .Where(item => item.Stats != null && !String.IsNullOrWhiteSpace(item.ItemName))
                 .GroupBy(item => item.ItemName.ToLower())
-                .Select(group => group.OrderBy(item => countUppercase(item.ItemName)).FirstOrDefault())
-                .ToList();
+                .Select(group => group.OrderBy(item => countUppercase(item.ItemName)).FirstOrDefault());
 
-            return itemsWithoutDuplicates;
+            var items = new List<Item>();
+            var errorItems = new List<string>();
+            foreach (WikiItemData wikiItem in wikiItemsWithoutDuplicates)
+            {
+                cleanWikiItem(wikiItem);
+
+                try
+                {
+                    items.Add(parseWikiItem(wikiItem));
+                }
+                catch (Exception)
+                {
+                    errorItems.Add(wikiItem.ToString());
+                }
+            }
+
+            if (errorItems.Count > 0)
+                throw new Exception("Error occurred parsing the following items: " + String.Join(", ", errorItems));
+
+            return items;
         }
 
-        private void parseStatLineTokens(string[] tokens, Item item)
+        // If an item's wiki page is particularly messed up, I just hard-code the item here
+        // rather than trying to make the parser handle every single janky wiki page.  It's
+        // unlikely that the stats for any of these items are going to change.
+        private void cleanWikiItem(WikiItemData wikiItem)
         {
-            int currentIndex = 0;
-
-            while (currentIndex < tokens.Length)
+            switch (wikiItem.ItemName.ToLower().Trim())
             {
-                switch (tokens[currentIndex].ToUpper().TrimEnd(':'))
+                case "ice silk amice":
+                    wikiItem.Stats = new string[] {
+                        "MAGIC ITEM QUEST ITEM",
+                        "Slot: SHOULDERS",
+                        "AC: 4",
+                        "CHA: +5 INT: +3 HP: +5 MANA: +10 SV COLD: +10",
+                        "WT: 0.3 Size: SMALL",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+
+                case "ice silk bracelet":
+                    wikiItem.Stats = new string[] {
+                        "MAGIC ITEM",
+                        "Slot: WRIST",
+                        "AC: 3",
+                        "STA: +5  CHA: +3  HP: +5  MANA: +15 SV COLD: +5",
+                        "WT: 0.3  Size: SMALL",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+
+                case "ice silk cap":
+                    wikiItem.Stats = new string[] {
+                        "MAGIC ITEM",
+                        "Slot: HEAD",
+                        "AC: 5",
+                        "CHA: +11  WIS: +8  INT: +10  HP: +10  MANA: +20 SV COLD: +5  SV MAGIC: +5",
+                        "WT: 0.3  Size: SMALL",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+
+                case "ice silk choker":
+                    wikiItem.Stats = new string[] {
+                        "MAGIC ITEM",
+                        "Slot: NECK",
+                        "AC: 4",
+                        "CHA: +5  INT: +4  HP: +5  MANA: +10 SV COLD: +5  SV MAGIC: +5",
+                        "WT: 0.2  Size: SMALL",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+
+                case "ice silk cloak":
+                    wikiItem.Stats = new string[] {
+                        "Slot: BACK",
+                        "AC: 6",
+                        "CHA: +6  INT: +8  HP: +5  MANA: +10 SV COLD: +10  SV MAGIC: +10",
+                        "WT: 0.6  Size: MEDIUM",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+
+                case "ice silk gloves":
+                    wikiItem.Stats = new string[] {
+                        "Slot: BACK",
+                        "AC: 6",
+                        "CHA: +6  INT: +8  HP: +5  MANA: +10 SV COLD: +10  SV MAGIC: +10",
+                        "WT: 0.6  Size: MEDIUM",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+
+                case "ice silk lined shoes":
+                    wikiItem.Stats = new string[] {
+                        "MAGIC ITEM",
+                        "Slot: FEET",
+                        "AC: 4",
+                        "DEX: +5  CHA: +4  AGI: +4  HP: +20  MANA: +8 SV COLD: +10",
+                        "WT: 0.7  Size: SMALL",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+
+                case "ice silk pantaloons":
+                    wikiItem.Stats = new string[] {
+                        "MAGIC ITEM",
+                        "Slot: LEGS",
+                        "AC: 5",
+                        "CHA: +6  INT: +5  HP: +20  MANA: +5 SV COLD: +9",
+                        "WT: 0.7  Size: MEDIUM",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+
+                case "ice silk robe":
+                    wikiItem.Stats = new string[] {
+                        "MAGIC ITEM",
+                        "Slot: CHEST",
+                        "AC: 12",
+                        "DEX: +11  CHA: +10  INT: +14  HP: +15  MANA: +25 SV COLD: +10",
+                        "WT: 1.0  Size: MEDIUM",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+
+                case "ice silk sash":
+                    wikiItem.Stats = new string[] {
+                        "MAGIC ITEM",
+                        "Slot: WAIST",
+                        "AC: 4",
+                        "CHA: +1  WIS: +1  INT: +3  HP: +5  MANA: +10 SV COLD: +5  SV MAGIC: +5",
+                        "WT: 0.2  Size: SMALL",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+
+                case "ice silk sleeves":
+                    wikiItem.Stats = new string[] {
+                        "MAGIC ITEM",
+                        "Slot: ARMS",
+                        "AC: 4",
+                        "CHA: +1  INT: +8  HP: +10  MANA: +10 SV COLD: +9",
+                        "WT: 0.4  Size: SMALL",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+
+                case "ice silk swatch":
+                    wikiItem.Stats = new string[] {
+                        "WT: 0.1  Size: SMALL",
+                        "Class: ALL Race: ALL"
+                    };
+                    break;
+
+                case "ice silk veil":
+                    wikiItem.Stats = new string[] {
+                        "MAGIC ITEM",
+                        "Slot: FACE",
+                        "AC: 3",
+                        "CHA: +4  INT: +4  HP: +5  MANA: +10 SV COLD: +5  SV MAGIC: +5",
+                        "WT: 0.2  Size: SMALL",
+                        "Class: NEC WIZ MAG ENC Race: HUM ERU HIE DEF GNM IKS"
+                    };
+                    break;
+            }
+        }
+
+        private Item parseWikiItem(WikiItemData wikiItem)
+        {
+            var item = new Item();
+            item.ItemName = wikiItem.ItemName.Trim();
+            item.IconFileName = wikiItem.IconFileName.Trim();
+
+            foreach (string statLine in wikiItem.Stats)
+            {
+                // check for lines that we know to ignore completely
+                if (statLine.StartsWith("This is a") || statLine == "Slot 1, Type 7 (General: Group)")
+                    continue;
+
+                var lineChunks = statLine
+                    .Replace(")(", ") (") // make life easier when parsing Effect corner cases
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                string firstChunk = cleanChunk(lineChunks[0]);
+
+                // first check for tokens that we know will take up an entire line
+                if (firstChunk == "AC")
                 {
-                    case "EFFECT":
-                        currentIndex++;
-
-                        var newItemEffect = new ItemEffect()
+                    if (item.ItemStats.Where(itemStat => itemStat.StatCode == StatCodes.ArmorClass).Count() > 0)
+                        throw new Exception("Multiple AC lines found for " + wikiItem.ToString());
+                    else
+                        item.ItemStats.Add(new ItemStat()
                         {
-                            ItemName = item.ItemName
-                        };
+                            ItemName = item.ItemName,
+                            Item = item,
+                            StatCode = StatCodes.ArmorClass
+                        });
+                }
+                else if (firstChunk == "DMG")
+                {
+                    if (item.AttackDamage != null)
+                        throw new Exception("Multiple DMG lines found for " + wikiItem.ToString());
+                    else
+                        item.AttackDamage = Int32.Parse(cleanChunk(lineChunks[1]));
+                }
+                else if (firstChunk == "SKILL")
+                {
+                    if (item.WeaponSkillCode != null)
+                        throw new Exception("Multiple Skill lines found for " + wikiItem.ToString());
+                    else
+                        parseWeaponSkillLine(lineChunks, item);
+                }
+                else if (firstChunk == "SLOT")
+                {
+                    if (item.ItemSlots.Count > 0)
+                        throw new Exception("Multiple Slot lines found for " + wikiItem.ToString());
+                    else
+                        parseSlotsLine(lineChunks, item);
+                }
+                else if (firstChunk == "WT")
+                {
+                    if (item.Weight != 0)
+                        throw new Exception("Multiple WT/Size lines found for " + wikiItem.ToString());
+                    else
+                    {
+                        item.Weight = float.Parse(cleanChunk(lineChunks[1]));
+                        item.SizeCode = SizeCodes.All.Where(code => code.Equals(cleanChunk(lineChunks[3]), StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
 
-                        // build newItemEffect.EffectName
-                        newItemEffect.EffectName = "";
-                        while (currentIndex < tokens.Length && !tokens[currentIndex].StartsWith('('))
+                        if (String.IsNullOrWhiteSpace(item.SizeCode))
+                            throw new Exception("Unrecognized Size");
+                    }
+                }
+                else if (firstChunk == "CLASS")
+                {
+                    if (item.ItemClasses.Count > 0)
+                        throw new Exception("Multiple Class lines found for " + wikiItem.ToString());
+                    else
+                        parseClassLine(lineChunks, item);
+                }
+                else if (firstChunk == "RACE")
+                {
+                    if (item.ItemRaces.Count > 0)
+                        throw new Exception("Multiple Race lines found for " + wikiItem.ToString());
+                    else
+                        parseRaceLine(lineChunks, item);
+                }
+                else if (firstChunk == "DEITY")
+                {
+                    if (item.Deities.Count > 0)
+                        throw new Exception("Multiple Deity lines found for " + wikiItem.ToString());
+                    else
+                        parseDeityLine(lineChunks, item);
+                }
+                else if (firstChunk == "EFFECT")
+                {
+                    // there CAN be multiple effect lines in very rare cases
+                    parseEffectLine(lineChunks, item);
+                }
+                else
+                {
+                    // it wasn't a whole-line token, so next check for tokens that can share a line
+
+                    int currentIndex = 0;
+                    while (currentIndex < lineChunks.Length)
+                    {
+                        string currentChunk = cleanChunk(lineChunks[currentIndex]);
+                        bool isChunkHandled = false;
+
+                        if (currentChunk == "NODROP")
                         {
-                            newItemEffect.EffectName += " " + tokens[currentIndex];
-                            currentIndex++;
+                            item.IsNoDrop = true;
+                            isChunkHandled = true;
                         }
-                        newItemEffect.EffectName = newItemEffect.EffectName.Trim();
-
-                        if (currentIndex < tokens.Length)
+                        else if (currentChunk == "TEMPORARY")
                         {
-                            // corner case: ignore the token "(spell)" if it's found
-                            if (tokens[currentIndex].Equals("(spell)", StringComparison.InvariantCultureIgnoreCase) && tokens.Length > (currentIndex + 1))
+                            item.IsTemporary = true;
+                            isChunkHandled = true;
+                        }
+                        else if (currentChunk == "EXPENDABLE")
+                        {
+                            item.IsExpendable = true;
+                            isChunkHandled = true;
+                        }
+                        else if (currentIndex + 1 < lineChunks.Length)
+                        {
+                            // this is NOT the last token in the line, so check for two-token combos
+
+                            string nextChunk = cleanChunk(lineChunks[currentIndex + 1]);
+                            if (currentChunk == "MAGIC" && nextChunk == "ITEM")
+                            {
+                                item.IsMagic = true;
                                 currentIndex++;
-
-                            // determine newItemEffect.EffectTypeCode
-                            if (tokens[currentIndex].StartsWith("(any", StringComparison.InvariantCultureIgnoreCase)
-                                || tokens[currentIndex].StartsWith("(inventory", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                newItemEffect.EffectTypeCode = "ClickAnySlot";
+                                isChunkHandled = true;
                             }
-                            else if (tokens[currentIndex].StartsWith("(must", StringComparison.InvariantCultureIgnoreCase))
+                            else if (currentChunk == "LORE" && nextChunk == "ITEM")
                             {
-                                newItemEffect.EffectTypeCode = "ClickEquipped";
-                            }
-                            else if (tokens[currentIndex].StartsWith("(worn", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                newItemEffect.EffectTypeCode = "Worn";
-                            }
-                            else if (tokens[currentIndex].StartsWith("(combat", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                newItemEffect.EffectTypeCode = "Combat";
-                            }
-                            else if (tokens[currentIndex].Equals("(instant)", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                // corner case
-                                // Line was in format "Effect: EffectName (Instant)"
-                                newItemEffect.EffectTypeCode = "ClickEquipped"; // random guess
-                                newItemEffect.CastingTime = 0;
-                            }
-                            else if (tokens[currentIndex].StartsWith("(casting", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                // corner case
-                                // Line was in format "Effect: EffectName (Casting Time: whatever)", without the EffectType
-                                newItemEffect.EffectTypeCode = "ClickEquipped"; // random guess
-                            }
-                            else
-                                throw new UnknownStatTokenException(tokens[currentIndex]);
-
-                            currentIndex++;
-                        }
-                        else
-                        {
-                            // corner case
-                            // Line was in format "Effect: EffectName" with nothing else after the name.  Assume it's a worn effect.
-                            newItemEffect.EffectTypeCode = "Worn";
-                        }
-
-
-                        // try to parse CastingTime and MinimumLevel, either of which may or may not be present
-                        while (currentIndex < tokens.Length)
-                        {
-                            // set newItemEffect.CastingTime
-                            if (tokens[currentIndex].StartsWith("time", StringComparison.InvariantCultureIgnoreCase) && tokens.Length > (currentIndex + 1))
-                            {
+                                item.IsLore = true;
                                 currentIndex++;
-
-                                string castingTimeString = tokens[currentIndex].TrimEnd(')');
-                                if (castingTimeString.Equals("instant", StringComparison.InvariantCultureIgnoreCase))
-                                    newItemEffect.CastingTime = 0;
+                                isChunkHandled = true;
+                            }
+                            else if (currentChunk == "QUEST" && nextChunk == "ITEM")
+                            {
+                                item.IsQuestItem = true;
+                                currentIndex++;
+                                isChunkHandled = true;
+                            }
+                            else if (currentChunk == "NO" && nextChunk == "DROP")
+                            {
+                                item.IsNoDrop = true;
+                                currentIndex++;
+                                isChunkHandled = true;
+                            }
+                            else if (currentChunk == "CHARGES")
+                            {
+                                if (nextChunk == "UNLIMITED")
+                                    item.MaxCharges = null;
                                 else
-                                    newItemEffect.CastingTime = float.Parse(castingTimeString);
-                            }
-
-                            // set newItemEffect.MinimumLevel
-                            if (tokens[currentIndex].Equals("level", StringComparison.InvariantCultureIgnoreCase) && tokens.Length > (currentIndex + 1))
-                            {
+                                    item.MaxCharges = Int32.Parse(nextChunk);
                                 currentIndex++;
-                                newItemEffect.MinimumLevel = int.Parse(tokens[currentIndex]);
+                                isChunkHandled = true;
                             }
-
-                            currentIndex++;
                         }
 
-                        item.ItemEffects = new List<ItemEffect>();
-                        item.ItemEffects.Add(newItemEffect);
+                        // stub uncomment this
+                        //if (!chunkHandled)
+                        //    throw new Exception("Unrecognized raw stat token " + currentChunk);
 
-                        break;
+                        currentIndex++;
+                    } // end while (currentIndex < lineChunks.Length)
+                } // end else
+            }// end foreach (statLine)
+            
+            return item;
+        }
+        
+        private string cleanChunk(string chunk)
+        {
+            return chunk.ToUpper().TrimEnd(':');
+        }
 
-                        // STUB uncomment these lines!
-                        //default:
-                        //  throw new Exception("Unrecognized stat token " + tokens[currentIndex]);
+        private void parseDeityLine(string[] lineChunks, Item item)
+        {
+            // stub!
+        }
+
+        private void parseRaceLine(string[] lineChunks, Item item)
+        {
+            // stub!
+        }
+
+        private void parseClassLine(string[] lineChunks, Item item)
+        {
+            string[] wikiCodes = lineChunks.Skip(1).ToArray();
+            IEnumerable<string> confirmedCodes;
+
+            if (wikiCodes[0].Equals("NONE", StringComparison.InvariantCultureIgnoreCase))
+            {
+                confirmedCodes = new string[] { };
+            }
+            else if (wikiCodes[0].Equals("ALL", StringComparison.InvariantCultureIgnoreCase))
+            {
+                confirmedCodes = ClassCodes.All;
+
+                if (wikiCodes.Length > 1)
+                {
+                    if (wikiCodes[1].Equals("EXCEPT", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        var exceptCodes = wikiCodes.Skip(2);
+
+                        var confirmedExceptCodes = ClassCodes.All.Where(cleanCode => exceptCodes.Contains(cleanCode, StringComparer.InvariantCultureIgnoreCase));
+                        if (exceptCodes.Count() != confirmedExceptCodes.Count())
+                            throw new Exception("Unrecognized classes for " + item.ItemName);
+
+                        confirmedCodes = confirmedCodes.Where(code => !confirmedExceptCodes.Contains(code, StringComparer.InvariantCultureIgnoreCase));
+                    }
+                    else
+                        throw new Exception("Couldn't parse Class line for " + item.ItemName);
+                }
+            }
+            else
+            {
+                confirmedCodes = ClassCodes.All.Where(cleanCode => wikiCodes.Contains(cleanCode, StringComparer.InvariantCultureIgnoreCase));
+
+                if (wikiCodes.Count() != confirmedCodes.Count())
+                    throw new Exception("Unrecognized Classes in " + item.ItemName);
+            }
+
+            foreach (string code in confirmedCodes)
+            {
+                item.ItemClasses.Add(new ItemClass()
+                {
+                    ItemName = item.ItemName,
+                    Item = item,
+                    ClassCode = code
+                });
+            }
+        }
+
+        private void parseWeaponSkillLine(string[] lineChunks, Item item)
+        {
+            // parse weaponSkillCode
+            string weaponSkillCode = "";
+            for (int i = 1; i < lineChunks.Length; i++)
+            {
+                if (lineChunks[i].ToUpper() == "ATK")
+                    break;
+                else
+                    weaponSkillCode += lineChunks[i] + " ";
+            }
+            weaponSkillCode = weaponSkillCode.TrimEnd();
+
+            var cleanCode = WeaponSkillCodes.All.Where(code => code.Equals(weaponSkillCode, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+
+            if (cleanCode == null)
+                throw new Exception("Unrecognized weapon skill in " + item.ItemName);
+
+            item.WeaponSkillCode = cleanCode;
+            item.AttackDelay = Int32.Parse(lineChunks.Last());
+        }
+
+        private void parseSlotsLine(string[] lineChunks, Item item)
+        {
+            var wikiSlotCodes = lineChunks.Skip(1).ToArray();
+
+            // clean up wiki data
+            for (int i = 0; i < wikiSlotCodes.Length; i++)
+            {
+                if (wikiSlotCodes[i].Equals("FINGERS", StringComparison.InvariantCultureIgnoreCase))
+                    wikiSlotCodes[i] = "FINGER";
+                else if (wikiSlotCodes[i].Equals("SHOULDER", StringComparison.InvariantCultureIgnoreCase))
+                    wikiSlotCodes[i] = "SHOULDERS";
+            }
+
+            var confirmedSlotCodes = SlotCodes.All.Where(cleanCode => wikiSlotCodes.Contains(cleanCode, StringComparer.InvariantCultureIgnoreCase));
+
+            if (confirmedSlotCodes.Count() != wikiSlotCodes.Count())
+                throw new Exception("Unrecognized slots in " + item.ItemName);
+
+            foreach (string slotCode in confirmedSlotCodes)
+            {
+                item.ItemSlots.Add(new ItemSlot()
+                {
+                    ItemName = item.ItemName,
+                    Item = item,
+                    SlotCode = slotCode
+                });
+            }
+        }
+
+        private void parseEffectLine(string[] lineChunks, Item item)
+        {
+            var newItemEffect = new ItemEffect()
+            {
+                ItemName = item.ItemName
+            };
+
+            int currentIndex = 1;
+
+            // build newItemEffect.EffectName
+            newItemEffect.EffectName = "";
+            while (currentIndex < lineChunks.Length && !lineChunks[currentIndex].StartsWith('('))
+            {
+                newItemEffect.EffectName += " " + lineChunks[currentIndex];
+                currentIndex++;
+            }
+            newItemEffect.EffectName = newItemEffect.EffectName.Trim();
+
+            if (currentIndex < lineChunks.Length)
+            {
+                // corner case: ignore the token "(spell)" if it's found
+                if (lineChunks[currentIndex].Equals("(spell)", StringComparison.InvariantCultureIgnoreCase) && lineChunks.Length > (currentIndex + 1))
+                    currentIndex++;
+
+                // determine newItemEffect.EffectTypeCode
+                if (lineChunks[currentIndex].StartsWith("(any", StringComparison.InvariantCultureIgnoreCase)
+                    || lineChunks[currentIndex].StartsWith("(inventory", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    newItemEffect.EffectTypeCode = "ClickAnySlot";
+                }
+                else if (lineChunks[currentIndex].StartsWith("(must", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    newItemEffect.EffectTypeCode = "ClickEquipped";
+                }
+                else if (lineChunks[currentIndex].StartsWith("(worn", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    newItemEffect.EffectTypeCode = "Worn";
+                }
+                else if (lineChunks[currentIndex].StartsWith("(combat", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    newItemEffect.EffectTypeCode = "Combat";
+                }
+                else if (lineChunks[currentIndex].Equals("(instant)", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // corner case
+                    // Line was in format "Effect: EffectName (Instant)"
+                    newItemEffect.EffectTypeCode = "ClickEquipped"; // random guess
+                    newItemEffect.CastingTime = 0;
+                }
+                else if (lineChunks[currentIndex].StartsWith("(casting", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // corner case
+                    // Line was in format "Effect: EffectName (Casting Time: whatever)", without the EffectType
+                    newItemEffect.EffectTypeCode = "ClickEquipped"; // random guess
+                }
+                else
+                    throw new UnknownStatTokenException(lineChunks[currentIndex]);
+
+                currentIndex++;
+            }
+            else
+            {
+                // corner case
+                // Line was in format "Effect: EffectName" with nothing else after the name.  Assume it's a worn effect.
+                newItemEffect.EffectTypeCode = "Worn";
+            }
+
+
+            // try to parse CastingTime and MinimumLevel, either of which may or may not be present
+            while (currentIndex < lineChunks.Length)
+            {
+                // set newItemEffect.CastingTime
+                if (lineChunks[currentIndex].StartsWith("time", StringComparison.InvariantCultureIgnoreCase) && lineChunks.Length > (currentIndex + 1))
+                {
+                    currentIndex++;
+
+                    string castingTimeString = lineChunks[currentIndex].TrimEnd(')');
+                    if (castingTimeString.Equals("instant", StringComparison.InvariantCultureIgnoreCase))
+                        newItemEffect.CastingTime = 0;
+                    else
+                        newItemEffect.CastingTime = float.Parse(castingTimeString);
+                }
+
+                // set newItemEffect.MinimumLevel
+                if (lineChunks[currentIndex].Equals("level", StringComparison.InvariantCultureIgnoreCase) && lineChunks.Length > (currentIndex + 1))
+                {
+                    currentIndex++;
+                    newItemEffect.MinimumLevel = int.Parse(lineChunks[currentIndex]);
                 }
 
                 currentIndex++;
-            } // end while (currentIndex < tokens.Length)
+            }
+
+            item.ItemEffects.Add(newItemEffect);
         }
 
         private int countUppercase(string input)

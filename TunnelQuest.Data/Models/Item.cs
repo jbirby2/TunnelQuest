@@ -39,16 +39,16 @@ namespace TunnelQuest.Data.Models
         public string SizeCode { get; set; }
         public Size Size { get; set; }
 
-        public ICollection<ItemRace> ItemRaces { get; set; }
-        public ICollection<ItemClass> ItemClasses { get; set; }
-        public ICollection<ItemStat> ItemStats { get; set; }
-        public ICollection<ItemEffect> ItemEffects { get; set; }
+        public ICollection<ItemRace> ItemRaces { get; set; } = new List<ItemRace>();
+        public ICollection<ItemClass> ItemClasses { get; set; } = new List<ItemClass>();
+        public ICollection<ItemStat> ItemStats { get; set; } = new List<ItemStat>();
+        public ICollection<ItemEffect> ItemEffects { get; set; } = new List<ItemEffect>();
 
 
         // equipment
 
-        public ICollection<ItemSlot> ItemSlots { get; set; }
-        public ICollection<ItemDeity> Deities { get; set; }
+        public ICollection<ItemSlot> ItemSlots { get; set; } = new List<ItemSlot>();
+        public ICollection<ItemDeity> Deities { get; set; } = new List<ItemDeity>();
 
 
         // weapons

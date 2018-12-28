@@ -86,5 +86,10 @@ namespace TunnelQuest.Data.Migrations.Data
         public string ItemName { get; set; }
         public string IconFileName { get; set; }
         public string[] Stats { get; set; }
+
+        public override string ToString()
+        {
+            return "[" + WikiPageId + "] " + ItemName;
+        }
     }
 }

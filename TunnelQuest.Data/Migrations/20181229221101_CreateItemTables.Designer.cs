@@ -9,8 +9,8 @@ using TunnelQuest.Data.Models;
 namespace TunnelQuest.Data.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    [Migration("20181227044236_InsertItemData")]
-    partial class InsertItemData
+    [Migration("20181229221101_CreateItemTables")]
+    partial class CreateItemTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -72,11 +72,20 @@ namespace TunnelQuest.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("item_name");
 
+                    b.Property<int?>("Agility")
+                        .HasColumnName("agility");
+
+                    b.Property<int?>("ArmorClass")
+                        .HasColumnName("armor_class");
+
                     b.Property<int?>("AttackDamage")
                         .HasColumnName("attack_damage");
 
                     b.Property<int?>("AttackDelay")
                         .HasColumnName("attack_delay");
+
+                    b.Property<int?>("BrassModifier")
+                        .HasColumnName("brass_modifier");
 
                     b.Property<int?>("Capacity")
                         .HasColumnName("capacity");
@@ -84,8 +93,47 @@ namespace TunnelQuest.Data.Migrations
                     b.Property<string>("CapacitySizeCode")
                         .HasColumnName("capacity_size_code");
 
+                    b.Property<int?>("Charisma")
+                        .HasColumnName("charisma");
+
+                    b.Property<int?>("ColdResist")
+                        .HasColumnName("cold_resist");
+
+                    b.Property<int?>("Dexterity")
+                        .HasColumnName("dexterity");
+
+                    b.Property<int?>("DiseaseResist")
+                        .HasColumnName("disease_resist");
+
+                    b.Property<float?>("EffectCastingTime")
+                        .HasColumnName("effect_casting_time");
+
+                    b.Property<int?>("EffectMinimumLevel")
+                        .HasColumnName("effect_minimum_level");
+
+                    b.Property<string>("EffectName")
+                        .HasColumnName("effect_name");
+
+                    b.Property<string>("EffectTypeCode")
+                        .HasColumnName("effect_type_code");
+
+                    b.Property<int?>("FireResist")
+                        .HasColumnName("fire_resist");
+
+                    b.Property<float?>("Haste")
+                        .HasColumnName("haste");
+
+                    b.Property<int?>("HitPoints")
+                        .HasColumnName("hit_points");
+
                     b.Property<string>("IconFileName")
                         .HasColumnName("icon_file_name");
+
+                    b.Property<int?>("Intelligence")
+                        .HasColumnName("intelligence");
+
+                    b.Property<bool>("IsArtifact")
+                        .HasColumnName("is_artifact");
 
                     b.Property<bool>("IsExpendable")
                         .HasColumnName("is_expendable");
@@ -99,17 +147,50 @@ namespace TunnelQuest.Data.Migrations
                     b.Property<bool>("IsNoDrop")
                         .HasColumnName("is_no_drop");
 
+                    b.Property<bool>("IsNoTrade")
+                        .HasColumnName("is_no_trade");
+
                     b.Property<bool>("IsQuestItem")
                         .HasColumnName("is_quest_item");
 
                     b.Property<bool>("IsTemporary")
                         .HasColumnName("is_temporary");
 
+                    b.Property<int?>("MagicResist")
+                        .HasColumnName("magic_resist");
+
+                    b.Property<int?>("Mana")
+                        .HasColumnName("mana");
+                    
                     b.Property<int?>("MaxCharges")
                         .HasColumnName("max_charges");
 
+                    b.Property<int?>("PercussionModifier")
+                        .HasColumnName("percussion_modifier");
+
+                    b.Property<int?>("Range")
+                        .HasColumnName("range");
+
+                    b.Property<int?>("RequiredLevel")
+                        .HasColumnName("required_level");
+
+                    b.Property<int?>("ResistPoison")
+                        .HasColumnName("poison_resist");
+
+                    b.Property<int?>("SingingModifier")
+                        .HasColumnName("singing_modifier");
+
                     b.Property<string>("SizeCode")
                         .HasColumnName("size_code");
+
+                    b.Property<int?>("Stamina")
+                        .HasColumnName("stamina");
+
+                    b.Property<int?>("Strength")
+                        .HasColumnName("strength");
+
+                    b.Property<int?>("StringedModifier")
+                        .HasColumnName("stringed_modifier");
 
                     b.Property<string>("WeaponSkillCode")
                         .HasColumnName("weapon_skill_code");
@@ -120,9 +201,19 @@ namespace TunnelQuest.Data.Migrations
                     b.Property<float?>("WeightReduction")
                         .HasColumnName("weight_reduction");
 
+                    b.Property<int?>("WindModifier")
+                        .HasColumnName("wind_modifier");
+
+                    b.Property<int?>("Wisdom")
+                        .HasColumnName("wisdom");
+
                     b.HasKey("ItemName");
 
                     b.HasIndex("CapacitySizeCode");
+
+                    b.HasIndex("EffectName");
+
+                    b.HasIndex("EffectTypeCode");
 
                     b.HasIndex("SizeCode");
 
@@ -173,36 +264,23 @@ namespace TunnelQuest.Data.Migrations
                     b.ToTable("item_deity");
                 });
 
-            modelBuilder.Entity("TunnelQuest.Data.Models.ItemEffect", b =>
+            modelBuilder.Entity("TunnelQuest.Data.Models.ItemInfoLine", b =>
                 {
-                    b.Property<int>("ItemEffectId")
+                    b.Property<int>("ItemInfoLineId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("item_effect_id");
-
-                    b.Property<float?>("CastingTime")
-                        .HasColumnName("casting_time");
-
-                    b.Property<string>("EffectName")
-                        .HasColumnName("effect_name");
-
-                    b.Property<string>("EffectTypeCode")
-                        .HasColumnName("effect_type_code");
+                        .HasColumnName("item_info_line_id");
 
                     b.Property<string>("ItemName")
                         .HasColumnName("item_name");
 
-                    b.Property<int?>("MinimumLevel")
-                        .HasColumnName("minimum_level");
+                    b.Property<string>("Text")
+                        .HasColumnName("text");
 
-                    b.HasKey("ItemEffectId");
-
-                    b.HasIndex("EffectName");
-
-                    b.HasIndex("EffectTypeCode");
+                    b.HasKey("ItemInfoLineId");
 
                     b.HasIndex("ItemName");
 
-                    b.ToTable("item_effect");
+                    b.ToTable("item_info_line");
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemRace", b =>
@@ -247,30 +325,6 @@ namespace TunnelQuest.Data.Migrations
                     b.ToTable("item_slot");
                 });
 
-            modelBuilder.Entity("TunnelQuest.Data.Models.ItemStat", b =>
-                {
-                    b.Property<int>("ItemStatId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("item_stat_id");
-
-                    b.Property<int>("Adjustment")
-                        .HasColumnName("adjustment");
-
-                    b.Property<string>("ItemName")
-                        .HasColumnName("item_name");
-
-                    b.Property<string>("StatCode")
-                        .HasColumnName("stat_code");
-
-                    b.HasKey("ItemStatId");
-
-                    b.HasIndex("ItemName");
-
-                    b.HasIndex("StatCode");
-
-                    b.ToTable("item_stat");
-                });
-
             modelBuilder.Entity("TunnelQuest.Data.Models.Race", b =>
                 {
                     b.Property<string>("RaceCode")
@@ -307,17 +361,6 @@ namespace TunnelQuest.Data.Migrations
                     b.ToTable("slot");
                 });
 
-            modelBuilder.Entity("TunnelQuest.Data.Models.Stat", b =>
-                {
-                    b.Property<string>("StatCode")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("stat_code");
-
-                    b.HasKey("StatCode");
-
-                    b.ToTable("stat");
-                });
-
             modelBuilder.Entity("TunnelQuest.Data.Models.WeaponSkill", b =>
                 {
                     b.Property<string>("WeaponSkillCode")
@@ -335,6 +378,14 @@ namespace TunnelQuest.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CapacitySizeCode");
 
+                    b.HasOne("TunnelQuest.Data.Models.Effect", "Effect")
+                        .WithMany()
+                        .HasForeignKey("EffectName");
+
+                    b.HasOne("TunnelQuest.Data.Models.EffectType", "EffectType")
+                        .WithMany()
+                        .HasForeignKey("EffectTypeCode");
+
                     b.HasOne("TunnelQuest.Data.Models.Size", "Size")
                         .WithMany()
                         .HasForeignKey("SizeCode");
@@ -351,7 +402,7 @@ namespace TunnelQuest.Data.Migrations
                         .HasForeignKey("ClassCode");
 
                     b.HasOne("TunnelQuest.Data.Models.Item", "Item")
-                        .WithMany("ItemClasses")
+                        .WithMany("Classes")
                         .HasForeignKey("ItemName");
                 });
 
@@ -366,25 +417,17 @@ namespace TunnelQuest.Data.Migrations
                         .HasForeignKey("ItemName");
                 });
 
-            modelBuilder.Entity("TunnelQuest.Data.Models.ItemEffect", b =>
+            modelBuilder.Entity("TunnelQuest.Data.Models.ItemInfoLine", b =>
                 {
-                    b.HasOne("TunnelQuest.Data.Models.Effect", "Effect")
-                        .WithMany()
-                        .HasForeignKey("EffectName");
-
-                    b.HasOne("TunnelQuest.Data.Models.EffectType", "EffectType")
-                        .WithMany()
-                        .HasForeignKey("EffectTypeCode");
-
                     b.HasOne("TunnelQuest.Data.Models.Item", "Item")
-                        .WithMany("ItemEffects")
+                        .WithMany("Info")
                         .HasForeignKey("ItemName");
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemRace", b =>
                 {
                     b.HasOne("TunnelQuest.Data.Models.Item", "Item")
-                        .WithMany("ItemRaces")
+                        .WithMany("Races")
                         .HasForeignKey("ItemName");
 
                     b.HasOne("TunnelQuest.Data.Models.Race", "Race")
@@ -395,23 +438,12 @@ namespace TunnelQuest.Data.Migrations
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemSlot", b =>
                 {
                     b.HasOne("TunnelQuest.Data.Models.Item", "Item")
-                        .WithMany("ItemSlots")
+                        .WithMany("Slots")
                         .HasForeignKey("ItemName");
 
                     b.HasOne("TunnelQuest.Data.Models.Slot", "Slot")
                         .WithMany()
                         .HasForeignKey("SlotCode");
-                });
-
-            modelBuilder.Entity("TunnelQuest.Data.Models.ItemStat", b =>
-                {
-                    b.HasOne("TunnelQuest.Data.Models.Item", "Item")
-                        .WithMany("ItemStats")
-                        .HasForeignKey("ItemName");
-
-                    b.HasOne("TunnelQuest.Data.Models.Stat", "Stat")
-                        .WithMany()
-                        .HasForeignKey("StatCode");
                 });
 #pragma warning restore 612, 618
         }

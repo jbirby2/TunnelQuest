@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TunnelQuest.Data.Models;
 
 namespace TunnelQuest.Data.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    partial class TunnelQuestContextModelSnapshot : ModelSnapshot
+    [Migration("20181229221639_InsertItemAndEffectData")]
+    partial class InsertItemAndEffectData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -6,7 +6,7 @@ namespace TunnelQuest.Data
 {
     public static class DeityNames
     {
-        public static readonly string CazicThule = "Cazic Thule";
+        public static readonly string CazicThule = "Cazic-Thule";
         public static readonly string Tunare = "Tunare";
         public static readonly string Karana = "Karana";
         public static readonly string BrellSerilis = "Brell Serilis";

@@ -1,0 +1,344 @@
+{
+  "30457": {
+    "ItemName": "Case of Blackburrow Stout",
+    "IconFileName": "Item_608.png",
+    "Stats": [
+      "LORE ITEM",
+      "WT: 5.0  Size: LARGE",
+      "Class: ALL",
+      "Race: ALL"
+    ]
+  },
+  "25381": {
+    "ItemName": "Dark Runed Gauntlets",
+    "IconFileName": "Item_531.png",
+    "Stats": [
+      "MAGIC ITEM  NO DROP",
+      "Slot: HANDS",
+      "AC: 15",
+      "STR: +2  DEX: +1  STA: +1  INT: +2  AGI: +1  MANA: +10",
+      "WT: 4.0  Size: SMALL",
+      "Class: SHD",
+      "Race: ALL"
+    ]
+  },
+  "22628": {
+    "ItemName": "Drums of the Beast",
+    "IconFileName": "Item_1152.png",
+    "Stats": [
+      "MAGIC ITEM  LORE ITEM",
+      "Slot: PRIMARY",
+      "Percussion Instrument: 26",
+      "Effect: Enduring Breath (Any Slot, Casting Time: Instant)",
+      "WT: 1.0  Size: MEDIUM",
+      "Class: BRD",
+      "Race: ALL"
+    ]
+  },
+  "28697": {
+    "ItemName": "Essence of Rallos",
+    "IconFileName": "Item_808.png",
+    "Stats": [
+      "Effect: Berserker Madness III (Combat, Casting Time: Instant) at Level 40",
+      "WT: 0.2  Size: SMALL",
+      "Class: ALL",
+      "Race: ALL"
+    ]
+  },
+  "10482": {
+    "ItemName": "Fool's Gold Stein",
+    "IconFileName": "Item_709.png",
+    "Stats": [
+      "LORE ITEM  NO DROP",
+      "Slot: PRIMARY SECONDARY",
+      "Skill: 1H Blunt  Atk Delay: 30",
+      "DMG: 2",
+      "WT: 1.0  Size: SMALL",
+      "Class: WAR CLR PAL RNG SHD DRU MNK BRD ROG SHM NEC WIZ MAG ENC",
+      "Race: ALL"
+    ]
+  },
+  "2831": {
+    "ItemName": "Forge Hammer of Dalnir",
+    "IconFileName": "Item_567.png",
+    "Stats": [
+      "MAGIC ITEM  LORE ITEM  NO DROP",
+      "Slot: PRIMARY",
+      "Skill: 1H Blunt  Atk Delay: 50",
+      "DMG: 6",
+      "WT: 15.0  Size: MEDIUM",
+      "Class: WAR CLR PAL RNG SHD DRU MNK BRD ROG SHM NEC WIZ MAG ENC",
+      "Race: ALL"
+    ]
+  },
+  "26860": {
+    "ItemName": "Glowing Red Stone",
+    "IconFileName": "Item_507.png",
+    "Stats": [
+      "LORE ITEM",
+      "Slot: PRIMARY SECONDARY",
+      "AC: 10",
+      "WIS: +6  INT: +6  HP: +40",
+      "WT: 0.0  Size: TINY",
+      "Class: WAR CLR PAL RNG SHD DRU MNK BRD ROG SHM NEC WIZ MAG ENC",
+      "Race: ALL"
+    ]
+  },
+  "28091": {
+    "ItemName": "Holgresh Spirit Beads",
+    "IconFileName": "Item_848.png",
+    "Stats": [
+      "Slot: NECK",
+      "SV FIRE: +1  SV COLD: +1 SV MAGIC: +2",
+      "Effect: Grim Aura (Worn)",
+      "WT: 0.2  Size: SMALL",
+      "Class: NEC WIZ MAG ENC",
+      "Race: ALL"
+    ]
+  },
+  "4443": {
+    "ItemName": "Journeyman's Walking Stick",
+    "IconFileName": "Item_602.png",
+    "Stats": [
+      "MAGIC ITEM",
+      "Slot: PRIMARY SECONDARY",
+      "Skill: 1H Blunt  Atk Delay: 24",
+      "DMG: 9",
+      "STR: +4  WIS: +4  INT: +4",
+      "Effect: Tashani (Combat, Casting Time: Instant) at Level 35",
+      "WT: 1.6  Size: MEDIUM",
+      "Class: WAR CLR PAL RNG SHD DRU MNK BRD ROG SHM",
+      "Race: ALL"
+    ]
+  },
+  "23064": {
+    "ItemName": "Large Sky Sapphire",
+    "IconFileName": "Item_965.png",
+    "Stats": [
+      "LORE ITEM  NO DROP",
+      "WT: 0.1 Size: MEDIUM",
+      "Class: ALL",
+      "Race: ALL"
+    ]
+  },
+  "25536": {
+    "ItemName": "Spell: McMerin's Feast",
+    "IconFileName": "Item_504.png",
+    "Stats": [
+      "MAGIC ITEM",
+      "Skill: Alteration",
+      "Mana Cost: 0",
+      "Effect: Cannibalize II",
+      "WT: 0.1  Size: SMALL",
+      "Race: NONE"
+    ]
+  },
+  "26939": {
+    "ItemName": "Nevederia's Horn",
+    "IconFileName": "Item_574.png",
+    "Stats": [
+      "MAGIC ITEM  LORE ITEM  NO DROP",
+      "Slot: SECONDARY",
+      "Skill: Piercing  Atk Delay: 15",
+      "DMG: 10   AC: 20",
+      "STR: +10",
+      "SV FIRE: +10",
+      "Effect: Suffocate (Combat, Casting Time: Instant)",
+      "WT: 0.0  Size: TINY",
+      "Class: WAR RNG ROG",
+      "Race: ALL"
+    ]
+  },
+  "6460": {
+    "ItemName": "Prayer Beads",
+    "IconFileName": "Item_848.png",
+    "Stats": [
+      "MAGIC ITEM  LORE ITEM",
+      "Slot: NECK",
+      "Charges: 2",
+      "Effect: Healing (Any Slot, Casting Time: Instant)",
+      "WT: 0.2  Size: SMALL",
+      "Class: WAR CLR PAL RNG DRU MNK BRD ROG WIZ MAG ENC",
+      "Race: ALL"
+    ]
+  },
+  "2167": {
+    "ItemName": "Rubicite Breastplate",
+    "IconFileName": "Item_624.png",
+    "Stats": [
+      "MAGIC ITEM  LORE ITEM",
+      "Slot: CHEST",
+      "AC: 19",
+      "Effect: Rubicite Aura (Worn)",
+      "WT: 6.0  Size: LARGE",
+      "Class: WAR CLR PAL RNG SHD BRD ROG SHM",
+      "Race: HUM BAR ERU ELF HIE DEF HEF DWF TRL OGR HFL GNM"
+    ]
+  },
+  "12290": {
+    "ItemName": "Ruined Gnoll Leather Boots",
+    "IconFileName": "Item_633.png",
+    "Stats": [
+      "LORE ITEM",
+      "Slot: FEET",
+      "AC: 2",
+      "WT: 3.8  Size: SMALL",
+      "Class: ALL except NEC WIZ MAG ENC",
+      "Race: ALL except DWF HFL GNM"
+    ]
+  },
+  "1863": {
+    "ItemName": "Shralok Pack",
+    "IconFileName": "Item_884.png",
+    "Stats": [
+      "LORE ITEM",
+      "WT: 0.4  Weight Reduction: 25%",
+      "Capacity: 8  Size Capacity: GIANT"
+    ]
+  },
+  "989": {
+    "ItemName": "Singing Short Sword",
+    "IconFileName": "Item_882.png",
+    "Stats": [
+      "MAGIC ITEM  LORE ITEM  NO DROP",
+      "Slot: PRIMARY SECONDARY",
+      "Skill: 1H Slashing  Atk Delay: 26",
+      "Singing Instruments 18",
+      "Percussion Instruments 18",
+      "Stringed Instruments 18",
+      "Brass Instruments 18",
+      "Wind Instruments 18",
+      "DMG: 16",
+      "STR: +15  DEX: +10  STA: +5  CHA: +20  HP: +100",
+      "SV FIRE: +10  SV DISEASE: +10  SV COLD: +10  SV MAGIC: +10  SV POISON: +10",
+      "Effect: Dance of the Blade (Combat, Casting Time: Instant) at Level 46",
+      "WT: 2.0  Size: MEDIUM",
+      "Class: BRD",
+      "Race: ALL"
+    ]
+  },
+  "31898": {
+    "ItemName": "Sphere of Unrest",
+    "IconFileName": "Item_507.png",
+    "Stats": [
+      "MAGIC ITEM LORE ITEM NO TRADE",
+      "Slot: PRIMARY SECONDARY",
+      "WT: 0.1  Size: TINY",
+      "Class: ALL",
+      "Race: ALL"
+    ]
+  },
+  "15590": {
+    "ItemName": "Tri-Plated Golden Hackle Hammer",
+    "IconFileName": "Item_567.png",
+    "Stats": [
+      "MAGIC ITEM  LORE ITEM  NO DROP",
+      "Slot: PRIMARY SECONDARY",
+      "Skill: 1H Blunt  Atk Delay: 24",
+      "DMG: 14",
+      "STR: +10  WIS: +13  INT: +13  MANA: +25",
+      "SV FIRE: +5  SV DISEASE: +5  SV COLD: +5  SV MAGIC: +5  SV POISON: +5",
+      "Effect: Arch Shielding (Any Slot, Casting Time: 0.1) at Level 50",
+      "WT: 2.0  Size: TINY",
+      "Class: WAR CLR PAL RNG SHD DRU MNK BRD ROG SHM NEC WIZ MAG ENC",
+      "Race: ALL"
+    ]
+  },
+  "16815": {
+    "ItemName": "Velium Maul of Superiority",
+    "IconFileName": "Item_578.png",
+    "Stats": [
+      "MAGIC ITEM  LORE ITEM  NO DROP",
+      "Slot: PRIMARY SECONDARY",
+      "Skill: 1H Blunt  Atk Delay: 18",
+      "DMG: 11   AC: 3",
+      "STR: +3  DEX: +3  STA: +3  CHA: +3  WIS: +3  INT: +3  AGI: +3  HP: +30  MANA: +30",
+      "SV FIRE: +3  SV DISEASE: +3  SV COLD: +3  SV MAGIC: +3  SV POISON: +3",
+      "WT: 7.0  Size: MEDIUM",
+      "Class: WAR CLR PAL RNG SHD DRU MNK BRD ROG SHM NEC WIZ MAG ENC",
+      "Race: ALL"
+    ]
+  },
+  "42466": {
+    "ItemName": "A Scroll",
+    "IconFileName": "Item_504.png",
+    "Stats": [
+      "The Note is rolled up.",
+      "LORE ITEM  NO TRADE TEMPORARY",
+      "WT: 0.1  Size: TINY"
+    ]
+  },
+  "18777": {
+    "ItemName": "Lava Pears",
+    "IconFileName": "Item_1232.png",
+    "Stats": [
+      "WT: 0.1  Size: TINY",
+      "Class: NONE",
+      "Race: NONE"
+    ]
+  },
+  "33966": {
+    "ItemName": "Teir`dal sai",
+    "IconFileName": "Item_1214.png",
+    "Stats": [
+      "MAGIC ITEM  LORE ITEM  NO TRADE",
+      "Slot: PRIMARY SECONDARY",
+      "Skill: 1H Blunt Atk Delay: 19",
+      "DMG: 11 AC: 9",
+      "AGI: +5",
+      "WT: 5.2  Size: SMALL",
+      "Class: MNK BRD ROG",
+      "Race: HUM BAR ELF DEF HEF HFL GNM IKS"
+    ]
+  },
+  "10116": {
+    "ItemName": "Used Merchants Gloves",
+    "IconFileName": "Item_517.png",
+    "Stats": [
+      "Slot: HANDS",
+      "AGI: +1",
+      "WT: 0.2  Size: SMALL",
+      "Class: WAR RNG BRD ROG",
+      "Race: HUM BAR ERU ELF HIE DEF HEF DWF HFL GNM"
+    ]
+  },
+  "29285": {
+    "ItemName": "Ancient Venom Sack",
+    "IconFileName": "Item_818.png",
+    "Stats": [
+      "EXPENDABLE   Charges: 1",
+      "Effect: Deadly Poison (Combat, Casting Time: Instant) at Level 30",
+      "WT: 0.2  Size: SMALL",
+      "Class: ROG",
+      "Race: HUM BAR ELF DEF HEF DWF HFL GNM"
+    ]
+  },
+  "26875": {
+    "ItemName": "Kejekan Smithy Hammer",
+    "IconFileName": "Item_567.png",
+    "Stats": [
+      "LORE ITEM  NODROP",
+      "Slot: PRIMARY SECONDARY",
+      "Skill: 1H Blunt  Atk Delay: 42",
+      "DMG: 5",
+      "WT: 18.0  Size: SMALL",
+      "Class: ALL",
+      "Race: ALL",
+      "Deity: Bertoxxulous / Cazic-Thule / Innoruuk / Rallos Zek"
+    ]
+  },
+  "27542": {
+    "ItemName": "Soulforge Hammer",
+    "IconFileName": "Item_567.png",
+    "Stats": [
+      "MAGIC ITEM",
+      "Slot: PRIMARY SECONDARY",
+      "Skill: 1H Blunt  Atk Delay: 40",
+      "DMG: 6",
+      "WT: 18.0  Size: SMALL",
+      "Class: ALL except",
+      "Race: ALL",
+      "Deity: Bertoxxulous / Cazic-Thule / Innoruuk / Rallos Zek"
+    ]
+  }
+}

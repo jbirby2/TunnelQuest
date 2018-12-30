@@ -87,17 +87,6 @@ namespace TunnelQuest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "stat",
-                columns: table => new
-                {
-                    stat_code = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_stat", x => x.stat_code);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "weapon_skill",
                 columns: table => new
                 {
@@ -117,13 +106,42 @@ namespace TunnelQuest.Data.Migrations
                     is_magic = table.Column<bool>(nullable: false),
                     is_lore = table.Column<bool>(nullable: false),
                     is_no_drop = table.Column<bool>(nullable: false),
+                    is_no_trade = table.Column<bool>(nullable: false),
                     is_temporary = table.Column<bool>(nullable: false),
                     is_quest_item = table.Column<bool>(nullable: false),
+                    is_artifact = table.Column<bool>(nullable: false),
+                    required_level = table.Column<int>(nullable: true),
                     weight = table.Column<float>(nullable: false),
                     size_code = table.Column<string>(nullable: true),
+                    strength = table.Column<int>(nullable: true),
+                    stamina = table.Column<int>(nullable: true),
+                    agility = table.Column<int>(nullable: true),
+                    dexterity = table.Column<int>(nullable: true),
+                    wisdom = table.Column<int>(nullable: true),
+                    intelligence = table.Column<int>(nullable: true),
+                    charisma = table.Column<int>(nullable: true),
+                    hit_points = table.Column<int>(nullable: true),
+                    mana = table.Column<int>(nullable: true),
+                    armor_class = table.Column<int>(nullable: true),
+                    magic_resist = table.Column<int>(nullable: true),
+                    poison_resist = table.Column<int>(nullable: true),
+                    disease_resist = table.Column<int>(nullable: true),
+                    fire_resist = table.Column<int>(nullable: true),
+                    cold_resist = table.Column<int>(nullable: true),
+                    haste = table.Column<float>(nullable: true),
+                    singing_modifier = table.Column<int>(nullable: true),
+                    percussion_modifier = table.Column<int>(nullable: true),
+                    stringed_modifier = table.Column<int>(nullable: true),
+                    brass_modifier = table.Column<int>(nullable: true),
+                    wind_modifier = table.Column<int>(nullable: true),
+                    effect_name = table.Column<string>(nullable: true),
+                    effect_type_code = table.Column<string>(nullable: true),
+                    effect_minimum_level = table.Column<int>(nullable: true),
+                    effect_casting_time = table.Column<float>(nullable: true),
                     weapon_skill_code = table.Column<string>(nullable: true),
                     attack_damage = table.Column<int>(nullable: true),
                     attack_delay = table.Column<int>(nullable: true),
+                    range = table.Column<int>(nullable: true),
                     capacity = table.Column<int>(nullable: true),
                     capacity_size_code = table.Column<string>(nullable: true),
                     weight_reduction = table.Column<float>(nullable: true),
@@ -138,6 +156,18 @@ namespace TunnelQuest.Data.Migrations
                         column: x => x.capacity_size_code,
                         principalTable: "size",
                         principalColumn: "size_code",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_item_effect_effect_name",
+                        column: x => x.effect_name,
+                        principalTable: "effect",
+                        principalColumn: "effect_name",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_item_effect_type_effect_type_code",
+                        column: x => x.effect_type_code,
+                        principalTable: "effect_type",
+                        principalColumn: "effect_type_code",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_item_size_size_code",
@@ -206,34 +236,19 @@ namespace TunnelQuest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "item_effect",
+                name: "item_info_line",
                 columns: table => new
                 {
-                    item_effect_id = table.Column<int>(nullable: false)
+                    item_info_line_id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     item_name = table.Column<string>(nullable: true),
-                    effect_name = table.Column<string>(nullable: true),
-                    effect_type_code = table.Column<string>(nullable: true),
-                    minimum_level = table.Column<int>(nullable: true),
-                    casting_time = table.Column<float>(nullable: true)
+                    text = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_item_effect", x => x.item_effect_id);
+                    table.PrimaryKey("PK_item_info_line", x => x.item_info_line_id);
                     table.ForeignKey(
-                        name: "FK_item_effect_effect_effect_name",
-                        column: x => x.effect_name,
-                        principalTable: "effect",
-                        principalColumn: "effect_name",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_item_effect_effect_type_effect_type_code",
-                        column: x => x.effect_type_code,
-                        principalTable: "effect_type",
-                        principalColumn: "effect_type_code",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_item_effect_item_item_name",
+                        name: "FK_item_info_line_item_item_name",
                         column: x => x.item_name,
                         principalTable: "item",
                         principalColumn: "item_name",
@@ -292,37 +307,20 @@ namespace TunnelQuest.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "item_stat",
-                columns: table => new
-                {
-                    item_stat_id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    item_name = table.Column<string>(nullable: true),
-                    stat_code = table.Column<string>(nullable: true),
-                    adjustment = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_item_stat", x => x.item_stat_id);
-                    table.ForeignKey(
-                        name: "FK_item_stat_item_item_name",
-                        column: x => x.item_name,
-                        principalTable: "item",
-                        principalColumn: "item_name",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_item_stat_stat_stat_code",
-                        column: x => x.stat_code,
-                        principalTable: "stat",
-                        principalColumn: "stat_code",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_item_capacity_size_code",
                 table: "item",
                 column: "capacity_size_code");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_item_effect_name",
+                table: "item",
+                column: "effect_name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_item_effect_type_code",
+                table: "item",
+                column: "effect_type_code");
 
             migrationBuilder.CreateIndex(
                 name: "IX_item_size_code",
@@ -355,18 +353,8 @@ namespace TunnelQuest.Data.Migrations
                 column: "item_name");
 
             migrationBuilder.CreateIndex(
-                name: "IX_item_effect_effect_name",
-                table: "item_effect",
-                column: "effect_name");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_item_effect_effect_type_code",
-                table: "item_effect",
-                column: "effect_type_code");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_item_effect_item_name",
-                table: "item_effect",
+                name: "IX_item_info_line_item_name",
+                table: "item_info_line",
                 column: "item_name");
 
             migrationBuilder.CreateIndex(
@@ -388,16 +376,6 @@ namespace TunnelQuest.Data.Migrations
                 name: "IX_item_slot_slot_code",
                 table: "item_slot",
                 column: "slot_code");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_item_stat_item_name",
-                table: "item_stat",
-                column: "item_name");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_item_stat_stat_code",
-                table: "item_stat",
-                column: "stat_code");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -409,7 +387,7 @@ namespace TunnelQuest.Data.Migrations
                 name: "item_deity");
 
             migrationBuilder.DropTable(
-                name: "item_effect");
+                name: "item_info_line");
 
             migrationBuilder.DropTable(
                 name: "item_race");
@@ -418,34 +396,28 @@ namespace TunnelQuest.Data.Migrations
                 name: "item_slot");
 
             migrationBuilder.DropTable(
-                name: "item_stat");
-
-            migrationBuilder.DropTable(
                 name: "class");
 
             migrationBuilder.DropTable(
                 name: "deity");
 
             migrationBuilder.DropTable(
-                name: "effect");
-
-            migrationBuilder.DropTable(
-                name: "effect_type");
-
-            migrationBuilder.DropTable(
                 name: "race");
-
-            migrationBuilder.DropTable(
-                name: "slot");
 
             migrationBuilder.DropTable(
                 name: "item");
 
             migrationBuilder.DropTable(
-                name: "stat");
+                name: "slot");
 
             migrationBuilder.DropTable(
                 name: "size");
+
+            migrationBuilder.DropTable(
+                name: "effect");
+
+            migrationBuilder.DropTable(
+                name: "effect_type");
 
             migrationBuilder.DropTable(
                 name: "weapon_skill");

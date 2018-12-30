@@ -5,11 +5,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20181229180120_asdf.cs" />
+    <Compile Remove="Migrations\20181229180156_asdf.cs" />
+    <Compile Remove="Migrations\20181229180238_asdf2.cs" />
+    <Compile Remove="Migrations\20181229221134_InsertItemData.cs" />
+    <Compile Remove="Migrations\20181229224537_asdf.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Migrations\Data\wiki.project1999.com_items_scrape.json" />
+    <None Remove="Migrations\Data\wiki_scrape_corrections.json" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Migrations\Data\wiki.project1999.com_items_scrape.json" />
+    <EmbeddedResource Include="Migrations\Data\wiki_scrape_corrections.json" />
   </ItemGroup>
 
   <ItemGroup>

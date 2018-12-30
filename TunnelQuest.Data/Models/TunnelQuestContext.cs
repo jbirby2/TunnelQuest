@@ -19,12 +19,9 @@ namespace TunnelQuest.Data.Models
         public DbSet<Effect> Effects { get; set; }
         public DbSet<EffectType> EffectTypes { get; set; }
         public DbSet<Item> Items { get; set; }
-        public DbSet<ItemEffect> ItemEffects { get; set; }
-        public DbSet<ItemStat> ItemStats { get; set; }
         public DbSet<Race> Races { get; set; }
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Slot> Slots { get; set; }
-        public DbSet<Stat> Stats { get; set; }
         public DbSet<WeaponSkill> WeaponSkills { get; set; }
         public DbSet<Deity> Deities { get; set; }
 

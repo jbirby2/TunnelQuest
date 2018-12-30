@@ -16,18 +16,20 @@ namespace TunnelQuest.DatabaseBuilder
     {
         public static readonly string BUILD_ITEM_LIST_URL = "http://wiki.project1999.com/api.php?action=query&generator=categorymembers&gcmtitle=Category:Items&gcmlimit=max&format=json";
         public static readonly string GET_ITEM_DETAIL_URL = "http://wiki.project1999.com/";
-        public static readonly string ITEM_LIST_FILE_NAME = "wiki.project1999.com_items_scrape.json";
+        public static readonly string ITEMS_FILE_NAME = "wiki.project1999.com_items_scrape.json";
+        public static readonly string CORRECTIONS_FILE_NAME = "wiki_scrape_corrections.json";
         public static readonly string IMAGE_WRAPPER_FOLDER_NAME = "wiki.project1999.com_items_scrape";
 
         
         public static void BuildItemDetails(string dataOutputPath, string imageOutputPath, bool pauseOnError)
         {
-            string itemListFilePath = getItemListFilePath(dataOutputPath);
+            string itemsFilePath = getItemsFilePath(dataOutputPath);
+            string correctionsFilePath = getCorrectionsFilePath(dataOutputPath);
 
-            if (!File.Exists(itemListFilePath))
-                buildItemList(itemListFilePath);
+            if (File.Exists(itemsFilePath) == false || new FileInfo(itemsFilePath).Length < 10)
+                buildItemList(itemsFilePath);
 
-            var itemList = WikiItemData.ReadFromFile(itemListFilePath);
+            var itemList = WikiItemData.ReadFromFile(itemsFilePath, correctionsFilePath);
 
             DateTime startTime = DateTime.Now;
             int totalFilesBuilt = 0;
@@ -37,7 +39,7 @@ namespace TunnelQuest.DatabaseBuilder
 
             using (var webClient = new WebClient())
             {
-                Console.WriteLine("Searching " + itemListFilePath + " for missing item data or images to pull from the wiki:");
+                Console.WriteLine("Searching " + itemsFilePath + " for missing item data or images to pull from the wiki:");
 
                 foreach (WikiItemData nextItem in itemList)
                 {
@@ -61,7 +63,25 @@ namespace TunnelQuest.DatabaseBuilder
                             var statsElement = dataElement.Descendants("p").FirstOrDefault();
                             if (statsElement == null)
                                 throw new Exception("Couldn't find statsElement");
-                            nextItem.Stats = statsElement.InnerText.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                            var itemStats = new List<string>();
+                            foreach (var childNode in statsElement.ChildNodes)
+                            {
+                                string childNodeText = childNode.InnerText.Replace("\r", "").Replace("\n", "").Trim();
+
+                                if (childNode is HtmlTextNode && !String.IsNullOrWhiteSpace(childNodeText))
+                                {
+                                    if (childNode.PreviousSibling != null && childNode.PreviousSibling.Name.Equals("a", StringComparison.InvariantCultureIgnoreCase))
+                                        itemStats[itemStats.Count - 1] += " " + childNodeText;
+                                    else
+                                        itemStats.Add(childNodeText);
+                                }
+                                else if (childNode.Name.Equals("a", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    itemStats[itemStats.Count - 1] += " " + childNodeText;
+                                }
+                            }
+                            nextItem.Stats = itemStats.ToArray();
 
                             // set itemData.IconFileName
 
@@ -74,7 +94,7 @@ namespace TunnelQuest.DatabaseBuilder
                             nextItem.IconFileName = imageSrc.Split('/')[1];
 
                             // re-write the data file to disk after every single item
-                            WikiItemData.WriteToFile(itemListFilePath, itemList);
+                            WikiItemData.WriteToFile(itemsFilePath, itemList);
 
                             Console.WriteLine("[" + nextItem.WikiPageId + "] " + nextItem.ItemName);
                             totalFilesBuilt++;
@@ -120,17 +140,18 @@ namespace TunnelQuest.DatabaseBuilder
 
         public static void ListDuplicateNames(string dataOutputPath)
         {
-            string itemListFilePath = getItemListFilePath(dataOutputPath);
+            string itemsFilePath = getItemsFilePath(dataOutputPath);
+            string correctionsFilePath = getCorrectionsFilePath(dataOutputPath);
 
-            if (!File.Exists(itemListFilePath))
+            if (!File.Exists(itemsFilePath))
             {
-                Console.WriteLine("No file found at " + itemListFilePath);
+                Console.WriteLine("No file found at " + itemsFilePath);
                 return;
             }
 
-            var itemList = WikiItemData.ReadFromFile(itemListFilePath);
+            var itemList = WikiItemData.ReadFromFile(itemsFilePath, correctionsFilePath);
 
-            Console.WriteLine("Searching " + itemListFilePath + " for items with identical names (case-insensitive):");
+            Console.WriteLine("Searching " + itemsFilePath + " for items with identical names (case-insensitive):");
 
             var duplicateItems = itemList
                 .GroupBy(item => item.ItemName.ToLower())
@@ -219,10 +240,15 @@ namespace TunnelQuest.DatabaseBuilder
             }
         }
 
-        private static string getItemListFilePath(string dataOutputPath)
+        private static string getItemsFilePath(string dataOutputPath)
         {
-            return Path.GetFullPath(Path.Join(dataOutputPath, ITEM_LIST_FILE_NAME));
+            return Path.GetFullPath(Path.Join(dataOutputPath, ITEMS_FILE_NAME));
         }
-        
+
+        private static string getCorrectionsFilePath(string dataOutputPath)
+        {
+            return Path.GetFullPath(Path.Join(dataOutputPath, CORRECTIONS_FILE_NAME));
+        }
+
     }
 }

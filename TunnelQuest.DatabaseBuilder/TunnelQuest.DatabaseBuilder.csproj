@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TunnelQuest.AppLogic\TunnelQuest.AppLogic.csproj" />
     <ProjectReference Include="..\TunnelQuest.Data\TunnelQuest.Data.csproj" />
   </ItemGroup>
 

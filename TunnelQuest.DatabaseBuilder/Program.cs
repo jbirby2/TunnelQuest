@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using TunnelQuest.AppLogic;
 using TunnelQuest.Data.Migrations;
 
 namespace TunnelQuest.DatabaseBuilder

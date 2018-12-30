@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TunnelQuest.Data\TunnelQuest.Data.csproj" />
+    <ProjectReference Include="..\TunnelQuest.AppLogic\TunnelQuest.AppLogic.csproj" />
   </ItemGroup>
 
 </Project>

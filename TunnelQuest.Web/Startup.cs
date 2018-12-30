@@ -40,7 +40,6 @@ namespace TunnelQuest.Web
 
             // STUB add api throttling
 
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

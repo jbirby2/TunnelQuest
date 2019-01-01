@@ -2,7 +2,7 @@
   "profiles": {
     "TunnelQuest.DatabaseBuilder": {
       "commandName": "Project",
-      "commandLineArgs": "Build-Item-Details \"..\\..\\..\\..\\TunnelQuest.Data\\Migrations\\Data\" \"..\\..\\..\\..\\TunnelQuest.Web\\wwwroot\\images\" false"
+      "commandLineArgs": "Scrape-Spells \"..\\..\\..\\..\\TunnelQuest.Data\\Migrations\\Data\\WikiScrapes\" \"..\\..\\..\\..\\TunnelQuest.Web\\wwwroot\\images\" false"
     }
   }
 }

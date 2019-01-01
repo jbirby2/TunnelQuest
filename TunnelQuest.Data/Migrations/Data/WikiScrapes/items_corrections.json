@@ -1,6 +1,6 @@
 {
   "30457": {
-    "ItemName": "Case of Blackburrow Stout",
+    "Name": "Case of Blackburrow Stout",
     "IconFileName": "Item_608.png",
     "Stats": [
       "LORE ITEM",
@@ -10,7 +10,7 @@
     ]
   },
   "25381": {
-    "ItemName": "Dark Runed Gauntlets",
+    "Name": "Dark Runed Gauntlets",
     "IconFileName": "Item_531.png",
     "Stats": [
       "MAGIC ITEM  NO DROP",
@@ -23,7 +23,7 @@
     ]
   },
   "22628": {
-    "ItemName": "Drums of the Beast",
+    "Name": "Drums of the Beast",
     "IconFileName": "Item_1152.png",
     "Stats": [
       "MAGIC ITEM  LORE ITEM",
@@ -36,7 +36,7 @@
     ]
   },
   "28697": {
-    "ItemName": "Essence of Rallos",
+    "Name": "Essence of Rallos",
     "IconFileName": "Item_808.png",
     "Stats": [
       "Effect: Berserker Madness III (Combat, Casting Time: Instant) at Level 40",
@@ -46,7 +46,7 @@
     ]
   },
   "10482": {
-    "ItemName": "Fool's Gold Stein",
+    "Name": "Fool's Gold Stein",
     "IconFileName": "Item_709.png",
     "Stats": [
       "LORE ITEM  NO DROP",
@@ -59,7 +59,7 @@
     ]
   },
   "2831": {
-    "ItemName": "Forge Hammer of Dalnir",
+    "Name": "Forge Hammer of Dalnir",
     "IconFileName": "Item_567.png",
     "Stats": [
       "MAGIC ITEM  LORE ITEM  NO DROP",
@@ -72,7 +72,7 @@
     ]
   },
   "26860": {
-    "ItemName": "Glowing Red Stone",
+    "Name": "Glowing Red Stone",
     "IconFileName": "Item_507.png",
     "Stats": [
       "LORE ITEM",
@@ -85,7 +85,7 @@
     ]
   },
   "28091": {
-    "ItemName": "Holgresh Spirit Beads",
+    "Name": "Holgresh Spirit Beads",
     "IconFileName": "Item_848.png",
     "Stats": [
       "Slot: NECK",
@@ -97,7 +97,7 @@
     ]
   },
   "4443": {
-    "ItemName": "Journeyman's Walking Stick",
+    "Name": "Journeyman's Walking Stick",
     "IconFileName": "Item_602.png",
     "Stats": [
       "MAGIC ITEM",
@@ -112,7 +112,7 @@
     ]
   },
   "23064": {
-    "ItemName": "Large Sky Sapphire",
+    "Name": "Large Sky Sapphire",
     "IconFileName": "Item_965.png",
     "Stats": [
       "LORE ITEM  NO DROP",
@@ -122,7 +122,7 @@
     ]
   },
   "25536": {
-    "ItemName": "Spell: McMerin's Feast",
+    "Name": "Spell: McMerin's Feast",
     "IconFileName": "Item_504.png",
     "Stats": [
       "MAGIC ITEM",
@@ -130,11 +130,12 @@
       "Mana Cost: 0",
       "Effect: Cannibalize II",
       "WT: 0.1  Size: SMALL",
+      "Class: SHM",
       "Race: NONE"
     ]
   },
   "26939": {
-    "ItemName": "Nevederia's Horn",
+    "Name": "Nevederia's Horn",
     "IconFileName": "Item_574.png",
     "Stats": [
       "MAGIC ITEM  LORE ITEM  NO DROP",
@@ -150,7 +151,7 @@
     ]
   },
   "6460": {
-    "ItemName": "Prayer Beads",
+    "Name": "Prayer Beads",
     "IconFileName": "Item_848.png",
     "Stats": [
       "MAGIC ITEM  LORE ITEM",
@@ -163,7 +164,7 @@
     ]
   },
   "2167": {
-    "ItemName": "Rubicite Breastplate",
+    "Name": "Rubicite Breastplate",
     "IconFileName": "Item_624.png",
     "Stats": [
       "MAGIC ITEM  LORE ITEM",
@@ -176,7 +177,7 @@
     ]
   },
   "12290": {
-    "ItemName": "Ruined Gnoll Leather Boots",
+    "Name": "Ruined Gnoll Leather Boots",
     "IconFileName": "Item_633.png",
     "Stats": [
       "LORE ITEM",
@@ -188,7 +189,7 @@
     ]
   },
   "1863": {
-    "ItemName": "Shralok Pack",
+    "Name": "Shralok Pack",
     "IconFileName": "Item_884.png",
     "Stats": [
       "LORE ITEM",
@@ -197,7 +198,7 @@
     ]
   },
   "989": {
-    "ItemName": "Singing Short Sword",
+    "Name": "Singing Short Sword",
     "IconFileName": "Item_882.png",
     "Stats": [
       "MAGIC ITEM  LORE ITEM  NO DROP",
@@ -218,7 +219,7 @@
     ]
   },
   "31898": {
-    "ItemName": "Sphere of Unrest",
+    "Name": "Sphere of Unrest",
     "IconFileName": "Item_507.png",
     "Stats": [
       "MAGIC ITEM LORE ITEM NO TRADE",
@@ -229,7 +230,7 @@
     ]
   },
   "15590": {
-    "ItemName": "Tri-Plated Golden Hackle Hammer",
+    "Name": "Tri-Plated Golden Hackle Hammer",
     "IconFileName": "Item_567.png",
     "Stats": [
       "MAGIC ITEM  LORE ITEM  NO DROP",
@@ -245,7 +246,7 @@
     ]
   },
   "16815": {
-    "ItemName": "Velium Maul of Superiority",
+    "Name": "Velium Maul of Superiority",
     "IconFileName": "Item_578.png",
     "Stats": [
       "MAGIC ITEM  LORE ITEM  NO DROP",
@@ -260,7 +261,7 @@
     ]
   },
   "42466": {
-    "ItemName": "A Scroll",
+    "Name": "A Scroll",
     "IconFileName": "Item_504.png",
     "Stats": [
       "The Note is rolled up.",
@@ -269,7 +270,7 @@
     ]
   },
   "18777": {
-    "ItemName": "Lava Pears",
+    "Name": "Lava Pears",
     "IconFileName": "Item_1232.png",
     "Stats": [
       "WT: 0.1  Size: TINY",
@@ -278,7 +279,7 @@
     ]
   },
   "33966": {
-    "ItemName": "Teir`dal sai",
+    "Name": "Teir`dal sai",
     "IconFileName": "Item_1214.png",
     "Stats": [
       "MAGIC ITEM  LORE ITEM  NO TRADE",
@@ -292,7 +293,7 @@
     ]
   },
   "10116": {
-    "ItemName": "Used Merchants Gloves",
+    "Name": "Used Merchants Gloves",
     "IconFileName": "Item_517.png",
     "Stats": [
       "Slot: HANDS",
@@ -303,7 +304,7 @@
     ]
   },
   "29285": {
-    "ItemName": "Ancient Venom Sack",
+    "Name": "Ancient Venom Sack",
     "IconFileName": "Item_818.png",
     "Stats": [
       "EXPENDABLE   Charges: 1",
@@ -314,7 +315,7 @@
     ]
   },
   "26875": {
-    "ItemName": "Kejekan Smithy Hammer",
+    "Name": "Kejekan Smithy Hammer",
     "IconFileName": "Item_567.png",
     "Stats": [
       "LORE ITEM  NODROP",
@@ -328,7 +329,7 @@
     ]
   },
   "27542": {
-    "ItemName": "Soulforge Hammer",
+    "Name": "Soulforge Hammer",
     "IconFileName": "Item_567.png",
     "Stats": [
       "MAGIC ITEM",
@@ -340,5 +341,39 @@
       "Race: ALL",
       "Deity: Bertoxxulous / Cazic-Thule / Innoruuk / Rallos Zek"
     ]
+  },
+  "28958": {
+    "Name": "Spell: Visions of Sebilite",
+    "IconFileName": "Item_504.png",
+    "Stats": [
+      "MAGIC ITEM",
+      "Charges: 1",
+      "Skill: Divination",
+      "Mana Cost: 50",
+      "Effect: Illusion: Iksar",
+      "WT: 0.1  Size: SMALL",
+      "Class: ENC",
+      "Race: NONE"
+    ]
+  },
+  "17694": {
+    "Name": "Spell: Improved Invis vs Undead",
+    "IconFileName": "Item_504.png",
+    "Stats": [
+      "MAGIC ITEM",
+      "Charges: 1",
+      "Skill: Divination",
+      "Mana Cost: 75",
+      "Effect: Improved Invis to Undead",
+      "WT: 0.1  Size: SMALL",
+      "Class: CLR PAL SHD NEC",
+      "Race: ALL"
+    ]
+  },
+  "12426": {
+    "Name": "Spell: Vocarate: Air"
+  },
+  "12427": {
+    "Name": "Spell: Vocarate: Fire"
   }
 }

@@ -23,7 +23,7 @@ namespace TunnelQuest.Data.Migrations
                 insertEffectTypes(context);
                 insertWeaponSkills(context);
                 insertDeities(context);
-                
+
                 context.SaveChanges();
             }
         }
@@ -336,6 +336,9 @@ namespace TunnelQuest.Data.Migrations
                 },
                 new EffectType() {
                     EffectTypeCode = EffectTypeCodes.ClickEquipped
+                },
+                new EffectType() {
+                    EffectTypeCode = EffectTypeCodes.LearnSpell
                 }
             };
         }

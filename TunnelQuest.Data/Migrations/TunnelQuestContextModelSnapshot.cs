@@ -42,17 +42,6 @@ namespace TunnelQuest.Data.Migrations
                     b.ToTable("deity");
                 });
 
-            modelBuilder.Entity("TunnelQuest.Data.Models.Effect", b =>
-                {
-                    b.Property<string>("EffectName")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("effect_name");
-
-                    b.HasKey("EffectName");
-
-                    b.ToTable("effect");
-                });
-
             modelBuilder.Entity("TunnelQuest.Data.Models.EffectType", b =>
                 {
                     b.Property<string>("EffectTypeCode")
@@ -109,8 +98,8 @@ namespace TunnelQuest.Data.Migrations
                     b.Property<int?>("EffectMinimumLevel")
                         .HasColumnName("effect_minimum_level");
 
-                    b.Property<string>("EffectName")
-                        .HasColumnName("effect_name");
+                    b.Property<string>("EffectSpellName")
+                        .HasColumnName("effect_spell_name");
 
                     b.Property<string>("EffectTypeCode")
                         .HasColumnName("effect_type_code");
@@ -166,14 +155,14 @@ namespace TunnelQuest.Data.Migrations
                     b.Property<int?>("PercussionModifier")
                         .HasColumnName("percussion_modifier");
 
+                    b.Property<int?>("PoisonResist")
+                        .HasColumnName("poison_resist");
+
                     b.Property<int?>("Range")
                         .HasColumnName("range");
 
                     b.Property<int?>("RequiredLevel")
                         .HasColumnName("required_level");
-
-                    b.Property<int?>("ResistPoison")
-                        .HasColumnName("poison_resist");
 
                     b.Property<int?>("SingingModifier")
                         .HasColumnName("singing_modifier");
@@ -209,7 +198,7 @@ namespace TunnelQuest.Data.Migrations
 
                     b.HasIndex("CapacitySizeCode");
 
-                    b.HasIndex("EffectName");
+                    b.HasIndex("EffectSpellName");
 
                     b.HasIndex("EffectTypeCode");
 
@@ -359,6 +348,85 @@ namespace TunnelQuest.Data.Migrations
                     b.ToTable("slot");
                 });
 
+            modelBuilder.Entity("TunnelQuest.Data.Models.Spell", b =>
+                {
+                    b.Property<string>("SpellName")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("spell_name");
+
+                    b.Property<string>("Description")
+                        .HasColumnName("description");
+
+                    b.Property<string>("IconFileName")
+                        .HasColumnName("icon_file_name");
+
+                    b.HasKey("SpellName");
+
+                    b.ToTable("spell");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.SpellEffectDetail", b =>
+                {
+                    b.Property<int>("SpellRequirementId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("spell_effect_detail_id");
+
+                    b.Property<string>("SpellName")
+                        .HasColumnName("spell_name");
+
+                    b.Property<string>("Text")
+                        .HasColumnName("text");
+
+                    b.HasKey("SpellRequirementId");
+
+                    b.HasIndex("SpellName");
+
+                    b.ToTable("spell_effect_detail");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.SpellRequirement", b =>
+                {
+                    b.Property<int>("SpellRequirementId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("spell_requirement_id");
+
+                    b.Property<string>("ClassCode")
+                        .HasColumnName("class_code");
+
+                    b.Property<int>("RequiredLevel")
+                        .HasColumnName("required_level");
+
+                    b.Property<string>("SpellName")
+                        .HasColumnName("spell_name");
+
+                    b.HasKey("SpellRequirementId");
+
+                    b.HasIndex("ClassCode");
+
+                    b.HasIndex("SpellName");
+
+                    b.ToTable("spell_requirement");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.SpellSource", b =>
+                {
+                    b.Property<int>("SpellSourceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("spell_source_id");
+
+                    b.Property<string>("SpellName")
+                        .HasColumnName("spell_name");
+
+                    b.Property<string>("Text")
+                        .HasColumnName("text");
+
+                    b.HasKey("SpellSourceId");
+
+                    b.HasIndex("SpellName");
+
+                    b.ToTable("spell_source");
+                });
+
             modelBuilder.Entity("TunnelQuest.Data.Models.WeaponSkill", b =>
                 {
                     b.Property<string>("WeaponSkillCode")
@@ -376,9 +444,9 @@ namespace TunnelQuest.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CapacitySizeCode");
 
-                    b.HasOne("TunnelQuest.Data.Models.Effect", "Effect")
+                    b.HasOne("TunnelQuest.Data.Models.Spell", "EffectSpell")
                         .WithMany()
-                        .HasForeignKey("EffectName");
+                        .HasForeignKey("EffectSpellName");
 
                     b.HasOne("TunnelQuest.Data.Models.EffectType", "EffectType")
                         .WithMany()
@@ -442,6 +510,31 @@ namespace TunnelQuest.Data.Migrations
                     b.HasOne("TunnelQuest.Data.Models.Slot", "Slot")
                         .WithMany()
                         .HasForeignKey("SlotCode");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.SpellEffectDetail", b =>
+                {
+                    b.HasOne("TunnelQuest.Data.Models.Spell", "Spell")
+                        .WithMany("EffectDetails")
+                        .HasForeignKey("SpellName");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.SpellRequirement", b =>
+                {
+                    b.HasOne("TunnelQuest.Data.Models.Class", "Class")
+                        .WithMany()
+                        .HasForeignKey("ClassCode");
+
+                    b.HasOne("TunnelQuest.Data.Models.Spell", "Spell")
+                        .WithMany("Requirements")
+                        .HasForeignKey("SpellName");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.SpellSource", b =>
+                {
+                    b.HasOne("TunnelQuest.Data.Models.Spell", "Spell")
+                        .WithMany("Sources")
+                        .HasForeignKey("SpellName");
                 });
 #pragma warning restore 612, 618
         }

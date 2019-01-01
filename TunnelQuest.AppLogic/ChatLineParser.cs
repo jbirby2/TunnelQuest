@@ -9,7 +9,7 @@ namespace TunnelQuest.AppLogic
     {
         private static Node rootNode = new Node();
 
-        // static constructor
+        // static constructor pulls a list of every item name and builds a big tree of letter paths for every possible name
         static ChatLineParser()
         {
             IEnumerable<string> itemNames;
@@ -43,6 +43,8 @@ namespace TunnelQuest.AppLogic
                 Node prevNode = rootNode;
                 var nodesTraversed = new Stack<Node>();
                 int searchEndIndex = searchStartIndex;
+
+                // build nodesTraversed
                 while (searchEndIndex < text.Length)
                 {
                     if (prevNode.NextChars.ContainsKey(text[searchEndIndex]))
@@ -55,7 +57,7 @@ namespace TunnelQuest.AppLogic
                         break;
                 }
                 
-                // now traverse backwards through nodesTraversed and find the deepest one that had an itemName (if any)
+                // now traverse backwards through nodesTraversed and find the deepest Node that had an itemName (if any)
                 while (nodesTraversed.Count > 0)
                 {
                     var lastNode = nodesTraversed.Pop();

@@ -6,7 +6,7 @@ I use TunnelQuest.DatabaseBuilder for two different purposes:
 	scraped icons are in TunnelQuest.Web\wwwroot\images\wiki.project1999.com_scrapes.  They were scraped 
 	from the wiki by running the following command:
 			
-		dotnet TunnelQuest.DatabaseBuilder.dll Build-Item-Details "..\..\..\..\TunnelQuest.Data\Migrations\Data" "..\..\..\..\TunnelQuest.Web\wwwroot\images" false
+		dotnet TunnelQuest.DatabaseBuilder.dll Scrape "..\..\..\..\TunnelQuest.Data\Migrations\Data\WikiScrapes" "..\..\..\..\TunnelQuest.Web\wwwroot\images" false
 
 			-	This command can be stopped and re-run as many times as necessary.  It will
 				never delete anything, or re-download anything that it's already downloaded.

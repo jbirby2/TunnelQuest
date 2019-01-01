@@ -1,0 +1,2246 @@
+{
+  "14401": {
+    "Name": "A Berserk Fiend"
+  },
+  "20429": {
+    "Name": "A Bewildered Wanderer"
+  },
+  "18488": {
+    "Name": "A Broken Claw Bandit"
+  },
+  "14478": {
+    "Name": "A Broken Construct"
+  },
+  "18664": {
+    "Name": "A Broken Gargoyle"
+  },
+  "18988": {
+    "Name": "A Calcified Skeleton"
+  },
+  "35355": {
+    "Name": "A champion of hate"
+  },
+  "16692": {
+    "Name": "A Cinder Goblin Cleric"
+  },
+  "16685": {
+    "Name": "A Cinder Goblin Warrior"
+  },
+  "16695": {
+    "Name": "A Cinder Goblin Wizard"
+  },
+  "22805": {
+    "Name": "A Crumbling Gargoyle"
+  },
+  "25584": {
+    "Name": "A crypt guardian"
+  },
+  "35306": {
+    "Name": "A Darkpaw curate"
+  },
+  "20724": {
+    "Name": "A Darkpaw Defiler"
+  },
+  "18462": {
+    "Name": "A Darkpaw Warrior"
+  },
+  "17182": {
+    "Name": "A Deathfist Templar"
+  },
+  "14396": {
+    "Name": "A Destroyed Construct"
+  },
+  "20924": {
+    "Name": "A gnoll avenger"
+  },
+  "39526": {
+    "Name": "A goblin bone caster"
+  },
+  "39528": {
+    "Name": "A goblin bone knight"
+  },
+  "28157": {
+    "Name": "A goblin death caller"
+  },
+  "28156": {
+    "Name": "A goblin death knight"
+  },
+  "39530": {
+    "Name": "A goblin flame master"
+  },
+  "37292": {
+    "Name": "A goblin janitor"
+  },
+  "28158": {
+    "Name": "A goblin miner"
+  },
+  "19178": {
+    "Name": "A Goblin Overseer"
+  },
+  "25712": {
+    "Name": "A goblin prison warden"
+  },
+  "38305": {
+    "Name": "A Goblin Slinker"
+  },
+  "39531": {
+    "Name": "A goblin whip cracker"
+  },
+  "18650": {
+    "Name": "A Gravelord of Hate"
+  },
+  "19244": {
+    "Name": "A Greater Lavaspinner"
+  },
+  "14834": {
+    "Name": "A Grikbar Kobold"
+  },
+  "15367": {
+    "Name": "A Grikbar Shaman"
+  },
+  "29022": {
+    "Name": "A gunthak pirate"
+  },
+  "34271": {
+    "Name": "A heretic of hate"
+  },
+  "24695": {
+    "Name": "A horror construct"
+  },
+  "25497": {
+    "Name": "A knight of hate"
+  },
+  "41448": {
+    "Name": "A lens of sorts"
+  },
+  "21884": {
+    "Name": "A Lost One"
+  },
+  "14390": {
+    "Name": "A Massive Construct"
+  },
+  "12282": {
+    "Name": "A Patrolling Gnoll"
+  },
+  "14442": {
+    "Name": "A Ratman Inhabitant"
+  },
+  "38100": {
+    "Name": "A rodent"
+  },
+  "22624": {
+    "Name": "A scouting kobold"
+  },
+  "14497": {
+    "Name": "A Solusek Goblin Priest"
+  },
+  "9817": {
+    "Name": "A Spectral Beguiler"
+  },
+  "19945": {
+    "Name": "A Spirit of the Old City"
+  },
+  "14337": {
+    "Name": "A Spirit of the Ruins"
+  },
+  "24700": {
+    "Name": "A Tae Ew Spiritualist"
+  },
+  "35349": {
+    "Name": "A temple researcher"
+  },
+  "26040": {
+    "Name": "A terrorantuling"
+  },
+  "21533": {
+    "Name": "A Thul Tae Ew Bloodcaller"
+  },
+  "19835": {
+    "Name": "A Timber Griffawn"
+  },
+  "16674": {
+    "Name": "A Timber Griffon"
+  },
+  "17863": {
+    "Name": "A Wandering Greenblood"
+  },
+  "27364": {
+    "Name": "Acrylia Rings"
+  },
+  "36559": {
+    "Name": "Aegis of Hatred"
+  },
+  "27250": {
+    "Name": "Aged Dragon Spine Staff"
+  },
+  "27267": {
+    "Name": "Aged Smoldering Cudgel"
+  },
+  "30007": {
+    "Name": "Aliafya Mistrunner"
+  },
+  "22758": {
+    "Name": "Alkalai Loam"
+  },
+  "6140": {
+    "Name": "Alladria Skyetcher"
+  },
+  "28844": {
+    "Name": "An agent of hate"
+  },
+  "35373": {
+    "Name": "An ancient construct"
+  },
+  "30229": {
+    "Name": "An Animated Construct"
+  },
+  "17910": {
+    "Name": "An Elemental Monstrosity"
+  },
+  "22271": {
+    "Name": "An Examination of Death"
+  },
+  "18054": {
+    "Name": "An Old Construct"
+  },
+  "21956": {
+    "Name": "An Unmasked Changeling"
+  },
+  "19079": {
+    "Name": "Anaconda Fang Knife"
+  },
+  "17634": {
+    "Name": "Ancient Gnarled Hammer"
+  },
+  "27655": {
+    "Name": "Arcane Maul of Celestial Destiny"
+  },
+  "30771": {
+    "Name": "Armor of the Patriarch"
+  },
+  "17618": {
+    "Name": "Axe of Destruction"
+  },
+  "9644": {
+    "Name": "Bag of Scarlet Sand"
+  },
+  "14399": {
+    "Name": "Ball of Elemental Clay"
+  },
+  "26857": {
+    "Name": "Band of the Arisen Cultist"
+  },
+  "6307": {
+    "Name": "Bane Weapons"
+  },
+  "22409": {
+    "Name": "Basilisk Parts"
+  },
+  "18471": {
+    "Name": "Bear Fanged Glove"
+  },
+  "19336": {
+    "Name": "Beastlord"
+  },
+  "6156": {
+    "Name": "Bedida Claygrinder"
+  },
+  "17444": {
+    "Name": "Beer Goggles"
+  },
+  "22272": {
+    "Name": "Beetles of the Estate"
+  },
+  "20567": {
+    "Name": "Berserker"
+  },
+  "28027": {
+    "Name": "Besmirched Mask of Conception"
+  },
+  "20963": {
+    "Name": "Bestial Trousers"
+  },
+  "19420": {
+    "Name": "Bestial Tunic"
+  },
+  "29605": {
+    "Name": "Binding Powder"
+  },
+  "19924": {
+    "Name": "Black Bear Paw"
+  },
+  "31117": {
+    "Name": "Black Bees"
+  },
+  "10250": {
+    "Name": "Black Ceremonial Coffin"
+  },
+  "21539": {
+    "Name": "Black Ooze Filled Phylactery"
+  },
+  "21537": {
+    "Name": "Black Powdered Incense"
+  },
+  "22652": {
+    "Name": "Blackened Lava Rock"
+  },
+  "14223": {
+    "Name": "Blackrock Lichen"
+  },
+  "26938": {
+    "Name": "Blade of the Arisen Cultist"
+  },
+  "27259": {
+    "Name": "Blade of the Red Dragon Eye"
+  },
+  "24105": {
+    "Name": "Blessed Coldain Prayer Shawl"
+  },
+  "27289": {
+    "Name": "Blessed Faydark Thunderbolt"
+  },
+  "17914": {
+    "Name": "Blood Flecked Obsidian Shard"
+  },
+  "19684": {
+    "Name": "Bloodstained Leggings"
+  },
+  "28898": {
+    "Name": "Blue Flecked Rock"
+  },
+  "9640": {
+    "Name": "Bolts of Tallon"
+  },
+  "21544": {
+    "Name": "Book of Unspeakable Fear"
+  },
+  "31783": {
+    "Name": "Boots of Flowing Slime"
+  },
+  "25853": {
+    "Name": "Boots of the Mosquito"
+  },
+  "19333": {
+    "Name": "Boots of the Rainkeeper"
+  },
+  "20566": {
+    "Name": "Boots of Wrath"
+  },
+  "31116": {
+    "Name": "Bottle of Bee Beer"
+  },
+  "29186": {
+    "Name": "Bracchium Secundae"
+  },
+  "18469": {
+    "Name": "Bracer of Acuity"
+  },
+  "37491": {
+    "Name": "Breastplate of Afflation"
+  },
+  "17183": {
+    "Name": "Brick of Crude Bronze"
+  },
+  "15511": {
+    "Name": "Brick of Deathsteel Ore"
+  },
+  "21249": {
+    "Name": "Brittle Yellow Stone"
+  },
+  "26731": {
+    "Name": "Bronze Ulak"
+  },
+  "20709": {
+    "Name": "Brown Bear Femur"
+  },
+  "20710": {
+    "Name": "Brown Bear Paw"
+  },
+  "15323": {
+    "Name": "Brownie Brain"
+  },
+  "9935": {
+    "Name": "Brownie Leg"
+  },
+  "9938": {
+    "Name": "Brownie Torso"
+  },
+  "19998": {
+    "Name": "Burly Kobold Ear"
+  },
+  "37490": {
+    "Name": "Butcherblock Hammer"
+  },
+  "11003": {
+    "Name": "Cap of the Arcane Order"
+  },
+  "11002": {
+    "Name": "Cap of the Arcane Order Quest"
+  },
+  "8410": {
+    "Name": "Cargo Clockwork (Quest)"
+  },
+  "31115": {
+    "Name": "Cask of Bee Beer"
+  },
+  "13975": {
+    "Name": "Casserole Dish Sketch"
+  },
+  "9589": {
+    "Name": "Catfish Croak Sandwich Quest"
+  },
+  "9446": {
+    "Name": "Cauldron Prawn"
+  },
+  "17480": {
+    "Name": "Celestial Essence"
+  },
+  "33058": {
+    "Name": "Celestial Solvent"
+  },
+  "5285": {
+    "Name": "Champion's Mancatcher"
+  },
+  "18992": {
+    "Name": "Charm (Equipment Slot)"
+  },
+  "19115": {
+    "Name": "Cheese"
+  },
+  "19113": {
+    "Name": "Chef Brargus"
+  },
+  "22255": {
+    "Name": "Chef Norador"
+  },
+  "19854": {
+    "Name": "Chokidai Hide"
+  },
+  "10562": {
+    "Name": "Chopper Brenga"
+  },
+  "35411": {
+    "Name": "Chromatic Bracer of the Ages"
+  },
+  "18944": {
+    "Name": "Chunk of Prismatic Metal"
+  },
+  "20562": {
+    "Name": "Chunk of Refined Metal"
+  },
+  "16687": {
+    "Name": "Cinder Goblin Skin"
+  },
+  "16689": {
+    "Name": "Cinder Goblin Toes"
+  },
+  "33573": {
+    "Name": "Circlet of the Struggle"
+  },
+  "28869": {
+    "Name": "Cloak of Hazy Memories"
+  },
+  "17086": {
+    "Name": "Clork"
+  },
+  "20897": {
+    "Name": "Coarse Silk"
+  },
+  "21412": {
+    "Name": "Codex of the Warrior"
+  },
+  "19423": {
+    "Name": "Coif of Wrath"
+  },
+  "14209": {
+    "Name": "Coin of Xev"
+  },
+  "5510": {
+    "Name": "Coldain Shawl 8"
+  },
+  "33851": {
+    "Name": "Collapsible Mixing Bowl"
+  },
+  "10404": {
+    "Name": "Collapsible Spit"
+  },
+  "19033": {
+    "Name": "Collector's Mistmoore Granite"
+  },
+  "15168": {
+    "Name": "Collector's Preserved Split Paw Eye"
+  },
+  "15959": {
+    "Name": "Collector's Scythe"
+  },
+  "15019": {
+    "Name": "Combine Smithy Hammer"
+  },
+  "893": {
+    "Name": "Commonlands"
+  },
+  "23182": {
+    "Name": "Complex Gold Gem Dusted Rune"
+  },
+  "22820": {
+    "Name": "Complex Velium Embossed Rune"
+  },
+  "22619": {
+    "Name": "Complex Velium Gemmed Rune"
+  },
+  "27558": {
+    "Name": "Complex Velium Silvered Rune"
+  },
+  "16406": {
+    "Name": "Concordance of Black Magic"
+  },
+  "20241": {
+    "Name": "Consigned Bite of the Shissar I"
+  },
+  "2203": {
+    "Name": "Help talk:Contents"
+  },
+  "18470": {
+    "Name": "Copper Plated Bracer"
+  },
+  "22401": {
+    "Name": "Corrupted Emerald Amulet"
+  },
+  "21685": {
+    "Name": "Cracked Helm of the Lifebringer"
+  },
+  "20898": {
+    "Name": "Crude Adept's Broom"
+  },
+  "21567": {
+    "Name": "Crude Adept's Cord"
+  },
+  "20899": {
+    "Name": "Crude Adept's Mantle"
+  },
+  "22308": {
+    "Name": "Crude Animal Pelt"
+  },
+  "20900": {
+    "Name": "Crude Binding Powder"
+  },
+  "21948": {
+    "Name": "Crude Combatant's Belt"
+  },
+  "21568": {
+    "Name": "Crude Combatant's Shovel"
+  },
+  "21569": {
+    "Name": "Crude Defiant Amethyst"
+  },
+  "19848": {
+    "Name": "Crude Defiant Bow"
+  },
+  "21570": {
+    "Name": "Crude Defiant Breastplate"
+  },
+  "19846": {
+    "Name": "Crude Defiant Chain Boots"
+  },
+  "20901": {
+    "Name": "Crude Defiant Cloth Gloves"
+  },
+  "20902": {
+    "Name": "Crude Defiant Cloth Robe"
+  },
+  "22851": {
+    "Name": "Crude Defiant Cloth Sandals"
+  },
+  "22852": {
+    "Name": "Crude Defiant Cloth Sleeves"
+  },
+  "21949": {
+    "Name": "Crude Defiant Dagger"
+  },
+  "21571": {
+    "Name": "Crude Defiant Emerald"
+  },
+  "21950": {
+    "Name": "Crude Defiant Fists"
+  },
+  "20903": {
+    "Name": "Crude Defiant Greatspear"
+  },
+  "20904": {
+    "Name": "Crude Defiant Leather Boots"
+  },
+  "21572": {
+    "Name": "Crude Defiant Leather Bracer"
+  },
+  "21573": {
+    "Name": "Crude Defiant Leather Gloves"
+  },
+  "20905": {
+    "Name": "Crude Defiant Leather Sleeves"
+  },
+  "22853": {
+    "Name": "Crude Defiant Mace"
+  },
+  "20906": {
+    "Name": "Crude Defiant Plate Bracer"
+  },
+  "20907": {
+    "Name": "Crude Defiant Plate Greaves"
+  },
+  "20908": {
+    "Name": "Crude Defiant Plate Vambraces"
+  },
+  "21951": {
+    "Name": "Crude Defiant Quarterstaff"
+  },
+  "21952": {
+    "Name": "Crude Defiant Ruby Shard"
+  },
+  "21953": {
+    "Name": "Crude Defiant Shortsword"
+  },
+  "22309": {
+    "Name": "Crude Spinneret Fluid"
+  },
+  "9296": {
+    "Name": "Crushbone Battle Plans"
+  },
+  "37487": {
+    "Name": "Crystal Claw of Veeshan"
+  },
+  "22958": {
+    "Name": "Cultist Geralissan"
+  },
+  "22960": {
+    "Name": "Cultist Ral'Arloshanis"
+  },
+  "23445": {
+    "Name": "Cultural Tradeskills: Troll"
+  },
+  "33524": {
+    "Name": "Custom Plate Helms - Kael Drakkel"
+  },
+  "15193": {
+    "Name": "Dairy Spoon"
+  },
+  "22334": {
+    "Name": "Damp Marrow"
+  },
+  "14741": {
+    "Name": "Dapper Blackhammer"
+  },
+  "42572": {
+    "Name": "Dark Runed Pauldron"
+  },
+  "26903": {
+    "Name": "Darkpaws of Jaggedpine"
+  },
+  "9481": {
+    "Name": "Deathfist Legionnaire Scalp"
+  },
+  "21653": {
+    "Name": "Deathfist Scout Scalp"
+  },
+  "17184": {
+    "Name": "Deathfist Templar Scalp"
+  },
+  "16754": {
+    "Name": "Derakor's Heart"
+  },
+  "29979": {
+    "Name": "Derubael-Bladed Bone Axe"
+  },
+  "21531": {
+    "Name": "Dew Clover"
+  },
+  "22279": {
+    "Name": "Diloperia"
+  },
+  "20929": {
+    "Name": "Dingy Grey Stone"
+  },
+  "10906": {
+    "Name": "Dirjadak`s Chipped Stein"
+  },
+  "29734": {
+    "Name": "Di`zok Insignia"
+  },
+  "18127": {
+    "Name": "Drake Lava Powder"
+  },
+  "26807": {
+    "Name": "Drakkel Wolf Claws"
+  },
+  "30018": {
+    "Name": "Drayen Blackguard"
+  },
+  "25711": {
+    "Name": "Droga Jail Key"
+  },
+  "9419": {
+    "Name": "Dry Eye Weed"
+  },
+  "20421": {
+    "Name": "Dull Black Ore"
+  },
+  "35352": {
+    "Name": "Dulled Silver Paineel Earring"
+  },
+  "13971": {
+    "Name": "Dunarl"
+  },
+  "20582": {
+    "Name": "Dune Tarantula Abdomen"
+  },
+  "20581": {
+    "Name": "Dune Tarantula Thorax"
+  },
+  "22456": {
+    "Name": "Dwarf Berserker Leggings"
+  },
+  "10885": {
+    "Name": "Dwarven Bandit Coinpurse"
+  },
+  "30181": {
+    "Name": "Earring of the Solstice"
+  },
+  "29594": {
+    "Name": "Elementary Binding Powder"
+  },
+  "13908": {
+    "Name": "Elgar Donbrand"
+  },
+  "15217": {
+    "Name": "Embroidered Gloves"
+  },
+  "33069": {
+    "Name": "Embroidering Needle"
+  },
+  "35556": {
+    "Name": "Emerald Cloak of the Faydark"
+  },
+  "22093": {
+    "Name": "Enameled Black Gauntlets"
+  },
+  "27662": {
+    "Name": "Envenomed Sleeves"
+  },
+  "11394": {
+    "Name": "Eriel Skelytia"
+  },
+  "16769": {
+    "Name": "Essence Lens Quest"
+  },
+  "18653": {
+    "Name": "Etched Knight's Crest"
+  },
+  "28519": {
+    "Name": "Excellent Animal Pelt"
+  },
+  "22287": {
+    "Name": "Exquisite Embossed Rune"
+  },
+  "22776": {
+    "Name": "Exquisite Etched Rune"
+  },
+  "22433": {
+    "Name": "Exquisite Platinum Etched Rune"
+  },
+  "22288": {
+    "Name": "Exquisite Platinum Silvered Rune"
+  },
+  "16677": {
+    "Name": "Eye of the Griffon"
+  },
+  "25371": {
+    "Name": "Eye of the Storm"
+  },
+  "30000": {
+    "Name": "Eywen Nalous"
+  },
+  "22318": {
+    "Name": "Fabled Infestation"
+  },
+  "29187": {
+    "Name": "Fascia Secundae"
+  },
+  "6136": {
+    "Name": "Feraniel Leafsway"
+  },
+  "41752": {
+    "Name": "Fetid Essence"
+  },
+  "19334": {
+    "Name": "Field Priest Armor"
+  },
+  "19337": {
+    "Name": "Field Priest's Bracer"
+  },
+  "19338": {
+    "Name": "Field Priest's Cap"
+  },
+  "19339": {
+    "Name": "Field Priest's Claw"
+  },
+  "19340": {
+    "Name": "Field Priest's Kilt"
+  },
+  "19341": {
+    "Name": "Field Priest's Leather"
+  },
+  "16699": {
+    "Name": "Fiery Ore"
+  },
+  "19768": {
+    "Name": "Finished Sheet of Metal"
+  },
+  "9311": {
+    "Name": "First Half of Torn Note"
+  },
+  "12107": {
+    "Name": "Flawless Gnoll Hides"
+  },
+  "19786": {
+    "Name": "Flawless Harpy Claw"
+  },
+  "22630": {
+    "Name": "Flawless Steel Mask"
+  },
+  "21543": {
+    "Name": "Flawless Tae Ew Hide"
+  },
+  "30336": {
+    "Name": "Flaxen Lock of Hair"
+  },
+  "21538": {
+    "Name": "Flesh Bound Tome"
+  },
+  "22790": {
+    "Name": "Fluorite Stone Earring"
+  },
+  "27508": {
+    "Name": "Folded Sheet of Infused Adamantite"
+  },
+  "22842": {
+    "Name": "Force Snap"
+  },
+  "16246": {
+    "Name": "Forged Deathsteel Short Sword"
+  },
+  "36747": {
+    "Name": "Froglok Tuk Buckler"
+  },
+  "5725": {
+    "Name": "Frogloks of Krup"
+  },
+  "29373": {
+    "Name": "Frozen Crystalline Eye"
+  },
+  "28003": {
+    "Name": "Frozen Kodiak Claw"
+  },
+  "24227": {
+    "Name": "Full Capacity Gnomish Vanishing Device"
+  },
+  "14739": {
+    "Name": "Gem of Nimbleness"
+  },
+  "21796": {
+    "Name": "Giant Rat Tail"
+  },
+  "22237": {
+    "Name": "Giant Scarab Brain"
+  },
+  "22278": {
+    "Name": "Giant Scarab Claw"
+  },
+  "20573": {
+    "Name": "Giant Wood Spider Femur"
+  },
+  "20572": {
+    "Name": "Giant Wood Spider Thorax"
+  },
+  "6357": {
+    "Name": "Gilded Tiny Skull Earring"
+  },
+  "19951": {
+    "Name": "Gleaming Crystal Scepter"
+  },
+  "29188": {
+    "Name": "Gloves of Temperantia"
+  },
+  "22248": {
+    "Name": "Gloves of Wrath"
+  },
+  "10884": {
+    "Name": "Glynda's Tongue"
+  },
+  "10900": {
+    "Name": "Glynn's Tongue"
+  },
+  "18480": {
+    "Name": "Gnoll Canine"
+  },
+  "18467": {
+    "Name": "Gnoll Forged Axe"
+  },
+  "18048": {
+    "Name": "Goblin Brain"
+  },
+  "20932": {
+    "Name": "Gold Etched Gear 1"
+  },
+  "20934": {
+    "Name": "Gold Etched Gear Number 1"
+  },
+  "20935": {
+    "Name": "Gold Etched Gear Number 2"
+  },
+  "20936": {
+    "Name": "Gold Etched Gear Number 3"
+  },
+  "20937": {
+    "Name": "Gold Etched Reinforced Rod"
+  },
+  "18583": {
+    "Name": "Gold Etched Rune"
+  },
+  "10901": {
+    "Name": "Golden Bandit Tooth"
+  },
+  "24687": {
+    "Name": "Golem Metal Rod"
+  },
+  "22637": {
+    "Name": "Grade C Larkspur Extract"
+  },
+  "22797": {
+    "Name": "Grade C Nigriventer Venom"
+  },
+  "17457": {
+    "Name": "Gralin Silvertooth"
+  },
+  "20360": {
+    "Name": "Gray Wolf Fang"
+  },
+  "21630": {
+    "Name": "Greater Cat Tooth"
+  },
+  "15522": {
+    "Name": "Green Goblin Blood Vial"
+  },
+  "15524": {
+    "Name": "Green Goblin Head"
+  },
+  "15509": {
+    "Name": "Greenscale Emerald"
+  },
+  "9954": {
+    "Name": "Gregan, Overseer of the Sands"
+  },
+  "22697": {
+    "Name": "Grgaraxx"
+  },
+  "16679": {
+    "Name": "Griffon Down"
+  },
+  "16678": {
+    "Name": "Griffon Fang Earring"
+  },
+  "16680": {
+    "Name": "Griffon Skull"
+  },
+  "14837": {
+    "Name": "Grikbar Kobold Fur"
+  },
+  "14838": {
+    "Name": "Grikbar Kobold Scalp"
+  },
+  "17964": {
+    "Name": "Gunthak Earring"
+  },
+  "17966": {
+    "Name": "Gunthak Eyepatch"
+  },
+  "9920": {
+    "Name": "Gyrating Green Slime"
+  },
+  "24232": {
+    "Name": "Half Capacity Gnomish Vanishing Device"
+  },
+  "19142": {
+    "Name": "Halfling Finger Bones"
+  },
+  "19143": {
+    "Name": "Halfling Foot Bones"
+  },
+  "19149": {
+    "Name": "Halfling Humerus"
+  },
+  "19148": {
+    "Name": "Halfling Pelvis Bone"
+  },
+  "19158": {
+    "Name": "Halfling Ribcage"
+  },
+  "19146": {
+    "Name": "Halfling Skull"
+  },
+  "19150": {
+    "Name": "Halfling Sternum"
+  },
+  "19147": {
+    "Name": "Halfling Tibia"
+  },
+  "19144": {
+    "Name": "Halfling Ulna"
+  },
+  "19787": {
+    "Name": "Harpies Eye"
+  },
+  "19788": {
+    "Name": "Harpy Wing"
+  },
+  "18392": {
+    "Name": "Hatebone Drake bones"
+  },
+  "35408": {
+    "Name": "Heart and Stone"
+  },
+  "9566": {
+    "Name": "Highway Protectors Mask"
+  },
+  "41581": {
+    "Name": "Historical faction tables"
+  },
+  "21545": {
+    "Name": "Horror Shard Blade"
+  },
+  "19335": {
+    "Name": "Hoyce MacTaegan"
+  },
+  "11033": {
+    "Name": "Ice Blood"
+  },
+  "26841": {
+    "Name": "Ice Forged Helmet"
+  },
+  "9983": {
+    "Name": "Impure Heart of Zordak Ragefire"
+  },
+  "21933": {
+    "Name": "Indium Ore"
+  },
+  "27634": {
+    "Name": "Infused Adamantite Rings"
+  },
+  "21683": {
+    "Name": "Initiate of Rodcet"
+  },
+  "17866": {
+    "Name": "Insignia of Greenblood"
+  },
+  "27423": {
+    "Name": "Insignia of the Cultist"
+  },
+  "22310": {
+    "Name": "Iridium Ore"
+  },
+  "20909": {
+    "Name": "Iron Ore"
+  },
+  "22273": {
+    "Name": "It Likes to Kill"
+  },
+  "17443": {
+    "Name": "Jacob Thornblade"
+  },
+  "22657": {
+    "Name": "Jaggedpine Forest"
+  },
+  "8178": {
+    "Name": "Jimji Bottletoe"
+  },
+  "35410": {
+    "Name": "Jortreva the Crusader"
+  },
+  "30008": {
+    "Name": "Josylyn Greenblade"
+  },
+  "41686": {
+    "Name": "Jumjum Sack Tunic"
+  },
+  "27929": {
+    "Name": "Kaggy Krup"
+  },
+  "13980": {
+    "Name": "Karka"
+  },
+  "28687": {
+    "Name": "Keeper of the glades"
+  },
+  "17458": {
+    "Name": "Keiya Oakwood"
+  },
+  "27505": {
+    "Name": "Kelp Cap of the Weaver"
+  },
+  "17411": {
+    "Name": "King's Court Casino"
+  },
+  "10749": {
+    "Name": "Kinliat Bloodwalker"
+  },
+  "12556": {
+    "Name": "Kiraikuei Flesh"
+  },
+  "19961": {
+    "Name": "Klom Jysun"
+  },
+  "15369": {
+    "Name": "Kobold Backbone"
+  },
+  "19782": {
+    "Name": "Kobold Finger Bones"
+  },
+  "19057": {
+    "Name": "Kobold Humerus"
+  },
+  "19059": {
+    "Name": "Kobold Ribcage"
+  },
+  "19038": {
+    "Name": "Kobold Skull"
+  },
+  "19058": {
+    "Name": "Kobold Sternum"
+  },
+  "21614": {
+    "Name": "Kobold Talon"
+  },
+  "19060": {
+    "Name": "Kobold Tibia"
+  },
+  "14666": {
+    "Name": "Kobold Tooth"
+  },
+  "19056": {
+    "Name": "Kobold Ulna"
+  },
+  "33305": {
+    "Name": "Kromzek Mercenary Brooches"
+  },
+  "14769": {
+    "Name": "Lake Pebble"
+  },
+  "23377": {
+    "Name": "Large Brick of Steel"
+  },
+  "19706": {
+    "Name": "Large Brick of Unrefined Ore"
+  },
+  "27363": {
+    "Name": "Large Meat Tenderizer"
+  },
+  "19311": {
+    "Name": "Large Section of Kobold Bone"
+  },
+  "22812": {
+    "Name": "Large Widow Abdomen"
+  },
+  "18332": {
+    "Name": "Larkin Tolman"
+  },
+  "18334": {
+    "Name": "Larkin Tolmans Head"
+  },
+  "27237": {
+    "Name": "Leather Greaves of Civility"
+  },
+  "33062": {
+    "Name": "Leatherfoot Haversack"
+  },
+  "35350": {
+    "Name": "Lesser Robe of Abjuration"
+  },
+  "22036": {
+    "Name": "Lesser Succor"
+  },
+  "21641": {
+    "Name": "Lesser Summon Corpse"
+  },
+  "20057": {
+    "Name": "Lhranc's Ring"
+  },
+  "37151": {
+    "Name": "Lieutenant Milven"
+  },
+  "21621": {
+    "Name": "Lion Mane"
+  },
+  "21620": {
+    "Name": "Lion Tail"
+  },
+  "24714": {
+    "Name": "Lockpick Mold"
+  },
+  "18466": {
+    "Name": "Long Fanged Glaive"
+  },
+  "34999": {
+    "Name": "Luclin"
+  },
+  "18328": {
+    "Name": "Lukas Hergo"
+  },
+  "18331": {
+    "Name": "Lukas Hergo's Head"
+  },
+  "20250": {
+    "Name": "Magus Arindri"
+  },
+  "20249": {
+    "Name": "Magus Delin"
+  },
+  "20251": {
+    "Name": "Magus Jerira"
+  },
+  "20247": {
+    "Name": "Magus Tira"
+  },
+  "20248": {
+    "Name": "Magus Zeir"
+  },
+  "22759": {
+    "Name": "Makeshift Binding Powder"
+  },
+  "20911": {
+    "Name": "Mangled Animal Pelt"
+  },
+  "28039": {
+    "Name": "Mantle of Distraction"
+  },
+  "23378": {
+    "Name": "Mark of Karana"
+  },
+  "21515": {
+    "Name": "Mark of the Predator"
+  },
+  "17301": {
+    "Name": "Mask of the Forgotten"
+  },
+  "31634": {
+    "Name": "Mask of the Tundra Walker"
+  },
+  "27222": {
+    "Name": "Master Shackle Key"
+  },
+  "21622": {
+    "Name": "Matted Greater Cat Pelt"
+  },
+  "19145": {
+    "Name": "Matted Halfling Hide"
+  },
+  "25924": {
+    "Name": "User:Maximum/Experience"
+  },
+  "21546": {
+    "Name": "Medallion of the Arcane Scientists"
+  },
+  "17624": {
+    "Name": "Midnight Drolvarg Cloak"
+  },
+  "22804": {
+    "Name": "Midnight Stone"
+  },
+  "18695": {
+    "Name": "Mighty Adventurer's Ring"
+  },
+  "17633": {
+    "Name": "Miniature Nosering"
+  },
+  "15911": {
+    "Name": "Minor Signet of the Dark Priest"
+  },
+  "14700": {
+    "Name": "Minor Signet of the Dark Sorcerer"
+  },
+  "21957": {
+    "Name": "Minor Stone of Power"
+  },
+  "18456": {
+    "Name": "Minotaur Blood"
+  },
+  "18457": {
+    "Name": "Minotaur Scalp"
+  },
+  "18458": {
+    "Name": "Minotaur Tibia"
+  },
+  "14394": {
+    "Name": "Mist of Povar"
+  },
+  "28686": {
+    "Name": "Mistress of the Darkwater"
+  },
+  "18468": {
+    "Name": "Mithril Knuckles"
+  },
+  "27786": {
+    "Name": "Moist Marrow"
+  },
+  "13973": {
+    "Name": "Morgan Wetstone"
+  },
+  "21631": {
+    "Name": "Mountain Lion Pelt"
+  },
+  "9922": {
+    "Name": "Mystical Gyrating Necklace"
+  },
+  "22854": {
+    "Name": "Nalla's Problem"
+  },
+  "17091": {
+    "Name": "Nansaidh"
+  },
+  "17459": {
+    "Name": "Nayda Winterwind"
+  },
+  "11178": {
+    "Name": "Necromancer Blood"
+  },
+  "20690": {
+    "Name": "Necromancer Meat"
+  },
+  "5187": {
+    "Name": "Necromancer Skullcap Quests"
+  },
+  "14048": {
+    "Name": "Nerdala Darkcloud"
+  },
+  "19181": {
+    "Name": "Nurgan Overseer Necklace"
+  },
+  "37493": {
+    "Name": "Oakwynd"
+  },
+  "34283": {
+    "Name": "Odd Bronze Necklace"
+  },
+  "14271": {
+    "Name": "Opalescent Hide"
+  },
+  "27276": {
+    "Name": "Orb of the Defender"
+  },
+  "17232": {
+    "Name": "Orc Clavicle"
+  },
+  "17225": {
+    "Name": "Orc Foot Bones"
+  },
+  "19069": {
+    "Name": "Orc Head"
+  },
+  "17228": {
+    "Name": "Orc Humerus"
+  },
+  "17227": {
+    "Name": "Orc Pelvis Bone"
+  },
+  "17231": {
+    "Name": "Orc Ribcage"
+  },
+  "17221": {
+    "Name": "Orc Skull"
+  },
+  "17229": {
+    "Name": "Orc Sternum"
+  },
+  "17230": {
+    "Name": "Orc Tibia"
+  },
+  "17226": {
+    "Name": "Orc Ulna"
+  },
+  "18058": {
+    "Name": "Outcast's Journal Page 21"
+  },
+  "18059": {
+    "Name": "Outcast's Journal Page 22"
+  },
+  "18060": {
+    "Name": "Outcast's Journal Page 23"
+  },
+  "14446": {
+    "Name": "Outcast's Journal Page 35"
+  },
+  "17970": {
+    "Name": "Padded Leather Tunic"
+  },
+  "17026": {
+    "Name": "Part of Finnok's Treatise Pg. 2"
+  },
+  "15917": {
+    "Name": "Part of Keris' Dissertation Pg. 5"
+  },
+  "15918": {
+    "Name": "Part of Yaeth's Compendium Pg. 50"
+  },
+  "17620": {
+    "Name": "Part of Yaeth's Compendium Pg. 63"
+  },
+  "9822": {
+    "Name": "Part of Yaeth's Compendium Pg. 65"
+  },
+  "18669": {
+    "Name": "Part of Yaeth's Compendium Pg. 73"
+  },
+  "19479": {
+    "Name": "Part of Yaeth's Compendium Pg. 78"
+  },
+  "19480": {
+    "Name": "Part of Yaeth's Compendium Pg. 80"
+  },
+  "21489": {
+    "Name": "Part of Yaeth's Compendium Pg. 91"
+  },
+  "16250": {
+    "Name": "Part of Yaeth's Compendium Pg. 97"
+  },
+  "17023": {
+    "Name": "Part of Zeannor's Thesis Pg. 12"
+  },
+  "17024": {
+    "Name": "Part of Zeannor's Thesis Pg. 14"
+  },
+  "17025": {
+    "Name": "Part of Zeannor's Thesis Pg. 15"
+  },
+  "14166": {
+    "Name": "Pearlescent Fragment"
+  },
+  "37484": {
+    "Name": "Pendant of Salvation"
+  },
+  "12108": {
+    "Name": "Perfect Gnoll Skin"
+  },
+  "19116": {
+    "Name": "Pergan Darkcloud"
+  },
+  "30670": {
+    "Name": "Petrified Bloodgill Eye"
+  },
+  "22437": {
+    "Name": "Petrified Holgresh Eye"
+  },
+  "9418": {
+    "Name": "Piece of Marr's Emerald"
+  },
+  "18667": {
+    "Name": "Pile of Gravel"
+  },
+  "14195": {
+    "Name": "Plague Mites"
+  },
+  "14654": {
+    "Name": "Plate Greaves of Aptitude"
+  },
+  "18652": {
+    "Name": "Platinum Ring of the Chosen"
+  },
+  "34722": {
+    "Name": "Potion of Draconic Rage"
+  },
+  "21795": {
+    "Name": "Preserved Rat Pelt"
+  },
+  "25375": {
+    "Name": "Pride of the Legion"
+  },
+  "22238": {
+    "Name": "Pristine Scarab Eye"
+  },
+  "21542": {
+    "Name": "Pristine Tae Ew Scale"
+  },
+  "22259": {
+    "Name": "Pumpkin Pie Spice"
+  },
+  "37057": {
+    "Name": "Qeynos Badge of Nobility"
+  },
+  "5096": {
+    "Name": "Qeynos Badge Quests"
+  },
+  "18028": {
+    "Name": "Quartermaster Grarucks"
+  },
+  "19443": {
+    "Name": "Rabid Grizzly Skin"
+  },
+  "21029": {
+    "Name": "Radiant Shard"
+  },
+  "19332": {
+    "Name": "Rainkeeper Boots"
+  },
+  "21798": {
+    "Name": "Rat Eye"
+  },
+  "21797": {
+    "Name": "Rat Foot"
+  },
+  "9414": {
+    "Name": "Rat Tooth"
+  },
+  "20912": {
+    "Name": "Raw Crude Hide"
+  },
+  "29595": {
+    "Name": "Raw Fine Runic Hide"
+  },
+  "22294": {
+    "Name": "Raw Fine Supple Runic Hide"
+  },
+  "22802": {
+    "Name": "Raw Hide"
+  },
+  "27711": {
+    "Name": "Raw Indigo Nihilite"
+  },
+  "21574": {
+    "Name": "Raw Rough Hide"
+  },
+  "28897": {
+    "Name": "Raw Runic Hide"
+  },
+  "20412": {
+    "Name": "Reanimation"
+  },
+  "19774": {
+    "Name": "Rebel Clockwork Foot Plate"
+  },
+  "19773": {
+    "Name": "Rebel Clockwork Hand Plate"
+  },
+  "20413": {
+    "Name": "Reconstitute"
+  },
+  "9881": {
+    "Name": "Red Sr Apprentice Robe*"
+  },
+  "19770": {
+    "Name": "Renegade Clockwork Scrapmetal"
+  },
+  "22340": {
+    "Name": "Renewal"
+  },
+  "22341": {
+    "Name": "Reparation"
+  },
+  "20822": {
+    "Name": "Research Notes - Part 1"
+  },
+  "9777": {
+    "Name": "Research Notes - Part 2"
+  },
+  "9778": {
+    "Name": "Research Notes - Part 3"
+  },
+  "19817": {
+    "Name": "Research Notes - Part 6"
+  },
+  "25868": {
+    "Name": "Residents of Jaggedpine"
+  },
+  "20414": {
+    "Name": "Restoration"
+  },
+  "35375": {
+    "Name": "Rock Helm of Defense"
+  },
+  "22454": {
+    "Name": "Rock Spiderling Legs"
+  },
+  "30915": {
+    "Name": "Rotted Staff"
+  },
+  "9415": {
+    "Name": "Rotting Zombie Skull"
+  },
+  "30949": {
+    "Name": "Rough Animal Pelt"
+  },
+  "22428": {
+    "Name": "Rough Defiant Chain Sleeves"
+  },
+  "19847": {
+    "Name": "Rough Defiant Cloth Sleeves"
+  },
+  "19849": {
+    "Name": "Rough Defiant Scepter"
+  },
+  "20913": {
+    "Name": "Rough Silk"
+  },
+  "14740": {
+    "Name": "Rozzut's Whistler"
+  },
+  "14743": {
+    "Name": "Rozzut's Whistler Quest"
+  },
+  "18428": {
+    "Name": "Rubicite Ore"
+  },
+  "20914": {
+    "Name": "Ruined Animal Pelt"
+  },
+  "19771": {
+    "Name": "Runaway Clockwork Gearbox"
+  },
+  "19772": {
+    "Name": "Runaway Clockwork Motor"
+  },
+  "19463": {
+    "Name": "Rune of Alternation"
+  },
+  "19464": {
+    "Name": "Rune of Coalition"
+  },
+  "19465": {
+    "Name": "Rune of Complexity"
+  },
+  "18585": {
+    "Name": "Rune of Conglomeration"
+  },
+  "12530": {
+    "Name": "Rune of Coruscation"
+  },
+  "17043": {
+    "Name": "Rune of Ellipse"
+  },
+  "17022": {
+    "Name": "Rune of Glint"
+  },
+  "20738": {
+    "Name": "Rune of Impulse"
+  },
+  "19466": {
+    "Name": "Rune of Incendiary"
+  },
+  "21681": {
+    "Name": "Rune of Incitation"
+  },
+  "19467": {
+    "Name": "Rune of Tempest"
+  },
+  "15916": {
+    "Name": "Rune of Transpose"
+  },
+  "19468": {
+    "Name": "Rune of Vortex"
+  },
+  "18465": {
+    "Name": "Sabertooth Forged Helm"
+  },
+  "18479": {
+    "Name": "Sack Full of Rocks"
+  },
+  "14445": {
+    "Name": "Sacred Key"
+  },
+  "30009": {
+    "Name": "Samatansyn Flamecaller"
+  },
+  "19160": {
+    "Name": "Sample of Halfling Meat"
+  },
+  "30010": {
+    "Name": "Sarialiyn Tranquilsong"
+  },
+  "17233": {
+    "Name": "Sarialiyn's Lute"
+  },
+  "27785": {
+    "Name": "Saturated Marrow"
+  },
+  "27341": {
+    "Name": "Scales of Veeshan"
+  },
+  "27258": {
+    "Name": "Scout's Mask"
+  },
+  "9819": {
+    "Name": "Scroll of the Beguiler"
+  },
+  "9312": {
+    "Name": "Second Half of Torn Note"
+  },
+  "6146": {
+    "Name": "Serenica Greenfinger"
+  },
+  "12106": {
+    "Name": "Severed Gnoll Foot"
+  },
+  "17865": {
+    "Name": "Severed Greenblood Finger"
+  },
+  "20915": {
+    "Name": "Severed Orc Foot"
+  },
+  "17470": {
+    "Name": "Sha's Lethargy"
+  },
+  "21491": {
+    "Name": "Sha's Restoration"
+  },
+  "36581": {
+    "Name": "Shackle of Tynnonium"
+  },
+  "14514": {
+    "Name": "Shadow Rage Boots"
+  },
+  "14512": {
+    "Name": "Shadow Rage Gloves"
+  },
+  "14508": {
+    "Name": "Shadow Rage Helm"
+  },
+  "14513": {
+    "Name": "Shadow Rage Leggings"
+  },
+  "14510": {
+    "Name": "Shadow Rage Sleeves"
+  },
+  "14509": {
+    "Name": "Shadow Rage Tunic"
+  },
+  "14511": {
+    "Name": "Shadow Rage Wristguard"
+  },
+  "18167": {
+    "Name": "Shadow Wolf Tibia"
+  },
+  "35351": {
+    "Name": "Shaped Amber Ring of Soldiery"
+  },
+  "15609": {
+    "Name": "Shard of Hsagra's Talisman"
+  },
+  "28004": {
+    "Name": "Shard of Power"
+  },
+  "27683": {
+    "Name": "Sheet of Oggok Adamantite"
+  },
+  "36560": {
+    "Name": "Shield of Hatred"
+  },
+  "27372": {
+    "Name": "Shield of the Arisen Cultist"
+  },
+  "27640": {
+    "Name": "Shimmering Bauble of Trickery"
+  },
+  "14591": {
+    "Name": "Shimmering Black Pearl"
+  },
+  "35489": {
+    "Name": "Shimmering Shard"
+  },
+  "18056": {
+    "Name": "Shiny Gold Earring"
+  },
+  "18057": {
+    "Name": "Shiny Silver Mask"
+  },
+  "36701": {
+    "Name": "Shissar"
+  },
+  "22507": {
+    "Name": "Shissar Hide Tome"
+  },
+  "37488": {
+    "Name": "Shrouds of Earthen Shadow"
+  },
+  "17718": {
+    "Name": "Shrunken Iksar Skull Necklace"
+  },
+  "20923": {
+    "Name": "Silent fist problem"
+  },
+  "34976": {
+    "Name": "Silver Earring of the Chosen"
+  },
+  "27486": {
+    "Name": "Silver Leafed Emerald Amulet"
+  },
+  "20916": {
+    "Name": "Silvril Ore"
+  },
+  "29606": {
+    "Name": "Simple Binding Powder"
+  },
+  "22633": {
+    "Name": "Simple Coral Bracelet"
+  },
+  "27557": {
+    "Name": "Simple Etched Rune"
+  },
+  "29978": {
+    "Name": "Sirken Cat-fur Girdle"
+  },
+  "15475": {
+    "Name": "Skeletal Arm"
+  },
+  "15474": {
+    "Name": "Skeletal Leg"
+  },
+  "15472": {
+    "Name": "Skeletal Skull"
+  },
+  "15473": {
+    "Name": "Skeletal Torso"
+  },
+  "29622": {
+    "Name": "Skeleton Parts"
+  },
+  "27407": {
+    "Name": "SkyIron Cudgel of the Arisen"
+  },
+  "19431": {
+    "Name": "Sleeves of Wrath"
+  },
+  "9921": {
+    "Name": "Slimy Green Ring"
+  },
+  "19476": {
+    "Name": "Sliver of Moonstone"
+  },
+  "18943": {
+    "Name": "Small Brick of Unrefined Ore"
+  },
+  "22508": {
+    "Name": "Small Froglok Bone Vial"
+  },
+  "21540": {
+    "Name": "Small Stone Totem"
+  },
+  "17455": {
+    "Name": "Snakefingers"
+  },
+  "37206": {
+    "Name": "Sorrowsong Boots"
+  },
+  "21490": {
+    "Name": "Spiritual Purity"
+  },
+  "22470": {
+    "Name": "Spiritual Strength"
+  },
+  "8533": {
+    "Name": "Staff of Dark Reflections"
+  },
+  "9580": {
+    "Name": "Staff of Dark Reflections Quest"
+  },
+  "27207": {
+    "Name": "Staff of the Arisen Cultist"
+  },
+  "14315": {
+    "Name": "Staff Shard of Luclin"
+  },
+  "23376": {
+    "Name": "Steel Arrowshafts"
+  },
+  "35376": {
+    "Name": "Steel Bracer of Law"
+  },
+  "17300": {
+    "Name": "Stone Splinted Cloak"
+  },
+  "19959": {
+    "Name": "Stonehand Trousers"
+  },
+  "10927": {
+    "Name": "Stormraven's Quill"
+  },
+  "20917": {
+    "Name": "Sullied Animal Pelt"
+  },
+  "20918": {
+    "Name": "Sullied Silk"
+  },
+  "14617": {
+    "Name": "Sunshard Dust"
+  },
+  "20940": {
+    "Name": "Sunshard Ore"
+  },
+  "16882": {
+    "Name": "Sunshard Pebble"
+  },
+  "18696": {
+    "Name": "Supreme Adventurer's Ring"
+  },
+  "20941": {
+    "Name": "Taaffeite"
+  },
+  "20919": {
+    "Name": "Tacky Silk"
+  },
+  "21541": {
+    "Name": "Tae Ew Blood Vial"
+  },
+  "15512": {
+    "Name": "Tambourine of Rituals"
+  },
+  "20920": {
+    "Name": "Tattered Animal Pelt"
+  },
+  "21534": {
+    "Name": "Tear Encrusted Obsidian Quill"
+  },
+  "20921": {
+    "Name": "Thalium Ore"
+  },
+  "6444": {
+    "Name": "The Blessed Ring"
+  },
+  "37492": {
+    "Name": "The Butcherblock Hammer"
+  },
+  "21535": {
+    "Name": "The Crude Bone Altar"
+  },
+  "6355": {
+    "Name": "The Frightlings"
+  },
+  "26191": {
+    "Name": "The Idol of Rallos Zek"
+  },
+  "22789": {
+    "Name": "The Light's Glory"
+  },
+  "25678": {
+    "Name": "Theoris Bladespur"
+  },
+  "17460": {
+    "Name": "Therin Asakith"
+  },
+  "22289": {
+    "Name": "Thick Silk"
+  },
+  "22760": {
+    "Name": "Thick Spinneret Fluid"
+  },
+  "30011": {
+    "Name": "Tilania Shadowwalker"
+  },
+  "9581": {
+    "Name": "Tilkzog Mournunder"
+  },
+  "20922": {
+    "Name": "Tin Ore"
+  },
+  "27632": {
+    "Name": "Tiny Pearl Seal"
+  },
+  "17461": {
+    "Name": "Tirac Goldbender"
+  },
+  "21680": {
+    "Name": "Toharon's Memoir Pg. 22"
+  },
+  "18018": {
+    "Name": "Tome Insert Page 1"
+  },
+  "18019": {
+    "Name": "Tome Insert Page 2"
+  },
+  "18020": {
+    "Name": "Tome Insert Page 3"
+  },
+  "18021": {
+    "Name": "Tome Insert Page 4"
+  },
+  "34721": {
+    "Name": "Torm Wenrar"
+  },
+  "14707": {
+    "Name": "Transons Elemental Infusion"
+  },
+  "15301": {
+    "Name": "Treven Ru`Soe"
+  },
+  "7925": {
+    "Name": "Trooper Neozite"
+  },
+  "19960": {
+    "Name": "Trousers of the Stonehand"
+  },
+  "14224": {
+    "Name": "Truthbringer Gem"
+  },
+  "19053": {
+    "Name": "Twilight Bloom"
+  },
+  "41355": {
+    "Name": "Tzirathk"
+  },
+  "14022": {
+    "Name": "Uleen Laughingwater"
+  },
+  "27710": {
+    "Name": "Uncut Gems"
+  },
+  "18880": {
+    "Name": "Undead Pawn Tibia"
+  },
+  "20943": {
+    "Name": "Unkempt Seed Rituals"
+  },
+  "17569": {
+    "Name": "Upgraded Pelts"
+  },
+  "19949": {
+    "Name": "Urwenae the Cold"
+  },
+  "42764": {
+    "Name": "Vah Shir"
+  },
+  "14706": {
+    "Name": "Vampire Dust"
+  },
+  "22402": {
+    "Name": "Velium Embossed Rune"
+  },
+  "28518": {
+    "Name": "Velium Mastodon Fur"
+  },
+  "22311": {
+    "Name": "Velium Silvered Rune"
+  },
+  "27714": {
+    "Name": "Vellum"
+  },
+  "12109": {
+    "Name": "Vial of Gnoll Blood"
+  },
+  "17462": {
+    "Name": "Vuri Pandar"
+  },
+  "21547": {
+    "Name": "Wailing Bone Mace"
+  },
+  "27414": {
+    "Name": "Warders Cloak"
+  },
+  "20740": {
+    "Name": "Warforged Emerald Hoop"
+  },
+  "5222": {
+    "Name": "Warlord Mancatcher"
+  },
+  "21575": {
+    "Name": "Weak Gormar Venom"
+  },
+  "19159": {
+    "Name": "Weak Muscimol Extract"
+  },
+  "19157": {
+    "Name": "Weak Nigriventer Venom"
+  },
+  "19347": {
+    "Name": "Wild Lord's Crown"
+  },
+  "22249": {
+    "Name": "Wild Lord's Gauntlets"
+  },
+  "21790": {
+    "Name": "Wild Lord's Sleeves"
+  },
+  "29003": {
+    "Name": "Wilted Laburnum"
+  },
+  "29002": {
+    "Name": "Wilted Larkspur"
+  },
+  "29001": {
+    "Name": "Wilted Oleander"
+  },
+  "9820": {
+    "Name": "Words of Annihilation"
+  },
+  "18668": {
+    "Name": "Words of Apparition"
+  },
+  "19469": {
+    "Name": "Words of Awareness"
+  },
+  "14240": {
+    "Name": "Words of Capacity"
+  },
+  "19943": {
+    "Name": "Words of Comprehension"
+  },
+  "18586": {
+    "Name": "Words of Control"
+  },
+  "9721": {
+    "Name": "Words of Decision"
+  },
+  "19470": {
+    "Name": "Words of Divergence"
+  },
+  "9490": {
+    "Name": "Words of Domination"
+  },
+  "19471": {
+    "Name": "Words of Exhilaration"
+  },
+  "19477": {
+    "Name": "Words of Expertise"
+  },
+  "18677": {
+    "Name": "Words of Invigoration"
+  },
+  "14971": {
+    "Name": "Words of Misery"
+  },
+  "19472": {
+    "Name": "Words of Obliteration"
+  },
+  "19473": {
+    "Name": "Words of Propriety"
+  },
+  "9821": {
+    "Name": "Words of Restraint"
+  },
+  "19474": {
+    "Name": "Words of Revenant"
+  },
+  "19475": {
+    "Name": "Words of Sapience"
+  },
+  "14904": {
+    "Name": "Words of Tenancy"
+  },
+  "17814": {
+    "Name": "Words of Voiding"
+  },
+  "33066": {
+    "Name": "Woven Dire Wolf Fur"
+  },
+  "22813": {
+    "Name": "Woven Spider Silk"
+  },
+  "37486": {
+    "Name": "Writ of Innoruuk"
+  },
+  "14232": {
+    "Name": "Wurmfire Totem"
+  },
+  "29250": {
+    "Name": "Xalamesh Dur`Kven"
+  },
+  "14990": {
+    "Name": "Yaeth's Compendium Pg. 103"
+  },
+  "14972": {
+    "Name": "Yaeth's Compendium Pg. 115"
+  },
+  "21615": {
+    "Name": "Yaeth's Compendium Pg. 83"
+  },
+  "21616": {
+    "Name": "Yaeth's Compendium Pg. 95"
+  },
+  "19481": {
+    "Name": "Yaeth's Compendium Pg. 98"
+  },
+  "15303": {
+    "Name": "Yakem Oreslinger"
+  },
+  "19458": {
+    "Name": "Young Kodiak Femur"
+  },
+  "19457": {
+    "Name": "Young Kodiak Paw"
+  },
+  "21613": {
+    "Name": "Young Plains Cat Backbone"
+  },
+  "21625": {
+    "Name": "Young Plains Cat Scalp"
+  },
+  "21612": {
+    "Name": "Young Puma Skin"
+  },
+  "29990": {
+    "Name": "Yuin Starchaser"
+  },
+  "19718": {
+    "Name": "Zeannor's Thesis Pg. 16"
+  },
+  "17771": {
+    "Name": "Zok Caropni"
+  },
+  "14410": {
+    "Name": "Zok Drup"
+  },
+  "17214": {
+    "Name": "Zok Folis"
+  },
+  "22772": {
+    "Name": "Zok Giibles"
+  },
+  "13961": {
+    "Name": "Zok Giisip"
+  },
+  "13929": {
+    "Name": "Zok Gleeup"
+  },
+  "14027": {
+    "Name": "Zok Gorble"
+  },
+  "16215": {
+    "Name": "Zok Gribbl"
+  },
+  "14440": {
+    "Name": "Zok Grop"
+  },
+  "15666": {
+    "Name": "Zok Huoo"
+  },
+  "18266": {
+    "Name": "Zok Kilikko"
+  },
+  "17085": {
+    "Name": "Zok Kuluree"
+  },
+  "14071": {
+    "Name": "Zok Lubump"
+  },
+  "15957": {
+    "Name": "Zok Pirk"
+  },
+  "13933": {
+    "Name": "Zok Prolo"
+  },
+  "14118": {
+    "Name": "Zok Ruppeta"
+  },
+  "16618": {
+    "Name": "Zok Rurpp"
+  },
+  "13988": {
+    "Name": "Zok Tabruu"
+  },
+  "22280": {
+    "Name": "Zok Vroog"
+  }
+}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace TunnelQuest.Data
 {
@@ -22,5 +23,17 @@ namespace TunnelQuest.Data
         public static readonly string Warrior = "WAR";
 
         public static readonly IEnumerable<string> All = new string[] { Enchanter, Magician, Necromancer, Wizard, Cleric, Druid, Shaman, Bard, Monk, Ranger, Rogue, Paladin, ShadowKnight, Warrior };
+
+
+        public static string GetCode(string className)
+        {
+            for (int i = 0; i < ClassCodes.All.Count(); i++)
+            {
+                if (ClassNames.All.ElementAt(i).Equals(className, StringComparison.InvariantCultureIgnoreCase))
+                    return ClassCodes.All.ElementAt(i);
+            }
+
+            throw new Exception("Invalid class name " + className);
+        }
     }
 }

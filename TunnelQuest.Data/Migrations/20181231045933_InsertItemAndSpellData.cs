@@ -9,52 +9,77 @@ using TunnelQuest.Data.Models;
 
 namespace TunnelQuest.Data.Migrations
 {
-    public partial class InsertItemAndEffectData : Migration
+    public partial class InsertItemAndSpellData : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            using (var context = new TunnelQuestContext())
+            try
             {
-                // insert item and effect data scraped from the wiki
-
-                var wikiData = WikiItemData.ReadFromEmbeddedResource();
-                var items = parseWikiItems(wikiData);
-                var effectNameNormalizer = getEffectNameNormalizer(items);
-
-                insertEffects(context, effectNameNormalizer);
-
-                // use effectNameNormalizer to make sure all items use the most popular spelling of their effect names
-                foreach (var item in items.Where(item => item.EffectName != null))
-                {
-                    item.EffectName = effectNameNormalizer[item.EffectName.ToLower()];
-                }
-
-                // insert items
-                context.AddRange(items);
-
-                context.SaveChanges();
+                Console.WriteLine("This might take a few minutes... be patient and don't exit early!");
             }
-        }
+            catch { }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+
+            var allItemsAndSpells = getAllItemsAndSpells();
+
             using (var context = new TunnelQuestContext())
             {
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
                     {
-                        // delete item and effect data scraped from the wiki
-
-                        var wikiData = WikiItemData.ReadFromEmbeddedResource();
-                        var items = parseWikiItems(wikiData);
-                        var effectNameNormalizer = getEffectNameNormalizer(items);
-
-                        deleteItems(context, items);
+                        context.AddRange(allItemsAndSpells.Spells);
                         context.SaveChanges();
-                        deleteEffects(context, effectNameNormalizer);
 
+                        context.AddRange(allItemsAndSpells.Items);
                         context.SaveChanges();
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                } // end using (transaction)
+            } // end using (context)
+        } // end function
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            try
+            {
+                Console.WriteLine("This might take a few minutes... be patient and don't exit early!");
+            }
+            catch { }
+
+
+            var allItemsAndSpells = getAllItemsAndSpells();
+
+            using (var context = new TunnelQuestContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        // delete items first
+                        var itemsToDelete = new List<Item>();
+                        foreach (var fullItem in allItemsAndSpells.Items)
+                        {
+                            itemsToDelete.Add(new Item() { ItemName = fullItem.ItemName });
+                        }
+                        context.RemoveRange(itemsToDelete);
+                        context.SaveChanges();
+
+                        // delete spells second
+                        var spellsToDelete = new List<Spell>();
+                        foreach (var fullSpell in allItemsAndSpells.Spells)
+                        {
+                            spellsToDelete.Add(new Spell() { SpellName = fullSpell.SpellName });
+                        }
+                        context.RemoveRange(spellsToDelete);
+                        context.SaveChanges();
+
 
                         transaction.Commit();
                     }
@@ -70,72 +95,128 @@ namespace TunnelQuest.Data.Migrations
 
         // private helpers
 
-        #region item
-        private void deleteItems(TunnelQuestContext context, IEnumerable<Item> items)
+        private AllItemsAndSpells getAllItemsAndSpells()
         {
-            // create a list of items with ONLY the names for use as deletion keys, and let the
-            // cascading deletes on the foreign keys handle the deletions in the child tables
-            var itemsToDelete = new List<Item>();
-            foreach (var fullItem in items)
-            {
-                itemsToDelete.Add(new Item() { ItemName = fullItem.ItemName });
-            }
-            context.RemoveRange(itemsToDelete);
-        }
-        #endregion
+            var spellFile = new WikiResourceHelper<WikiSpellData>("spells.json", "spells_corrections.json");
+            var wikiSpells = spellFile.ReadFromEmbeddedResource();
+            var spells = parseWikiSpells(wikiSpells);
 
-        #region effect
-        private void insertEffects(TunnelQuestContext context, Dictionary<string, string> effectNameNormalizer)
-        {
-            foreach (string effectName in effectNameNormalizer.Values)
+            var itemFile = new WikiResourceHelper<WikiItemData>("items.json", "items_corrections.json");
+            var wikiItems = itemFile.ReadFromEmbeddedResource();
+            var items = parseWikiItems(wikiItems);
+
+            // Find any items whose effect is not a known spell, and artificially
+            // create an empty Spells entry for the item's effect
+            var itemsWithUnknownSpellEffects = items.Where(item => item.EffectSpellName != null && spells.Where(spell => spell.SpellName.Equals(item.EffectSpellName, StringComparison.InvariantCultureIgnoreCase)).Count() == 0);
+            foreach (var item in itemsWithUnknownSpellEffects)
             {
-                context.Add(new Effect()
+                spells.Add(new Spell()
                 {
-                    EffectName = effectName
+                    SpellName = item.EffectSpellName
                 });
             }
-        }
 
-        private void deleteEffects(TunnelQuestContext context, Dictionary<string, string> effectNameNormalizer)
-        {
-            foreach (string effectName in effectNameNormalizer.Values)
+            // A few spells (like cannibalize 2) have special scrolls acquired through quests and whatnot, and
+            // those scrolls will already be in the item list from the wiki.  However, most spells do not have their
+            // learnable scroll item listed in the wiki.  We still want to include all those scroll items in our own
+            // database, so we have to figure out which spells do NOT already have a spell scroll in the items list,
+            // and then generate "Spell: ____" items for ONLY those spells.
+
+            var learnableSpellsWithoutScrolls = spells.Where(spell =>
+                spell.Requirements.Count > 0
+                && items.Where(item =>
+                        item.EffectTypeCode == EffectTypeCodes.LearnSpell
+                        && item.EffectSpellName.Equals(spell.SpellName, StringComparison.InvariantCultureIgnoreCase)
+                    ).Count() == 0);
+
+            foreach (var spell in learnableSpellsWithoutScrolls)
             {
-                context.Remove(new Effect()
+                var spellScrollItem = new Item()
                 {
-                    EffectName = effectName
-                });
-            }
-        }
+                    ItemName = "Spell: " + spell.SpellName,
+                    IconFileName = "Item_504.png",
+                    IsMagic = true,
+                    Weight = 0.1f,
+                    SizeCode = SizeCodes.Small,
+                    EffectSpellName = spell.SpellName,
+                    EffectTypeCode = EffectTypeCodes.LearnSpell
+                };
 
-        private Dictionary<string, string> getEffectNameNormalizer(IEnumerable<Item> items)
+                foreach (var req in spell.Requirements)
+                {
+                    spellScrollItem.Classes.Add(new ItemClass()
+                    {
+                        Item = spellScrollItem,
+                        ItemName = spellScrollItem.ItemName,
+                        ClassCode = req.ClassCode
+                    });
+                }
+
+                items.Add(spellScrollItem);
+            }
+
+            return new AllItemsAndSpells() {
+                Items = items,
+                Spells = spells
+            };
+        }
+        
+        private List<Spell> parseWikiSpells(IEnumerable<WikiSpellData> wikiData)
         {
-            // One entry per effect name.
-            // Usage: effectNameNormalizer[lowerCaseName] = nameToUseInDatabase
-            var effectNameNormalizer = new Dictionary<string, string>();
+            var wikiSpellsWithoutDuplicates = wikiData
+                .Where(spell => !String.IsNullOrWhiteSpace(spell.Name))
+                .GroupBy(spell => spell.Name.ToLower())
+                .Select(group => group.OrderBy(spell => countUppercase(spell.Name)).FirstOrDefault());
 
-            // build effectNameNormalizer
-
-            var effectNameGroups = items
-                .Where(item => !String.IsNullOrWhiteSpace(item.EffectName))
-                .Select(item => item.EffectName)
-                .GroupBy(name => name.ToLower());
-
-            foreach (var lowerNameGroup in effectNameGroups)
+            var spells = new List<Spell>();
+            var errorSpells = new List<string>();
+            foreach (WikiSpellData wikiSpell in wikiSpellsWithoutDuplicates)
             {
-                string lowerName = lowerNameGroup.Key;
+                try
+                {
+                    var nextSpell = new Spell() {
+                        SpellName = wikiSpell.Name.Replace("(spell)", "", StringComparison.InvariantCultureIgnoreCase).Trim(),
+                        IconFileName = wikiSpell.IconFileName?.Trim(),
+                        Description = wikiSpell.Description?.Trim()
+                    };
+                    foreach (var wikiReq in wikiSpell.Requirements)
+                    {
+                        nextSpell.Requirements.Add(new SpellRequirement() {
+                            SpellName = nextSpell.SpellName,
+                            ClassCode = wikiReq.ClassCode,
+                            RequiredLevel = wikiReq.Level
+                        });
+                    }
+                    foreach (string wikiDetail in wikiSpell.EffectDetails)
+                    {
+                        nextSpell.EffectDetails.Add(new SpellEffectDetail()
+                        {
+                            SpellName = nextSpell.SpellName,
+                            Text = wikiDetail
+                        });
+                    }
+                    foreach (string wikiSource in wikiSpell.Sources)
+                    {
+                        nextSpell.Sources.Add(new SpellSource()
+                        {
+                            SpellName = nextSpell.SpellName,
+                            Text = wikiSource
+                        });
+                    }
 
-                var mostPopularNameCase = lowerNameGroup
-                    .GroupBy(name => name)
-                    .OrderByDescending(nameGroup => nameGroup.Count())
-                    .FirstOrDefault()
-                    .Key;
-
-                effectNameNormalizer[lowerName] = mostPopularNameCase;
+                    spells.Add(nextSpell);
+                }
+                catch (Exception ex)
+                {
+                    errorSpells.Add(wikiSpell.ToString());
+                }
             }
 
-            return effectNameNormalizer;
+            if (errorSpells.Count > 0)
+                throw new Exception(errorSpells.Count.ToString() + " errors occurred while parsing spells: " + String.Join(", ", errorSpells));
+
+            return spells;
         }
-        #endregion
 
         private List<Item> parseWikiItems(IEnumerable<WikiItemData> wikiData)
         {
@@ -145,9 +226,9 @@ namespace TunnelQuest.Data.Migrations
             // has the most capital letters in the item's name.  
             // (You can see this for yourself by running the List-Duplicate-Names command in TunnelQuest.DatabaseBuilder.)
             var wikiItemsWithoutDuplicates = wikiData
-                .Where(item => item.Stats != null && !String.IsNullOrWhiteSpace(item.ItemName))
-                .GroupBy(item => item.ItemName.ToLower())
-                .Select(group => group.OrderBy(item => countUppercase(item.ItemName)).FirstOrDefault());
+                .Where(item => item.Stats != null && item.Stats.Length > 0 && !String.IsNullOrWhiteSpace(item.Name))
+                .GroupBy(item => item.Name.ToLower())
+                .Select(group => group.OrderBy(item => countUppercase(item.Name)).FirstOrDefault());
 
             var items = new List<Item>();
             var errorItems = new List<string>();
@@ -168,12 +249,12 @@ namespace TunnelQuest.Data.Migrations
 
             return items;
         }
-        
+
         private Item parseWikiItem(WikiItemData wikiItem)
         {
             var item = new Item();
-            item.ItemName = wikiItem.ItemName.Trim();
-            item.IconFileName = wikiItem.IconFileName.Trim();
+            item.ItemName = wikiItem.Name.Trim();
+            item.IconFileName = wikiItem.IconFileName?.Trim();
 
             foreach (string statLine in wikiItem.Stats)
             {
@@ -253,7 +334,7 @@ namespace TunnelQuest.Data.Migrations
             }
             else if (firstChunk == "EFFECT")
             {
-                if (item.EffectName != null)
+                if (item.EffectSpellName != null)
                     throw new Exception("Multiple Effect values found for " + wikiItem.ToString());
                 parseEffectLine(lineChunks, item);
             }
@@ -516,7 +597,7 @@ namespace TunnelQuest.Data.Migrations
 
                             isChunkHandled = true;
                         }
-                        
+
                     }
                     else if (currentChunk == "AC")
                     {
@@ -841,51 +922,53 @@ namespace TunnelQuest.Data.Migrations
         {
             int currentIndex = 1;
 
-            // build item.EffectName
-            item.EffectName = "";
+            // build item.EffectSpellName
+            item.EffectSpellName = "";
             while (currentIndex < lineChunks.Length && !lineChunks[currentIndex].StartsWith('('))
             {
-                item.EffectName += " " + lineChunks[currentIndex];
+                item.EffectSpellName += " " + lineChunks[currentIndex];
                 currentIndex++;
             }
-            item.EffectName = item.EffectName.Trim();
+            item.EffectSpellName = item.EffectSpellName.Trim();
 
-            if (currentIndex < lineChunks.Length)
+            // determine item.EffectTypeCode
+            if (item.ItemName.StartsWith("Spell:", StringComparison.InvariantCultureIgnoreCase))
+                item.EffectTypeCode = EffectTypeCodes.LearnSpell;
+            else if (currentIndex < lineChunks.Length)
             {
                 // corner case: ignore the token "(spell)" if it's found
                 if (lineChunks[currentIndex].Equals("(spell)", StringComparison.InvariantCultureIgnoreCase) && lineChunks.Length > (currentIndex + 1))
                     currentIndex++;
 
-                // determine item.EffectTypeCode
                 if (lineChunks[currentIndex].StartsWith("(any", StringComparison.InvariantCultureIgnoreCase)
                     || lineChunks[currentIndex].StartsWith("(inventory", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    item.EffectTypeCode = "ClickAnySlot";
+                    item.EffectTypeCode = EffectTypeCodes.ClickAnySlot;
                 }
                 else if (lineChunks[currentIndex].StartsWith("(must", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    item.EffectTypeCode = "ClickEquipped";
+                    item.EffectTypeCode = EffectTypeCodes.ClickEquipped;
                 }
                 else if (lineChunks[currentIndex].StartsWith("(worn", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    item.EffectTypeCode = "Worn";
+                    item.EffectTypeCode = EffectTypeCodes.Worn;
                 }
                 else if (lineChunks[currentIndex].StartsWith("(combat", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    item.EffectTypeCode = "Combat";
+                    item.EffectTypeCode = EffectTypeCodes.Combat;
                 }
                 else if (lineChunks[currentIndex].Equals("(instant)", StringComparison.InvariantCultureIgnoreCase))
                 {
                     // corner case
                     // Line was in format "Effect: EffectName (Instant)"
-                    item.EffectTypeCode = "ClickEquipped"; // random guess
+                    item.EffectTypeCode = EffectTypeCodes.ClickEquipped; // random guess
                     item.EffectCastingTime = 0;
                 }
                 else if (lineChunks[currentIndex].StartsWith("(casting", StringComparison.InvariantCultureIgnoreCase))
                 {
                     // corner case
                     // Line was in format "Effect: EffectName (Casting Time: whatever)", without the EffectType
-                    item.EffectTypeCode = "ClickEquipped"; // random guess
+                    item.EffectTypeCode = EffectTypeCodes.ClickEquipped; // random guess
                 }
                 else
                     throw new UnknownStatTokenException(lineChunks[currentIndex]);
@@ -896,7 +979,7 @@ namespace TunnelQuest.Data.Migrations
             {
                 // corner case
                 // Line was in format "Effect: EffectName" with nothing else after the name.  Assume it's a worn effect.
-                item.EffectTypeCode = "Worn";
+                item.EffectTypeCode = EffectTypeCodes.Worn;
             }
 
 
@@ -936,6 +1019,15 @@ namespace TunnelQuest.Data.Migrations
             }
 
             return count;
+        }
+
+
+        // private helper class
+        private class AllItemsAndSpells
+        {
+            public IEnumerable<Item> Items { get; set; }
+            public IEnumerable<Spell> Spells { get; set; }
+
         }
     }
 }

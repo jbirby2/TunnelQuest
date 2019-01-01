@@ -12,8 +12,12 @@ namespace TunnelQuest.DatabaseBuilder
         {
             try
             {
-                if (args.Length == 4 && args[0].Equals("Build-Item-Details", StringComparison.InvariantCultureIgnoreCase))
-                    WikiScraper.BuildItemDetails(args[1], args[2], Convert.ToBoolean(args[3]));
+                if (args.Length == 4 && args[0].Equals("Scrape", StringComparison.InvariantCultureIgnoreCase))
+                    WikiScraper.Scrape(args[1], args[2], Convert.ToBoolean(args[3]));
+                else if (args.Length == 4 && args[0].Equals("Scrape-Spells", StringComparison.InvariantCultureIgnoreCase))
+                    WikiScraper.ScrapeSpells(args[1], args[2], Convert.ToBoolean(args[3]));
+                else if (args.Length == 4 && args[0].Equals("Scrape-Items", StringComparison.InvariantCultureIgnoreCase))
+                    WikiScraper.ScrapeItems(args[1], args[2], Convert.ToBoolean(args[3]));
                 else if (args.Length == 2 && args[0].Equals("List-Duplicate-Names", StringComparison.InvariantCultureIgnoreCase))
                     WikiScraper.ListDuplicateNames(args[1]);
                 else

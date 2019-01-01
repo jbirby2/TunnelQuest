@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TunnelQuest.Data.Migrations
 {
-    public partial class CreateItemTables : Migration
+    public partial class CreateItemAndSpellTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,17 +28,6 @@ namespace TunnelQuest.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_deity", x => x.deity_name);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "effect",
-                columns: table => new
-                {
-                    effect_name = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_effect", x => x.effect_name);
                 });
 
             migrationBuilder.CreateTable(
@@ -87,6 +76,19 @@ namespace TunnelQuest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "spell",
+                columns: table => new
+                {
+                    spell_name = table.Column<string>(nullable: false),
+                    icon_file_name = table.Column<string>(nullable: true),
+                    description = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_spell", x => x.spell_name);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "weapon_skill",
                 columns: table => new
                 {
@@ -95,6 +97,73 @@ namespace TunnelQuest.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_weapon_skill", x => x.weapon_skill_code);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "spell_effect_detail",
+                columns: table => new
+                {
+                    spell_effect_detail_id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    spell_name = table.Column<string>(nullable: true),
+                    text = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_spell_effect_detail", x => x.spell_effect_detail_id);
+                    table.ForeignKey(
+                        name: "FK_spell_effect_detail_spell_spell_name",
+                        column: x => x.spell_name,
+                        principalTable: "spell",
+                        principalColumn: "spell_name",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "spell_requirement",
+                columns: table => new
+                {
+                    spell_requirement_id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    spell_name = table.Column<string>(nullable: true),
+                    class_code = table.Column<string>(nullable: true),
+                    required_level = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_spell_requirement", x => x.spell_requirement_id);
+                    table.ForeignKey(
+                        name: "FK_spell_requirement_class_class_code",
+                        column: x => x.class_code,
+                        principalTable: "class",
+                        principalColumn: "class_code",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_spell_requirement_spell_spell_name",
+                        column: x => x.spell_name,
+                        principalTable: "spell",
+                        principalColumn: "spell_name",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "spell_source",
+                columns: table => new
+                {
+                    spell_source_id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    spell_name = table.Column<string>(nullable: true),
+                    text = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_spell_source", x => x.spell_source_id);
+                    table.ForeignKey(
+                        name: "FK_spell_source_spell_spell_name",
+                        column: x => x.spell_name,
+                        principalTable: "spell",
+                        principalColumn: "spell_name",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -134,7 +203,7 @@ namespace TunnelQuest.Data.Migrations
                     stringed_modifier = table.Column<int>(nullable: true),
                     brass_modifier = table.Column<int>(nullable: true),
                     wind_modifier = table.Column<int>(nullable: true),
-                    effect_name = table.Column<string>(nullable: true),
+                    effect_spell_name = table.Column<string>(nullable: true),
                     effect_type_code = table.Column<string>(nullable: true),
                     effect_minimum_level = table.Column<int>(nullable: true),
                     effect_casting_time = table.Column<float>(nullable: true),
@@ -158,11 +227,11 @@ namespace TunnelQuest.Data.Migrations
                         principalColumn: "size_code",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_item_effect_effect_name",
-                        column: x => x.effect_name,
-                        principalTable: "effect",
-                        principalColumn: "effect_name",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_item_spell_effect_spell_name",
+                        column: x => x.effect_spell_name,
+                        principalTable: "spell",
+                        principalColumn: "spell_name",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_item_effect_type_effect_type_code",
                         column: x => x.effect_type_code,
@@ -313,9 +382,9 @@ namespace TunnelQuest.Data.Migrations
                 column: "capacity_size_code");
 
             migrationBuilder.CreateIndex(
-                name: "IX_item_effect_name",
+                name: "IX_item_effect_spell_name",
                 table: "item",
-                column: "effect_name");
+                column: "effect_spell_name");
 
             migrationBuilder.CreateIndex(
                 name: "IX_item_effect_type_code",
@@ -376,6 +445,26 @@ namespace TunnelQuest.Data.Migrations
                 name: "IX_item_slot_slot_code",
                 table: "item_slot",
                 column: "slot_code");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_spell_effect_detail_spell_name",
+                table: "spell_effect_detail",
+                column: "spell_name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_spell_requirement_class_code",
+                table: "spell_requirement",
+                column: "class_code");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_spell_requirement_spell_name",
+                table: "spell_requirement",
+                column: "spell_name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_spell_source_spell_name",
+                table: "spell_source",
+                column: "spell_name");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -396,7 +485,13 @@ namespace TunnelQuest.Data.Migrations
                 name: "item_slot");
 
             migrationBuilder.DropTable(
-                name: "class");
+                name: "spell_effect_detail");
+
+            migrationBuilder.DropTable(
+                name: "spell_requirement");
+
+            migrationBuilder.DropTable(
+                name: "spell_source");
 
             migrationBuilder.DropTable(
                 name: "deity");
@@ -411,10 +506,13 @@ namespace TunnelQuest.Data.Migrations
                 name: "slot");
 
             migrationBuilder.DropTable(
+                name: "class");
+
+            migrationBuilder.DropTable(
                 name: "size");
 
             migrationBuilder.DropTable(
-                name: "effect");
+                name: "spell");
 
             migrationBuilder.DropTable(
                 name: "effect_type");

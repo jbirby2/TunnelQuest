@@ -16,7 +16,7 @@ namespace TunnelQuest.Data.Models
         //private static readonly LoggerFactory consoleLoggerFactory = new LoggerFactory(new[] { new ConsoleLoggerProvider((_, __) => true, true) });
 
         public DbSet<Class> Classes { get; set; }
-        public DbSet<Effect> Effects { get; set; }
+        public DbSet<Spell> Spells { get; set; }
         public DbSet<EffectType> EffectTypes { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Race> Races { get; set; }
@@ -41,9 +41,9 @@ namespace TunnelQuest.Data.Models
             IConfigurationRoot configuration = builder.Build();
 
             optionsBuilder
-                .UseMySql(configuration.GetConnectionString("TunnelQuest"))
-                .EnableSensitiveDataLogging(true);
-            //.UseLoggerFactory(consoleLoggerFactory) // stub remove this
+                .UseMySql(configuration.GetConnectionString("TunnelQuest"));
+                //.EnableSensitiveDataLogging(true);
+                //.UseLoggerFactory(consoleLoggerFactory);
         }
     }
 }

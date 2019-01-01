@@ -117,12 +117,12 @@ namespace TunnelQuest.Data.Models
         [Column("wind_modifier")]
         public int? WindModifier { get; set; }
 
-        // effect
+        // spell effect
 
-        [ForeignKey("Effect")]
-        [Column("effect_name")]
-        public string EffectName { get; set; }
-        public Effect Effect { get; set; }
+        [ForeignKey("EffectSpell")]
+        [Column("effect_spell_name")]
+        public string EffectSpellName { get; set; }
+        public Spell EffectSpell { get; set; }
 
         [ForeignKey("EffectType")]
         [Column("effect_type_code")]

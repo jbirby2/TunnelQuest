@@ -9,16 +9,13 @@ namespace TunnelQuest.Data.Models
     [Table("item_race")]
     public class ItemRace
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("item_race_id")]
-        public int ItemRaceId { get; set; }
-
+        [Required]
         [ForeignKey("Item")]
         [Column("item_name")]
         public string ItemName { get; set; }
         public Item Item { get; set; }
 
+        [Required]
         [ForeignKey("Race")]
         [Column("race_code")]
         public string RaceCode { get; set; }

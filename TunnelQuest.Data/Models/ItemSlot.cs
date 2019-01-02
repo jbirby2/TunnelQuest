@@ -9,16 +9,13 @@ namespace TunnelQuest.Data.Models
     [Table("item_slot")]
     public class ItemSlot
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("item_slot_id")]
-        public int ItemSlotId { get; set; }
-
+        [Required]
         [ForeignKey("Item")]
         [Column("item_name")]
         public string ItemName { get; set; }
         public Item Item { get; set; }
 
+        [Required]
         [ForeignKey("Slot")]
         [Column("slot_code")]
         public string SlotCode { get; set; }

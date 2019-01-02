@@ -15,7 +15,8 @@ namespace TunnelQuest.Data.Migrations
         {
             using (var context = new TunnelQuestContext())
             {
-                // insert static data
+                insertServers(context);
+                insertAuthTokens(context);
                 insertClasses(context);
                 insertRaces(context);
                 insertSizes(context);
@@ -32,6 +33,8 @@ namespace TunnelQuest.Data.Migrations
         {
             using (var context = new TunnelQuestContext())
             {
+                deleteServers(context);
+                deleteAuthTokens(context);
                 deleteClasses(context);
                 deleteRaces(context);
                 deleteSizes(context);
@@ -46,6 +49,54 @@ namespace TunnelQuest.Data.Migrations
 
 
         // private helpers
+
+        #region server
+        private void insertServers(TunnelQuestContext context)
+        {
+            context.AddRange(getServers());
+        }
+
+        private void deleteServers(TunnelQuestContext context)
+        {
+            context.RemoveRange(getServers());
+        }
+
+        private IEnumerable<Server> getServers()
+        {
+            return new Server[] {
+                new Server() {
+                    ServerCode = ServerCodes.Blue,
+                    ServerName = "Project 1999"
+                },
+                new Server() {
+                    ServerCode = ServerCodes.Red,
+                    ServerName = "Project 1999 (Red Server)"
+                },
+            };
+        }
+        #endregion
+
+        #region auth_token
+        private void insertAuthTokens(TunnelQuestContext context)
+        {
+            context.AddRange(getAuthTokens());
+        }
+
+        private void deleteAuthTokens(TunnelQuestContext context)
+        {
+            context.RemoveRange(getAuthTokens());
+        }
+
+        private IEnumerable<AuthToken> getAuthTokens()
+        {
+            return new AuthToken[] {
+                new AuthToken() {
+                    TokenName = "default",
+                    Value = Guid.NewGuid().ToString()   // generate a different random token every time this is run
+                }
+            };
+        }
+        #endregion
 
         #region class
         private void insertClasses(TunnelQuestContext context)

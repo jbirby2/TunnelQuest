@@ -12,7 +12,8 @@ namespace TunnelQuest.Data.Models
         [Key]
         [Column("class_code")]
         public string ClassCode { get; set; }
-
+        
+        [Required]
         [Column("class_name")]
         public string ClassName { get; set; }
     }

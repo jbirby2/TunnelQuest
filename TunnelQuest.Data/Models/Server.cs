@@ -6,15 +6,15 @@ using System.Text;
 
 namespace TunnelQuest.Data.Models
 {
-    [Table("race")]
-    public class Race
+    [Table("server")]
+    public class Server
     {
         [Key]
-        [Column("race_code")]
-        public string RaceCode { get; set; }
-
+        [Column("server_code")]
+        public string ServerCode { get; set; }
+        
         [Required]
-        [Column("race_name")]
-        public string RaceName { get; set; }
+        [Column("server_name")]
+        public string ServerName { get; set; }
     }
 }

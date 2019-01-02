@@ -11,6 +11,11 @@ namespace TunnelQuest.Data.Migrations
 {
     public partial class InsertItemAndSpellData : Migration
     {
+        public static void STUB()
+        {
+            new InsertItemAndSpellData().Up(null);
+        }
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             try
@@ -28,9 +33,11 @@ namespace TunnelQuest.Data.Migrations
                 {
                     try
                     {
+                        // insert spells first
                         context.AddRange(allItemsAndSpells.Spells);
                         context.SaveChanges();
 
+                        // insert items second
                         context.AddRange(allItemsAndSpells.Items);
                         context.SaveChanges();
 
@@ -105,7 +112,7 @@ namespace TunnelQuest.Data.Migrations
             var wikiItems = itemFile.ReadFromEmbeddedResource();
             var items = parseWikiItems(wikiItems);
 
-            // Find any items whose effect is not a known spell, and artificially
+            // Find any item whose effect is not a known spell, and artificially
             // create an empty Spells entry for the item's effect
             var itemsWithUnknownSpellEffects = items.Where(item => item.EffectSpellName != null && spells.Where(spell => spell.SpellName.Equals(item.EffectSpellName, StringComparison.InvariantCultureIgnoreCase)).Count() == 0);
             foreach (var item in itemsWithUnknownSpellEffects)
@@ -155,12 +162,13 @@ namespace TunnelQuest.Data.Migrations
                 items.Add(spellScrollItem);
             }
 
-            return new AllItemsAndSpells() {
+            return new AllItemsAndSpells()
+            {
                 Items = items,
                 Spells = spells
             };
         }
-        
+
         private List<Spell> parseWikiSpells(IEnumerable<WikiSpellData> wikiData)
         {
             var wikiSpellsWithoutDuplicates = wikiData
@@ -174,14 +182,16 @@ namespace TunnelQuest.Data.Migrations
             {
                 try
                 {
-                    var nextSpell = new Spell() {
+                    var nextSpell = new Spell()
+                    {
                         SpellName = wikiSpell.Name.Replace("(spell)", "", StringComparison.InvariantCultureIgnoreCase).Trim(),
                         IconFileName = wikiSpell.IconFileName?.Trim(),
                         Description = wikiSpell.Description?.Trim()
                     };
                     foreach (var wikiReq in wikiSpell.Requirements)
                     {
-                        nextSpell.Requirements.Add(new SpellRequirement() {
+                        nextSpell.Requirements.Add(new SpellRequirement()
+                        {
                             SpellName = nextSpell.SpellName,
                             ClassCode = wikiReq.ClassCode,
                             RequiredLevel = wikiReq.Level

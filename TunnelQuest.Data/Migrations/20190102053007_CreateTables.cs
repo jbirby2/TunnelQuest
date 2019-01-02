@@ -1,18 +1,50 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TunnelQuest.Data.Migrations
 {
-    public partial class CreateItemAndSpellTables : Migration
+    public partial class CreateTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "auction",
+                columns: table => new
+                {
+                    auction_id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    item_name = table.Column<string>(nullable: false),
+                    is_buying = table.Column<bool>(nullable: false),
+                    price = table.Column<int>(nullable: true),
+                    is_price_negotiable = table.Column<bool>(nullable: false),
+                    is_accepting_trades = table.Column<bool>(nullable: false),
+                    created_at = table.Column<DateTime>(nullable: false),
+                    updated_at = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_auction", x => x.auction_id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "auth_token",
+                columns: table => new
+                {
+                    token_name = table.Column<string>(nullable: false),
+                    value = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_auth_token", x => x.token_name);
+                });
+
             migrationBuilder.CreateTable(
                 name: "class",
                 columns: table => new
                 {
                     class_code = table.Column<string>(nullable: false),
-                    class_name = table.Column<string>(nullable: true)
+                    class_name = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,11 +78,23 @@ namespace TunnelQuest.Data.Migrations
                 columns: table => new
                 {
                     race_code = table.Column<string>(nullable: false),
-                    race_name = table.Column<string>(nullable: true)
+                    race_name = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_race", x => x.race_code);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "server",
+                columns: table => new
+                {
+                    server_code = table.Column<string>(nullable: false),
+                    server_name = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_server", x => x.server_code);
                 });
 
             migrationBuilder.CreateTable(
@@ -100,13 +144,35 @@ namespace TunnelQuest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "chat_line",
+                columns: table => new
+                {
+                    chat_line_id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    server_code = table.Column<string>(nullable: false),
+                    player_name = table.Column<string>(nullable: false),
+                    text = table.Column<string>(nullable: false),
+                    sent_at = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_chat_line", x => x.chat_line_id);
+                    table.ForeignKey(
+                        name: "FK_chat_line_server_server_code",
+                        column: x => x.server_code,
+                        principalTable: "server",
+                        principalColumn: "server_code",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "spell_effect_detail",
                 columns: table => new
                 {
                     spell_effect_detail_id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    spell_name = table.Column<string>(nullable: true),
-                    text = table.Column<string>(nullable: true)
+                    spell_name = table.Column<string>(nullable: false),
+                    text = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,21 +189,19 @@ namespace TunnelQuest.Data.Migrations
                 name: "spell_requirement",
                 columns: table => new
                 {
-                    spell_requirement_id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    spell_name = table.Column<string>(nullable: true),
-                    class_code = table.Column<string>(nullable: true),
+                    spell_name = table.Column<string>(nullable: false),
+                    class_code = table.Column<string>(nullable: false),
                     required_level = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_spell_requirement", x => x.spell_requirement_id);
+                    table.PrimaryKey("PK_spell_requirement", x => new { x.spell_name, x.class_code });
                     table.ForeignKey(
                         name: "FK_spell_requirement_class_class_code",
                         column: x => x.class_code,
                         principalTable: "class",
                         principalColumn: "class_code",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_spell_requirement_spell_spell_name",
                         column: x => x.spell_name,
@@ -152,8 +216,8 @@ namespace TunnelQuest.Data.Migrations
                 {
                     spell_source_id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    spell_name = table.Column<string>(nullable: true),
-                    text = table.Column<string>(nullable: true)
+                    spell_name = table.Column<string>(nullable: false),
+                    text = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -231,7 +295,7 @@ namespace TunnelQuest.Data.Migrations
                         column: x => x.effect_spell_name,
                         principalTable: "spell",
                         principalColumn: "spell_name",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_item_effect_type_effect_type_code",
                         column: x => x.effect_type_code,
@@ -253,23 +317,45 @@ namespace TunnelQuest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "item_class",
+                name: "chat_line_auction",
                 columns: table => new
                 {
-                    item_class_id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    item_name = table.Column<string>(nullable: true),
-                    class_code = table.Column<string>(nullable: true)
+                    chat_line_id = table.Column<long>(nullable: false),
+                    auction_id = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_item_class", x => x.item_class_id);
+                    table.PrimaryKey("PK_chat_line_auction", x => new { x.chat_line_id, x.auction_id });
+                    table.ForeignKey(
+                        name: "FK_chat_line_auction_auction_auction_id",
+                        column: x => x.auction_id,
+                        principalTable: "auction",
+                        principalColumn: "auction_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_chat_line_auction_chat_line_chat_line_id",
+                        column: x => x.chat_line_id,
+                        principalTable: "chat_line",
+                        principalColumn: "chat_line_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "item_class",
+                columns: table => new
+                {
+                    item_name = table.Column<string>(nullable: false),
+                    class_code = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_item_class", x => new { x.item_name, x.class_code });
                     table.ForeignKey(
                         name: "FK_item_class_class_class_code",
                         column: x => x.class_code,
                         principalTable: "class",
                         principalColumn: "class_code",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_item_class_item_item_name",
                         column: x => x.item_name,
@@ -282,20 +368,18 @@ namespace TunnelQuest.Data.Migrations
                 name: "item_deity",
                 columns: table => new
                 {
-                    item_deity_id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    item_name = table.Column<string>(nullable: true),
-                    deity_name = table.Column<string>(nullable: true)
+                    item_name = table.Column<string>(nullable: false),
+                    deity_name = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_item_deity", x => x.item_deity_id);
+                    table.PrimaryKey("PK_item_deity", x => new { x.item_name, x.deity_name });
                     table.ForeignKey(
                         name: "FK_item_deity_deity_deity_name",
                         column: x => x.deity_name,
                         principalTable: "deity",
                         principalColumn: "deity_name",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_item_deity_item_item_name",
                         column: x => x.item_name,
@@ -310,8 +394,8 @@ namespace TunnelQuest.Data.Migrations
                 {
                     item_info_line_id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    item_name = table.Column<string>(nullable: true),
-                    text = table.Column<string>(nullable: true)
+                    item_name = table.Column<string>(nullable: false),
+                    text = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -328,14 +412,12 @@ namespace TunnelQuest.Data.Migrations
                 name: "item_race",
                 columns: table => new
                 {
-                    item_race_id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    item_name = table.Column<string>(nullable: true),
-                    race_code = table.Column<string>(nullable: true)
+                    item_name = table.Column<string>(nullable: false),
+                    race_code = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_item_race", x => x.item_race_id);
+                    table.PrimaryKey("PK_item_race", x => new { x.item_name, x.race_code });
                     table.ForeignKey(
                         name: "FK_item_race_item_item_name",
                         column: x => x.item_name,
@@ -347,21 +429,19 @@ namespace TunnelQuest.Data.Migrations
                         column: x => x.race_code,
                         principalTable: "race",
                         principalColumn: "race_code",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "item_slot",
                 columns: table => new
                 {
-                    item_slot_id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    item_name = table.Column<string>(nullable: true),
-                    slot_code = table.Column<string>(nullable: true)
+                    item_name = table.Column<string>(nullable: false),
+                    slot_code = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_item_slot", x => x.item_slot_id);
+                    table.PrimaryKey("PK_item_slot", x => new { x.item_name, x.slot_code });
                     table.ForeignKey(
                         name: "FK_item_slot_item_item_name",
                         column: x => x.item_name,
@@ -373,8 +453,43 @@ namespace TunnelQuest.Data.Migrations
                         column: x => x.slot_code,
                         principalTable: "slot",
                         principalColumn: "slot_code",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_auction_item_name",
+                table: "auction",
+                column: "item_name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_chat_line_server_code",
+                table: "chat_line",
+                column: "server_code");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_chat_line_server_code_player_name",
+                table: "chat_line",
+                columns: new[] { "server_code", "player_name" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_chat_line_server_code_sent_at",
+                table: "chat_line",
+                columns: new[] { "server_code", "sent_at" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_chat_line_server_code_player_name_sent_at",
+                table: "chat_line",
+                columns: new[] { "server_code", "player_name", "sent_at" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_chat_line_auction_auction_id",
+                table: "chat_line_auction",
+                column: "auction_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_chat_line_auction_chat_line_id",
+                table: "chat_line_auction",
+                column: "chat_line_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_item_capacity_size_code",
@@ -470,6 +585,12 @@ namespace TunnelQuest.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "auth_token");
+
+            migrationBuilder.DropTable(
+                name: "chat_line_auction");
+
+            migrationBuilder.DropTable(
                 name: "item_class");
 
             migrationBuilder.DropTable(
@@ -494,6 +615,12 @@ namespace TunnelQuest.Data.Migrations
                 name: "spell_source");
 
             migrationBuilder.DropTable(
+                name: "auction");
+
+            migrationBuilder.DropTable(
+                name: "chat_line");
+
+            migrationBuilder.DropTable(
                 name: "deity");
 
             migrationBuilder.DropTable(
@@ -507,6 +634,9 @@ namespace TunnelQuest.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "class");
+
+            migrationBuilder.DropTable(
+                name: "server");
 
             migrationBuilder.DropTable(
                 name: "size");

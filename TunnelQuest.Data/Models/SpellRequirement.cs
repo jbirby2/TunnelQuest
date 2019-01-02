@@ -9,16 +9,13 @@ namespace TunnelQuest.Data.Models
     [Table("spell_requirement")]
     public class SpellRequirement
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("spell_requirement_id")]
-        public int SpellRequirementId { get; set; }
-
+        [Required]
         [ForeignKey("Spell")]
         [Column("spell_name")]
         public string SpellName { get; set; }
         public Spell Spell { get; set; }
 
+        [Required]
         [ForeignKey("Class")]
         [Column("class_code")]
         public string ClassCode { get; set; }

@@ -2,7 +2,9 @@
 using System;
 using System.IO;
 using TunnelQuest.AppLogic;
+using TunnelQuest.Data;
 using TunnelQuest.Data.Migrations;
+using TunnelQuest.Data.Models;
 
 namespace TunnelQuest.DatabaseBuilder
 {
@@ -10,6 +12,15 @@ namespace TunnelQuest.DatabaseBuilder
     {
         static void Main(string[] args)
         {
+            //stub
+            using (var context = new TunnelQuestContext())
+            {
+                var chatLogic = new ChatLogic(context);
+                var result = chatLogic.ProcessLogLine(ServerCodes.Blue, @"[Mon Dec 17 22:38:00 2018] Frinop auctions, 'WTS Tiger Skin'");
+                var stub = 1;
+            }
+            return;
+
             try
             {
                 if (args.Length == 4 && args[0].Equals("Scrape", StringComparison.InvariantCultureIgnoreCase))

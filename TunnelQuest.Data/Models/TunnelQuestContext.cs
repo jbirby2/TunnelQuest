@@ -24,6 +24,12 @@ namespace TunnelQuest.Data.Models
         public DbSet<Slot> Slots { get; set; }
         public DbSet<WeaponSkill> WeaponSkills { get; set; }
         public DbSet<Deity> Deities { get; set; }
+        public DbSet<Server> Servers { get; set; }
+        public DbSet<ChatLine> ChatLines { get; set; }
+        public DbSet<ChatLineAuction> ChatLineAuctions { get; set; }
+        public DbSet<Auction> Auctions { get; set; }
+        public DbSet<AuthToken> AuthTokens { get; set; }
+        
 
         public TunnelQuestContext ()
             : base()
@@ -44,6 +50,62 @@ namespace TunnelQuest.Data.Models
                 .UseMySql(configuration.GetConnectionString("TunnelQuest"));
                 //.EnableSensitiveDataLogging(true);
                 //.UseLoggerFactory(consoleLoggerFactory);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+            // declare all the things like composite primary keys and indexes that we can't declare with model attributes
+
+
+            // item
+            modelBuilder.Entity<Item>().HasIndex(item => item.EffectSpellName);
+
+            // item_class
+            modelBuilder.Entity<ItemClass>().HasKey(ic => new { ic.ItemName, ic.ClassCode });
+            modelBuilder.Entity<ItemClass>().HasIndex(ic => ic.ItemName);
+
+            // item_race
+            modelBuilder.Entity<ItemRace>().HasKey(ir => new { ir.ItemName, ir.RaceCode });
+            modelBuilder.Entity<ItemRace>().HasIndex(ir => ir.ItemName);
+
+            // item_slot
+            modelBuilder.Entity<ItemSlot>().HasKey(slot => new { slot.ItemName, slot.SlotCode });
+            modelBuilder.Entity<ItemSlot>().HasIndex(slot => slot.ItemName);
+
+            // item_deity
+            modelBuilder.Entity<ItemDeity>().HasKey(id => new { id.ItemName, id.DeityName });
+            modelBuilder.Entity<ItemDeity>().HasIndex(id => id.ItemName);
+
+            // item_info_line
+            modelBuilder.Entity<ItemInfoLine>().HasIndex(ii => ii.ItemName);
+
+
+            // spell_effect_detail
+            modelBuilder.Entity<SpellEffectDetail>().HasIndex(sed => sed.SpellName);
+
+            // spell_requirement
+            modelBuilder.Entity<SpellRequirement>().HasKey(sr => new { sr.SpellName, sr.ClassCode });
+            modelBuilder.Entity<SpellRequirement>().HasIndex(sr => sr.SpellName);
+
+            // spell_source
+            modelBuilder.Entity<SpellSource>().HasIndex(ss => ss.SpellName);
+
+
+            // chat_line
+            modelBuilder.Entity<ChatLine>().HasIndex(line => line.ServerCode);
+            modelBuilder.Entity<ChatLine>().HasIndex(line => new { line.ServerCode, line.SentAt });
+            modelBuilder.Entity<ChatLine>().HasIndex(line => new { line.ServerCode, line.PlayerName });
+            modelBuilder.Entity<ChatLine>().HasIndex(line => new { line.ServerCode, line.PlayerName, line.SentAt });
+
+            // chat_line_auction
+            modelBuilder.Entity<ChatLineAuction>().HasKey(acl => new { acl.ChatLineId, acl.AuctionId });
+            modelBuilder.Entity<ChatLineAuction>().HasIndex(acl => acl.ChatLineId);
+            modelBuilder.Entity<ChatLineAuction>().HasIndex(acl => acl.AuctionId);
+
+            // auction
+            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ItemName });
         }
     }
 }

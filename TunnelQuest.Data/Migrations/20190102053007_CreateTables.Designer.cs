@@ -9,8 +9,8 @@ using TunnelQuest.Data.Models;
 namespace TunnelQuest.Data.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    [Migration("20181231045933_InsertItemAndSpellData")]
-    partial class InsertItemAndSpellData
+    [Migration("20190102053007_CreateTables")]
+    partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,6 +19,106 @@ namespace TunnelQuest.Data.Migrations
                 .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("TunnelQuest.Data.Models.Auction", b =>
+                {
+                    b.Property<long>("AuctionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("auction_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsAcceptingTrades")
+                        .HasColumnName("is_accepting_trades");
+
+                    b.Property<bool>("IsBuying")
+                        .HasColumnName("is_buying");
+
+                    b.Property<bool>("IsPriceNegotiable")
+                        .HasColumnName("is_price_negotiable");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasColumnName("item_name");
+
+                    b.Property<int?>("Price")
+                        .HasColumnName("price");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("AuctionId");
+
+                    b.HasIndex("ItemName");
+
+                    b.ToTable("auction");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.AuthToken", b =>
+                {
+                    b.Property<string>("TokenName")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("token_name");
+
+                    b.Property<string>("Value")
+                        .HasColumnName("value");
+
+                    b.HasKey("TokenName");
+
+                    b.ToTable("auth_token");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.ChatLine", b =>
+                {
+                    b.Property<long>("ChatLineId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("chat_line_id");
+
+                    b.Property<string>("PlayerName")
+                        .IsRequired()
+                        .HasColumnName("player_name");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnName("sent_at");
+
+                    b.Property<string>("ServerCode")
+                        .IsRequired()
+                        .HasColumnName("server_code");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnName("text");
+
+                    b.HasKey("ChatLineId");
+
+                    b.HasIndex("ServerCode");
+
+                    b.HasIndex("ServerCode", "PlayerName");
+
+                    b.HasIndex("ServerCode", "SentAt");
+
+                    b.HasIndex("ServerCode", "PlayerName", "SentAt");
+
+                    b.ToTable("chat_line");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.ChatLineAuction", b =>
+                {
+                    b.Property<long>("ChatLineId")
+                        .HasColumnName("chat_line_id");
+
+                    b.Property<long>("AuctionId")
+                        .HasColumnName("auction_id");
+
+                    b.HasKey("ChatLineId", "AuctionId");
+
+                    b.HasIndex("AuctionId");
+
+                    b.HasIndex("ChatLineId");
+
+                    b.ToTable("chat_line_auction");
+                });
+
             modelBuilder.Entity("TunnelQuest.Data.Models.Class", b =>
                 {
                     b.Property<string>("ClassCode")
@@ -26,6 +126,7 @@ namespace TunnelQuest.Data.Migrations
                         .HasColumnName("class_code");
 
                     b.Property<string>("ClassName")
+                        .IsRequired()
                         .HasColumnName("class_name");
 
                     b.HasKey("ClassCode");
@@ -213,17 +314,13 @@ namespace TunnelQuest.Data.Migrations
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemClass", b =>
                 {
-                    b.Property<int>("ItemClassId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("item_class_id");
+                    b.Property<string>("ItemName")
+                        .HasColumnName("item_name");
 
                     b.Property<string>("ClassCode")
                         .HasColumnName("class_code");
 
-                    b.Property<string>("ItemName")
-                        .HasColumnName("item_name");
-
-                    b.HasKey("ItemClassId");
+                    b.HasKey("ItemName", "ClassCode");
 
                     b.HasIndex("ClassCode");
 
@@ -234,17 +331,13 @@ namespace TunnelQuest.Data.Migrations
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemDeity", b =>
                 {
-                    b.Property<int>("ItemDeityId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("item_deity_id");
+                    b.Property<string>("ItemName")
+                        .HasColumnName("item_name");
 
                     b.Property<string>("DeityName")
                         .HasColumnName("deity_name");
 
-                    b.Property<string>("ItemName")
-                        .HasColumnName("item_name");
-
-                    b.HasKey("ItemDeityId");
+                    b.HasKey("ItemName", "DeityName");
 
                     b.HasIndex("DeityName");
 
@@ -260,9 +353,11 @@ namespace TunnelQuest.Data.Migrations
                         .HasColumnName("item_info_line_id");
 
                     b.Property<string>("ItemName")
+                        .IsRequired()
                         .HasColumnName("item_name");
 
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnName("text");
 
                     b.HasKey("ItemInfoLineId");
@@ -274,17 +369,13 @@ namespace TunnelQuest.Data.Migrations
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemRace", b =>
                 {
-                    b.Property<int>("ItemRaceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("item_race_id");
-
                     b.Property<string>("ItemName")
                         .HasColumnName("item_name");
 
                     b.Property<string>("RaceCode")
                         .HasColumnName("race_code");
 
-                    b.HasKey("ItemRaceId");
+                    b.HasKey("ItemName", "RaceCode");
 
                     b.HasIndex("ItemName");
 
@@ -295,17 +386,13 @@ namespace TunnelQuest.Data.Migrations
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemSlot", b =>
                 {
-                    b.Property<int>("ItemSlotId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("item_slot_id");
-
                     b.Property<string>("ItemName")
                         .HasColumnName("item_name");
 
                     b.Property<string>("SlotCode")
                         .HasColumnName("slot_code");
 
-                    b.HasKey("ItemSlotId");
+                    b.HasKey("ItemName", "SlotCode");
 
                     b.HasIndex("ItemName");
 
@@ -321,11 +408,27 @@ namespace TunnelQuest.Data.Migrations
                         .HasColumnName("race_code");
 
                     b.Property<string>("RaceName")
+                        .IsRequired()
                         .HasColumnName("race_name");
 
                     b.HasKey("RaceCode");
 
                     b.ToTable("race");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.Server", b =>
+                {
+                    b.Property<string>("ServerCode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("server_code");
+
+                    b.Property<string>("ServerName")
+                        .IsRequired()
+                        .HasColumnName("server_name");
+
+                    b.HasKey("ServerCode");
+
+                    b.ToTable("server");
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.Size", b =>
@@ -374,9 +477,11 @@ namespace TunnelQuest.Data.Migrations
                         .HasColumnName("spell_effect_detail_id");
 
                     b.Property<string>("SpellName")
+                        .IsRequired()
                         .HasColumnName("spell_name");
 
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnName("text");
 
                     b.HasKey("SpellRequirementId");
@@ -388,9 +493,8 @@ namespace TunnelQuest.Data.Migrations
 
             modelBuilder.Entity("TunnelQuest.Data.Models.SpellRequirement", b =>
                 {
-                    b.Property<int>("SpellRequirementId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("spell_requirement_id");
+                    b.Property<string>("SpellName")
+                        .HasColumnName("spell_name");
 
                     b.Property<string>("ClassCode")
                         .HasColumnName("class_code");
@@ -398,10 +502,7 @@ namespace TunnelQuest.Data.Migrations
                     b.Property<int>("RequiredLevel")
                         .HasColumnName("required_level");
 
-                    b.Property<string>("SpellName")
-                        .HasColumnName("spell_name");
-
-                    b.HasKey("SpellRequirementId");
+                    b.HasKey("SpellName", "ClassCode");
 
                     b.HasIndex("ClassCode");
 
@@ -417,9 +518,11 @@ namespace TunnelQuest.Data.Migrations
                         .HasColumnName("spell_source_id");
 
                     b.Property<string>("SpellName")
+                        .IsRequired()
                         .HasColumnName("spell_name");
 
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnName("text");
 
                     b.HasKey("SpellSourceId");
@@ -438,6 +541,27 @@ namespace TunnelQuest.Data.Migrations
                     b.HasKey("WeaponSkillCode");
 
                     b.ToTable("weapon_skill");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.ChatLine", b =>
+                {
+                    b.HasOne("TunnelQuest.Data.Models.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerCode")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.ChatLineAuction", b =>
+                {
+                    b.HasOne("TunnelQuest.Data.Models.Auction", "Auction")
+                        .WithMany("ChatLines")
+                        .HasForeignKey("AuctionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TunnelQuest.Data.Models.ChatLine", "ChatLine")
+                        .WithMany("Auctions")
+                        .HasForeignKey("ChatLineId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.Item", b =>
@@ -467,76 +591,89 @@ namespace TunnelQuest.Data.Migrations
                 {
                     b.HasOne("TunnelQuest.Data.Models.Class", "Class")
                         .WithMany()
-                        .HasForeignKey("ClassCode");
+                        .HasForeignKey("ClassCode")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TunnelQuest.Data.Models.Item", "Item")
                         .WithMany("Classes")
-                        .HasForeignKey("ItemName");
+                        .HasForeignKey("ItemName")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemDeity", b =>
                 {
                     b.HasOne("TunnelQuest.Data.Models.Deity", "Deity")
                         .WithMany()
-                        .HasForeignKey("DeityName");
+                        .HasForeignKey("DeityName")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TunnelQuest.Data.Models.Item", "Item")
                         .WithMany("Deities")
-                        .HasForeignKey("ItemName");
+                        .HasForeignKey("ItemName")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemInfoLine", b =>
                 {
                     b.HasOne("TunnelQuest.Data.Models.Item", "Item")
                         .WithMany("Info")
-                        .HasForeignKey("ItemName");
+                        .HasForeignKey("ItemName")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemRace", b =>
                 {
                     b.HasOne("TunnelQuest.Data.Models.Item", "Item")
                         .WithMany("Races")
-                        .HasForeignKey("ItemName");
+                        .HasForeignKey("ItemName")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TunnelQuest.Data.Models.Race", "Race")
                         .WithMany()
-                        .HasForeignKey("RaceCode");
+                        .HasForeignKey("RaceCode")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ItemSlot", b =>
                 {
                     b.HasOne("TunnelQuest.Data.Models.Item", "Item")
                         .WithMany("Slots")
-                        .HasForeignKey("ItemName");
+                        .HasForeignKey("ItemName")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TunnelQuest.Data.Models.Slot", "Slot")
                         .WithMany()
-                        .HasForeignKey("SlotCode");
+                        .HasForeignKey("SlotCode")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.SpellEffectDetail", b =>
                 {
                     b.HasOne("TunnelQuest.Data.Models.Spell", "Spell")
                         .WithMany("EffectDetails")
-                        .HasForeignKey("SpellName");
+                        .HasForeignKey("SpellName")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.SpellRequirement", b =>
                 {
                     b.HasOne("TunnelQuest.Data.Models.Class", "Class")
                         .WithMany()
-                        .HasForeignKey("ClassCode");
+                        .HasForeignKey("ClassCode")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TunnelQuest.Data.Models.Spell", "Spell")
                         .WithMany("Requirements")
-                        .HasForeignKey("SpellName");
+                        .HasForeignKey("SpellName")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.SpellSource", b =>
                 {
                     b.HasOne("TunnelQuest.Data.Models.Spell", "Spell")
                         .WithMany("Sources")
-                        .HasForeignKey("SpellName");
+                        .HasForeignKey("SpellName")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

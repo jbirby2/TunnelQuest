@@ -16,7 +16,7 @@ namespace TunnelQuest.DatabaseBuilder
             using (var context = new TunnelQuestContext())
             {
                 var chatLogic = new ChatLogic(context);
-                var result = chatLogic.ProcessLogLine(ServerCodes.Blue, @"[Mon Dec 17 22:38:00 2018] Frinop auctions, 'WTS Tiger Skin'");
+                var result = chatLogic.ProcessLogLine(ServerCodes.Blue, @"[Sun Dec 16 22:09:23 2018] Luluo auctions, 'WTS Velium Fire Wedding Ring 500 Spell: Celestial Healing 500 stub Velium Fire Wedding Ring stub Velium Fire Wedding Ring stub Nephrite 100 Kobold Jester's Crown 1000 Crystal Chitin Gauntlets 600 Golden Efreeti Boots 1100 Velium Fire Wedding Ring'");
                 var stub = 1;
             }
             return;

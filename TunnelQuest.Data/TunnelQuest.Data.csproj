@@ -10,6 +10,7 @@
     <Compile Remove="Migrations\20181229180238_asdf2.cs" />
     <Compile Remove="Migrations\20181229221134_InsertItemData.cs" />
     <Compile Remove="Migrations\20181229224537_asdf.cs" />
+    <Compile Remove="Migrations\20190103052938_asdf.cs" />
   </ItemGroup>
 
   <ItemGroup>

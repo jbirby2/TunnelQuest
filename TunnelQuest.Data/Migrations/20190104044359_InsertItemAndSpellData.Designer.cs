@@ -9,8 +9,8 @@ using TunnelQuest.Data.Models;
 namespace TunnelQuest.Data.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    [Migration("20190102053014_InsertStaticData")]
-    partial class InsertStaticData
+    [Migration("20190104044359_InsertItemAndSpellData")]
+    partial class InsertItemAndSpellData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -56,14 +56,19 @@ namespace TunnelQuest.Data.Migrations
 
             modelBuilder.Entity("TunnelQuest.Data.Models.AuthToken", b =>
                 {
-                    b.Property<string>("TokenName")
+                    b.Property<short>("AuthTokenId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("token_name");
+                        .HasColumnName("auth_token_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("name");
 
                     b.Property<string>("Value")
+                        .IsRequired()
                         .HasColumnName("value");
 
-                    b.HasKey("TokenName");
+                    b.HasKey("AuthTokenId");
 
                     b.ToTable("auth_token");
                 });
@@ -73,6 +78,9 @@ namespace TunnelQuest.Data.Migrations
                     b.Property<long>("ChatLineId")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("chat_line_id");
+
+                    b.Property<short>("AuthTokenId")
+                        .HasColumnName("auth_token_id");
 
                     b.Property<string>("PlayerName")
                         .IsRequired()
@@ -90,6 +98,8 @@ namespace TunnelQuest.Data.Migrations
                         .HasColumnName("text");
 
                     b.HasKey("ChatLineId");
+
+                    b.HasIndex("AuthTokenId");
 
                     b.HasIndex("ServerCode");
 
@@ -545,6 +555,11 @@ namespace TunnelQuest.Data.Migrations
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ChatLine", b =>
                 {
+                    b.HasOne("TunnelQuest.Data.Models.AuthToken", "AuthToken")
+                        .WithMany()
+                        .HasForeignKey("AuthTokenId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("TunnelQuest.Data.Models.Server", "Server")
                         .WithMany()
                         .HasForeignKey("ServerCode")

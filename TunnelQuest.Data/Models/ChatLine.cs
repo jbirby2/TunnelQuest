@@ -14,6 +14,11 @@ namespace TunnelQuest.Data.Models
         [Column("chat_line_id")]
         public long ChatLineId { get; set; }
 
+        [ForeignKey("AuthToken")]
+        [Column("auth_token_id")]
+        public short AuthTokenId { get; set; }
+        public AuthToken AuthToken { get; set; }
+
         [Required]
         [ForeignKey("Server")]
         [Column("server_code")]

@@ -10,9 +10,15 @@ namespace TunnelQuest.Data.Models
     public class AuthToken
     {
         [Key]
-        [Column("token_name")]
-        public string TokenName { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("auth_token_id")]
+        public short AuthTokenId { get; set; }
 
+        [Required]
+        [Column("name")]
+        public string Name { get; set; }
+
+        [Required]
         [Column("value")]
         public string Value { get; set; }
     }

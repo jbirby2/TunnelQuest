@@ -4,6 +4,7 @@ using System.Linq;
 using TunnelQuest.Data;
 using TunnelQuest.Data.Models;
 using System.Threading;
+using TunnelQuest.AppLogic.ChatSegments;
 
 namespace TunnelQuest.AppLogic
 {
@@ -11,6 +12,7 @@ namespace TunnelQuest.AppLogic
     {
         // static stuff
 
+        private static readonly Dictionary<string, short> tokenCache = new Dictionary<string, short>();
         private static readonly object CHAT_LINE_LOCK = new object();
         private static Node rootNode = new Node();
 
@@ -50,8 +52,11 @@ namespace TunnelQuest.AppLogic
             this.context = _context;
         }
 
-        public ChatLine ProcessLogLine(string serverCode, string logLine)
+        public ChatLine ProcessLogLine(string authTokenValue, string serverCode, string logLine)
         {
+            if (String.IsNullOrWhiteSpace(authTokenValue))
+                throw new Exception("authTokenValue cannot be empty");
+
             if (String.IsNullOrWhiteSpace(logLine))
                 throw new Exception("logLine cannot be empty");
 
@@ -59,9 +64,21 @@ namespace TunnelQuest.AppLogic
             if (String.IsNullOrWhiteSpace(serverCode))
                 throw new Exception("serverCode cannot be empty");
 
-            
+            if (!tokenCache.ContainsKey(authTokenValue))
+            {
+                short tokenId = (from token in context.AuthTokens
+                                 where token.Value == authTokenValue
+                                 select token.AuthTokenId).FirstOrDefault();
+
+                if (tokenId <= 0)
+                    throw new InvalidAuthTokenException();
+                else
+                    tokenCache[authTokenValue] = tokenId;
+            }
+
             var newChatLine = new ChatLine();
-            
+            newChatLine.AuthTokenId = tokenCache[authTokenValue];
+
             Monitor.Enter(CHAT_LINE_LOCK);
             try
             {
@@ -73,7 +90,7 @@ namespace TunnelQuest.AppLogic
 
                 // search for existing auctions to reuse instead, based on AuctionLogic
                 var auctionLogic = new AuctionLogic(context);
-                auctionLogic.ApplyNewAuctionRules(serverCode, parsedLine);
+                auctionLogic.ApplyAuctionRules(serverCode, parsedLine);
                 var finalAuctions = parsedLine.GetAuctions();
                 foreach (var auction in finalAuctions)
                 {
@@ -120,93 +137,69 @@ namespace TunnelQuest.AppLogic
 
         private ParsedChatLine parseChatLine(string logLine)
         {
-            string[] lineWords = logLine.Split(' ', StringSplitOptions.None);
+            string[] lineSegments = logLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-            if (lineWords.Length < 8 || lineWords[0][0] != '[' || lineWords[4][4] != ']' || lineWords[6] != "auctions,")
+            if (lineSegments.Length < 8 || lineSegments[0][0] != '[' || lineSegments[4][4] != ']' || lineSegments[6] != "auctions,")
                 throw new InvalidLogLineException(logLine);
 
-            string playerName = lineWords[5];
-            string playerTypedText = String.Join(' ', lineWords, 7, lineWords.Length - 7).Trim('\'');
+            string playerName = lineSegments[5];
+            string playerTypedText = String.Join(' ', lineSegments, 7, lineSegments.Length - 7).Trim('\'');
 
-            var parsedItemNames = parseItemNames(playerTypedText);
+            var segmentList = parseItemNames(playerTypedText);
 
-            // build wordList
-            var wordList = new List<ChatWord>();
-            string[] lineSplit = parsedItemNames.TokenizedText.Split(' ', StringSplitOptions.None);
-            foreach (string wordText in lineSplit)
+            // At this point, the only types of segments in segmentList are AuctionSegments and ChatSegments.  We want
+            // to loop through and attempt to replace each of the generic ChatSegments (which represent unknown text)
+            // with more specific Segments that represent data elements.
+            for (int i = 0; i < segmentList.Count; i++)
             {
-                if (wordText.StartsWith(AuctionWord.AUCTION_TOKEN))
+                var segment = segmentList[i];
+                if ((segment is AuctionSegment) == false)
                 {
-                    int itemNameIndex = Convert.ToInt32(wordText.Substring(AuctionWord.AUCTION_TOKEN.Length));
-                    wordList.Add(new ItemNameWord(parsedItemNames.ItemNames[itemNameIndex], itemNameIndex));
+                    ChatSegment parsedSegment = NumberSegment.TryParse(segment.Text);
+
+                    // STUB TO DO: more segment types here (wtb/wts segment, price segment, etc)
+
+                    if (parsedSegment != null)
+                        segmentList[i] = parsedSegment;
                 }
-                // STUB TO DO: more word types here (wtb/wts word, price word, etc)
-                else
-                    wordList.Add(new ChatWord(wordText));
             }
+
+
+            // STUB TO DO: build properties below for each AuctionSegment by examining previous and subsequent Segments
+            /*
+             * IsBuying = false,           // STUB
+                Price = 124,                // STUB
+                IsPriceNegotiable = false,  // STUB
+                IsAcceptingTrades = false,   // STUB
+            */
 
 
             // STUB TO DO - step through tokens and artificially add entries to itemNames for text that doesn't match known items.
-            // Do it here, last, after creating all other strongly typed Words, because we can use them for hints to deduce weak
-            // item names (i.e. anything between two PriceWords basically)
+            // Do it here, last, after creating all other strongly typed segments, because we can use them for hints to deduce weak
+            // item names (i.e. anything between two NumberSegments basically)
 
 
-            // build auctions
-            var auctions = new Dictionary<string, Auction>();
-            for (int i = 0; i < wordList.Count; i++)
-            {
-                if (wordList[i] is ItemNameWord)
-                {
-                    string itemName = wordList[i].Text;
-                    // if we find the same item name more than once, ignore it and only create an auction for the first occurence
-                    if (auctions.ContainsKey(itemName))
-                    {
-                        wordList[i] = new AuctionWord(auctions[itemName]);
-                       
-                    }
-                    else
-                    {
-                        // STUB TO DO: build properties below by examining previous and subsequent Words
-                        DateTime createdAt = DateTime.UtcNow;
-                        var newAuction = new Auction()
-                        {
-                            ItemName = itemName,
-                            IsBuying = false,           // STUB
-                            Price = 124,                // STUB
-                            IsPriceNegotiable = false,  // STUB
-                            IsAcceptingTrades = false,   // STUB
-                            CreatedAt = createdAt,
-                            UpdatedAt = createdAt
-                        };
-
-                        auctions.Add(itemName, newAuction);
-                        wordList[i] = new AuctionWord(newAuction);
-                    }
-                }
-            }
-
-            return new ParsedChatLine(playerName, wordList.ToArray());
+            return new ParsedChatLine(playerName, segmentList);
         }
 
-        private ParseItemNamesResult parseItemNames(string text)
+        private List<ChatSegment> parseItemNames(string playerTypedText)
         {
-            var result = new ParseItemNamesResult();
-            result.ItemNames = new List<string>();
-            result.TokenizedText = "";
+            var segmentList = new List<ChatSegment>();
 
             int searchStartIndex = 0;
-            while (searchStartIndex < text.Length)
+            string currentSegmentText = "";
+            while (searchStartIndex < playerTypedText.Length)
             {
                 Node prevNode = rootNode;
                 var nodesTraversed = new Stack<Node>();
                 int searchEndIndex = searchStartIndex;
 
                 // build nodesTraversed
-                while (searchEndIndex < text.Length)
+                while (searchEndIndex < playerTypedText.Length)
                 {
-                    if (prevNode.NextChars.ContainsKey(text[searchEndIndex]))
+                    if (prevNode.NextChars.ContainsKey(playerTypedText[searchEndIndex]))
                     {
-                        prevNode = prevNode.NextChars[text[searchEndIndex]];
+                        prevNode = prevNode.NextChars[playerTypedText[searchEndIndex]];
                         nodesTraversed.Push(prevNode);
                         searchEndIndex++;
                     }
@@ -215,37 +208,35 @@ namespace TunnelQuest.AppLogic
                 }
 
                 // now traverse backwards through nodesTraversed and find the deepest Node that had an itemName (if any)
-                int? foundNameIndex = null;
                 while (nodesTraversed.Count > 0)
                 {
                     var lastNode = nodesTraversed.Pop();
                     if (lastNode.ItemName != null)
                     {
-                        int existingItemNameIndex = result.ItemNames.IndexOf(lastNode.ItemName);
+                        segmentList.Add(new AuctionSegment(new Auction()
+                        {
+                            ItemName = lastNode.ItemName
+                        }));
 
-                        if (existingItemNameIndex < 0)
-                        {
-                            result.ItemNames.Add(lastNode.ItemName);
-                            foundNameIndex = result.ItemNames.Count - 1;
-                        }
-                        else
-                        {
-                            foundNameIndex = existingItemNameIndex;
-                        }
                         break;
                     }
                 }
 
-                int oldSearchStartIndex = searchStartIndex;
-                searchStartIndex += nodesTraversed.Count + 1;
+                if (nodesTraversed.Count == 0)
+                {
+                    if (playerTypedText[searchStartIndex] == ' ')
+                    {
+                        segmentList.Add(new ChatSegment(currentSegmentText));
+                        currentSegmentText = "";
+                    }
+                    else
+                        currentSegmentText += playerTypedText[searchStartIndex];
+                }
 
-                if (foundNameIndex != null)
-                    result.TokenizedText += AuctionWord.AUCTION_TOKEN + foundNameIndex.ToString();
-                else
-                    result.TokenizedText += text.Substring(oldSearchStartIndex, searchStartIndex - oldSearchStartIndex);
+                searchStartIndex += nodesTraversed.Count + 1;
             }
 
-            return result;
+            return segmentList;
         }
 
 
@@ -257,10 +248,5 @@ namespace TunnelQuest.AppLogic
             public Dictionary<char, Node> NextChars { get; } = new Dictionary<char, Node>();
         }
 
-        private class ParseItemNamesResult
-        {
-            public string TokenizedText { get; set; }
-            public List<string> ItemNames { get; set; }
-        }
     }
 }

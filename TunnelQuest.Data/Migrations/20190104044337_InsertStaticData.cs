@@ -91,7 +91,7 @@ namespace TunnelQuest.Data.Migrations
         {
             return new AuthToken[] {
                 new AuthToken() {
-                    TokenName = "default",
+                    Name = "default",
                     Value = Guid.NewGuid().ToString()   // generate a different random token every time this is run
                 }
             };

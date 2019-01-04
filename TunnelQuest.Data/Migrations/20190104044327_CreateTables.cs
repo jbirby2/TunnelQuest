@@ -31,12 +31,14 @@ namespace TunnelQuest.Data.Migrations
                 name: "auth_token",
                 columns: table => new
                 {
-                    token_name = table.Column<string>(nullable: false),
-                    value = table.Column<string>(nullable: true)
+                    auth_token_id = table.Column<short>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    name = table.Column<string>(nullable: false),
+                    value = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_auth_token", x => x.token_name);
+                    table.PrimaryKey("PK_auth_token", x => x.auth_token_id);
                 });
 
             migrationBuilder.CreateTable(
@@ -149,6 +151,7 @@ namespace TunnelQuest.Data.Migrations
                 {
                     chat_line_id = table.Column<long>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    auth_token_id = table.Column<short>(nullable: false),
                     server_code = table.Column<string>(nullable: false),
                     player_name = table.Column<string>(nullable: false),
                     text = table.Column<string>(nullable: false),
@@ -157,6 +160,12 @@ namespace TunnelQuest.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_chat_line", x => x.chat_line_id);
+                    table.ForeignKey(
+                        name: "FK_chat_line_auth_token_auth_token_id",
+                        column: x => x.auth_token_id,
+                        principalTable: "auth_token",
+                        principalColumn: "auth_token_id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_chat_line_server_server_code",
                         column: x => x.server_code,
@@ -462,6 +471,11 @@ namespace TunnelQuest.Data.Migrations
                 column: "item_name");
 
             migrationBuilder.CreateIndex(
+                name: "IX_chat_line_auth_token_id",
+                table: "chat_line",
+                column: "auth_token_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_chat_line_server_code",
                 table: "chat_line",
                 column: "server_code");
@@ -585,9 +599,6 @@ namespace TunnelQuest.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "auth_token");
-
-            migrationBuilder.DropTable(
                 name: "chat_line_auction");
 
             migrationBuilder.DropTable(
@@ -634,6 +645,9 @@ namespace TunnelQuest.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "class");
+
+            migrationBuilder.DropTable(
+                name: "auth_token");
 
             migrationBuilder.DropTable(
                 name: "server");

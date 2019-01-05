@@ -56,7 +56,7 @@ namespace TunnelQuest.AppLogic
                     pendingNewAuction.Price = null;
 
                 // See if there's an existing auction we should reuse instead of posting this new one.  If so, use it instead of the pending new auction.
-                Auction auctionToReuse = getReusableAuction(serverCode, parsedLine.PlayerName, pendingNewAuction);
+                Auction auctionToReuse = getReusableAuction(serverCode, parsedLine, pendingNewAuction);
                 if (auctionToReuse != null)
                     normalizedAuctions[itemName] = auctionToReuse;
             }
@@ -111,14 +111,14 @@ namespace TunnelQuest.AppLogic
         // Returns an Auction if there's an existing Auction which can be reused instead of pendingAuction, based on
         // the rules defined within the function.  If there is no existing auction that we want to reuse, then return
         // null.
-        private Auction getReusableAuction(string serverCode, string playerName, Auction pendingNewAuction)
+        private Auction getReusableAuction(string serverCode, ParsedChatLine parsedLine, Auction pendingNewAuction)
         {
             Auction lastAuctionBySamePlayerForSameItem = (from auction in context.Auctions
                                                           join chatLineAuction in context.ChatLineAuctions on auction.AuctionId equals chatLineAuction.AuctionId
                                                           join chatLine in context.ChatLines on chatLineAuction.ChatLineId equals chatLine.ChatLineId
                                                           where
                                                             chatLine.ServerCode == serverCode
-                                                            && chatLine.PlayerName == playerName
+                                                            && chatLine.PlayerName == parsedLine.PlayerName
                                                             && auction.ItemName == pendingNewAuction.ItemName
                                                           orderby auction.UpdatedAt descending
                                                           select auction).FirstOrDefault();
@@ -159,7 +159,7 @@ namespace TunnelQuest.AppLogic
                         // It hasn't been long enough since the last time this player created a new auction
                         // for this item: update the existing auction with the new values.
                         lastAuctionBySamePlayerForSameItem.CopyValuesFrom(pendingNewAuction);
-                        lastAuctionBySamePlayerForSameItem.UpdatedAt = DateTime.UtcNow;
+                        lastAuctionBySamePlayerForSameItem.UpdatedAt = parsedLine.Timestamp;
                         return lastAuctionBySamePlayerForSameItem;
                     }
                     else

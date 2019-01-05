@@ -28,8 +28,15 @@ namespace TunnelQuest.AppLogic
 
             string[] lineWords = logLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-            if (lineWords.Length < 8 || lineWords[0][0] != '[' || lineWords[4][4] != ']' || lineWords[6] != "auctions,")
+            try
+            {
+                if (lineWords.Length < 8 || lineWords[0][0] != '[' || lineWords[4][4] != ']' || lineWords[6] != "auctions,")
+                    throw new InvalidLogLineException(logLine);
+            }
+            catch (IndexOutOfRangeException)
+            {
                 throw new InvalidLogLineException(logLine);
+            }
 
             this.PlayerName = lineWords[5];
             this.PlayerTypedText = String.Join(' ', lineWords, 7, lineWords.Length - 7).Trim('\'');

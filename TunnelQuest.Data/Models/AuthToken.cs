@@ -21,5 +21,7 @@ namespace TunnelQuest.Data.Models
         [Required]
         [Column("value")]
         public string Value { get; set; }
+
+        // STUB TODO: add Status property (enum with values { Pending, Approved, Declined }
     }
 }

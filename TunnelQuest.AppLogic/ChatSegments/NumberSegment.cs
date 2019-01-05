@@ -4,15 +4,15 @@ using System.Text;
 
 namespace TunnelQuest.AppLogic.ChatSegments
 {
-    internal class NumberSegment : ChatSegment
+    internal class NumberSegment : BaseSegment
     {
         // static
 
-        public static NumberSegment TryParse(string text)
+        public static NumberSegment TryParse(ParsedChatLine parentLine, BaseSegment textSegment)
         {
             // assume a price starts with numbers, then ends with non-numeric characters (e.g. "200p", "10k", "10k!!!!!!!!~~~", etc)
             string numberString = "";
-            foreach (char chr in text)
+            foreach (char chr in textSegment.Text)
             {
                 if (Char.IsNumber(chr))
                     numberString += chr;
@@ -28,10 +28,10 @@ namespace TunnelQuest.AppLogic.ChatSegments
                 if (charsAfterNumber.Length > 0)
                 {
                     if (charsAfterNumber[0] == 'k' || charsAfterNumber[0] == 'K')
-                        price = price * 10;
+                        price = price * 1000;
                 }
 
-                return new NumberSegment(text, price);
+                return new NumberSegment(parentLine, textSegment.Text, price);
             }
             else
                 return null;
@@ -39,12 +39,13 @@ namespace TunnelQuest.AppLogic.ChatSegments
 
         // non-static
 
-        public int Price { get; private set; }
+        public int Number { get; private set; }
 
         // protected constructor so that these segments can only be created by calling TryParse()
-        protected NumberSegment(string text, int price)
-            : base(text)
+        protected NumberSegment(ParsedChatLine parentLine, string text, int number)
+            : base(parentLine, text)
         {
+            this.Number = number;
         }
     }
 }

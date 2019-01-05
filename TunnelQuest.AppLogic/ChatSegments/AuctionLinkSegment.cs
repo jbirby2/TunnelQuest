@@ -5,7 +5,11 @@ using TunnelQuest.Data.Models;
 
 namespace TunnelQuest.AppLogic.ChatSegments
 {
-    internal class AuctionSegment : ChatSegment
+    // Unlike all other segments, which preserve their original raw player-typed text, the entire purpose
+    // of AuctionLinkSegment is to REPLACE its original player-typed text (or actually in 99% of cases,
+    // the name of a player-linked item) with a special token string representing the item's AuctionId.
+
+    internal class AuctionLinkSegment : BaseSegment
     {
         // static
 
@@ -22,18 +26,17 @@ namespace TunnelQuest.AppLogic.ChatSegments
             {
                 if (value == null)
                     throw new Exception("Auction cannot be set null");
+
                 _Auction = value;
             }
         }
 
-        public AuctionSegment(Auction auction)
-            : base(null)
+        public AuctionLinkSegment(ParsedChatLine parentLine, Auction auction)
+            : base(parentLine, null)
         {
             this.Auction = auction;
         }
 
-        // Unlike other segments which preserve their original raw player-typed text, the AuctionSegments
-        // actually want to REPLACE the original player-typed text with a token that identifies the saved Auction record
         public override string Text
         {
             get

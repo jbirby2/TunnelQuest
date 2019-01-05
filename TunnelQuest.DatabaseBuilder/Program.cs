@@ -15,10 +15,10 @@ namespace TunnelQuest.DatabaseBuilder
             //stub
             using (var context = new TunnelQuestContext())
             {
-                string authToken = "6fbea464-0c63-4e0b-b756-03bf69a68675";
+                string authToken = "237d683f-bd5b-40c3-a068-2d685be717dd";
 
                 var chatLogic = new ChatLogic(context);
-                var result = chatLogic.ProcessLogLine(authToken, ServerCodes.Blue, @"[Sun Dec 16 22:09:23 2018] Luluo auctions, 'WTS Velium Fire Wedding RingSpell: Celestial HealingVelium Fire Wedding Ring stub Velium Fire Wedding Ring stub Nephrite 100 Kobold Jester's Crown 1000 Crystal Chitin Gauntlets 600 Golden Efreeti Boots 1100 Velium Fire Wedding Ring'");
+                var result = chatLogic.ProcessLogLine(authToken, ServerCodes.Blue, @"[Sun Dec 16 22:09:23 2018] Luluo auctions, 'WTS Velium Fire Wedding RingSpell: Celestial HealingVelium Fire Wedding Ring obo Velium Fire Wedding Ring 200 or best offer Nephrite 100 Kobold Jester's Crown 1000 Crystal Chitin Gauntlets 600 Golden Efreeti Boots 1100 Velium Fire Wedding Ring'");
                 var stub = 1;
             }
             return;

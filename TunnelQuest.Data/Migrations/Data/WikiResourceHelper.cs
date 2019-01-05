@@ -8,6 +8,10 @@ using System.Text;
 
 namespace TunnelQuest.Data.Migrations.Data
 {
+    // Helper class to wrap up the code for reading json files that are embedded into the DLL
+    // as Embedded Resources.  This is how the migration gets the data from the json files, so that
+    // the actual .json files themselves don't have to be published alongside the compiled executable files.
+
     public class WikiResourceHelper<T> : WikiJsonHelper<T> where T : WikiData
     {
         public string ResourceName { get; private set; }
@@ -19,8 +23,6 @@ namespace TunnelQuest.Data.Migrations.Data
             this.CorrectionsResourceName = correctionsResourceName;
         }
 
-        // This function is called by the migration code, so that it doesn't have to rely on the json file
-        // being physically present at runtime
         public List<T> ReadFromEmbeddedResource()
         {
             string json;

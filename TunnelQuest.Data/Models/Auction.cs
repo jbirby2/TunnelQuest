@@ -26,8 +26,8 @@ namespace TunnelQuest.Data.Models
         [Column("price")]
         public int? Price { get; set; }
 
-        [Column("is_price_negotiable")]
-        public bool IsPriceNegotiable { get; set; } // "OBO"
+        [Column("is_or_best_offer")]
+        public bool IsOrBestOffer { get; set; } // "OBO"
 
         [Column("is_accepting_trades")]
         public bool IsAcceptingTrades { get; set; } // "WTT", "WTTF"
@@ -56,7 +56,7 @@ namespace TunnelQuest.Data.Models
             return (this.IsBuying == auction.IsBuying
                 && this.ItemName == auction.ItemName
                 && this.Price == auction.Price
-                && this.IsPriceNegotiable == auction.IsPriceNegotiable
+                && this.IsOrBestOffer == auction.IsOrBestOffer
                 && this.IsAcceptingTrades == auction.IsAcceptingTrades);
         }
 
@@ -65,7 +65,7 @@ namespace TunnelQuest.Data.Models
             this.IsBuying = auction.IsBuying;
             this.ItemName = auction.ItemName;
             this.Price = auction.Price;
-            this.IsPriceNegotiable = auction.IsPriceNegotiable;
+            this.IsOrBestOffer = auction.IsOrBestOffer;
             this.IsAcceptingTrades = auction.IsAcceptingTrades;
         }
     }

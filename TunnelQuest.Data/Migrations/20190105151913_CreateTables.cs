@@ -17,7 +17,7 @@ namespace TunnelQuest.Data.Migrations
                     item_name = table.Column<string>(nullable: false),
                     is_buying = table.Column<bool>(nullable: false),
                     price = table.Column<int>(nullable: true),
-                    is_price_negotiable = table.Column<bool>(nullable: false),
+                    is_or_best_offer = table.Column<bool>(nullable: false),
                     is_accepting_trades = table.Column<bool>(nullable: false),
                     created_at = table.Column<DateTime>(nullable: false),
                     updated_at = table.Column<DateTime>(nullable: false)

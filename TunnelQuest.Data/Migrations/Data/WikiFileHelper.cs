@@ -8,6 +8,9 @@ using System.Text;
 
 namespace TunnelQuest.Data.Migrations.Data
 {
+    // Helper class to wrap up the code for reading/writing the json files that contain the scraped
+    // wiki data (and any manual corrections).
+
     public class WikiFileHelper<T> : WikiJsonHelper<T> where T : WikiData
     {
         public string FilePath { get; private set;}

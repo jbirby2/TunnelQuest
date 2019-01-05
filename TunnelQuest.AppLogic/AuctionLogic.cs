@@ -35,9 +35,9 @@ namespace TunnelQuest.AppLogic
             var normalizedAuctions = new Dictionary<string, Auction>();
             foreach (var segment in parsedLine.Segments)
             {
-                if (segment is AuctionSegment)
+                if (segment is AuctionLinkSegment)
                 {
-                    var auctionSegment = (AuctionSegment)segment;
+                    var auctionSegment = (AuctionLinkSegment)segment;
                     if (normalizedAuctions.ContainsKey(auctionSegment.Auction.ItemName))
                         normalizedAuctions[auctionSegment.Auction.ItemName] = whichAuctionIsMoreComplete(auctionSegment.Auction, normalizedAuctions[auctionSegment.Auction.ItemName]);
                     else
@@ -64,9 +64,9 @@ namespace TunnelQuest.AppLogic
             // Lastly, go back through the chat segments and make them all point at the correct Auction objects
             foreach (var chatSegment in parsedLine.Segments)
             {
-                if (chatSegment is AuctionSegment)
+                if (chatSegment is AuctionLinkSegment)
                 {
-                    var auctionSegment = (AuctionSegment)chatSegment;
+                    var auctionSegment = (AuctionLinkSegment)chatSegment;
                     auctionSegment.Auction = normalizedAuctions[auctionSegment.Auction.ItemName];
                 }
             }
@@ -85,9 +85,9 @@ namespace TunnelQuest.AppLogic
             else if (auction1.IsAcceptingTrades == false && auction2.IsAcceptingTrades == true)
                 a2Score++;
 
-            if (auction1.IsPriceNegotiable == true && auction2.IsPriceNegotiable == false)
+            if (auction1.IsOrBestOffer == true && auction2.IsOrBestOffer == false)
                 a1Score++;
-            else if (auction1.IsPriceNegotiable == false && auction2.IsPriceNegotiable == true)
+            else if (auction1.IsOrBestOffer == false && auction2.IsOrBestOffer == true)
                 a2Score++;
 
             if (auction1.Price != null && auction2.Price == null)

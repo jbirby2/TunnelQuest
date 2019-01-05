@@ -86,7 +86,7 @@ namespace TunnelQuest.AppLogic
 
                 var parsedLine = parseChatLine(logLine);
                 newChatLine.PlayerName = parsedLine.PlayerName;
-                newChatLine.SentAt = DateTime.UtcNow;  // completely ignore the timestamp in the beginning of logLine, because the client device's internal clock could be wrong
+                newChatLine.SentAt = parsedLine.Timestamp;  // completely ignore the timestamp in the beginning of logLine, because the client device's internal clock could be wrong
 
                 // search for existing auctions to reuse instead, based on AuctionLogic
                 var auctionLogic = new AuctionLogic(context);
@@ -137,37 +137,43 @@ namespace TunnelQuest.AppLogic
 
         private ParsedChatLine parseChatLine(string logLine)
         {
-            string[] lineSegments = logLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            // stub here!
+            var parsedLine = new ParsedChatLine(logLine);
 
-            if (lineSegments.Length < 8 || lineSegments[0][0] != '[' || lineSegments[4][4] != ']' || lineSegments[6] != "auctions,")
-                throw new InvalidLogLineException(logLine);
-
-            string playerName = lineSegments[5];
-            string playerTypedText = String.Join(' ', lineSegments, 7, lineSegments.Length - 7).Trim('\'');
-
-            var segmentList = parseItemNames(playerTypedText);
+            parseItemNames(parsedLine);
 
             // At this point, the only types of segments in segmentList are AuctionSegments and ChatSegments.  We want
             // to loop through and attempt to replace each of the generic ChatSegments (which represent unknown text)
             // with more specific Segments that represent data elements.
-            for (int i = 0; i < segmentList.Count; i++)
+            for (int i = 0; i < parsedLine.Segments.Count; i++)
             {
-                var segment = segmentList[i];
-                if ((segment is AuctionSegment) == false)
+                var segment = parsedLine.Segments[i];
+                if (segment.GetType() == typeof(BaseSegment))
                 {
-                    ChatSegment parsedSegment = NumberSegment.TryParse(segment.Text);
+                    BaseSegment parsedSegment = NumberSegment.TryParse(parsedLine, segment);
 
-                    // STUB TO DO: more segment types here (wtb/wts segment, price segment, etc)
+                    if (parsedSegment == null)
+                        parsedSegment = BuySellTradeSegment.TryParse(parsedLine, segment);
+
+                    if (parsedSegment == null)
+                        parsedSegment = OrBestOfferSegment.TryParse(parsedLine, segment);
 
                     if (parsedSegment != null)
-                        segmentList[i] = parsedSegment;
+                        parsedLine.Segments[i] = parsedSegment;
                 }
+            }
+
+            // Now that we've parsed all the segments that we can recognize, loop through them again and
+            // use their values to update the Auction objects
+            for (int i = 0; i < parsedLine.Segments.Count; i++)
+            {
+
             }
 
 
             // STUB TO DO: build properties below for each AuctionSegment by examining previous and subsequent Segments
             /*
-             * IsBuying = false,           // STUB
+                * IsBuying = false,           // STUB
                 Price = 124,                // STUB
                 IsPriceNegotiable = false,  // STUB
                 IsAcceptingTrades = false,   // STUB
@@ -178,28 +184,25 @@ namespace TunnelQuest.AppLogic
             // Do it here, last, after creating all other strongly typed segments, because we can use them for hints to deduce weak
             // item names (i.e. anything between two NumberSegments basically)
 
-
-            return new ParsedChatLine(playerName, segmentList);
+            return parsedLine;
         }
 
-        private List<ChatSegment> parseItemNames(string playerTypedText)
+        private void parseItemNames(ParsedChatLine parsedLine)
         {
-            var segmentList = new List<ChatSegment>();
-
             int searchStartIndex = 0;
             string currentSegmentText = "";
-            while (searchStartIndex < playerTypedText.Length)
+            while (searchStartIndex < parsedLine.PlayerTypedText.Length)
             {
                 Node prevNode = rootNode;
                 var nodesTraversed = new Stack<Node>();
                 int searchEndIndex = searchStartIndex;
 
                 // build nodesTraversed
-                while (searchEndIndex < playerTypedText.Length)
+                while (searchEndIndex < parsedLine.PlayerTypedText.Length)
                 {
-                    if (prevNode.NextChars.ContainsKey(playerTypedText[searchEndIndex]))
+                    if (prevNode.NextChars.ContainsKey(parsedLine.PlayerTypedText[searchEndIndex]))
                     {
-                        prevNode = prevNode.NextChars[playerTypedText[searchEndIndex]];
+                        prevNode = prevNode.NextChars[parsedLine.PlayerTypedText[searchEndIndex]];
                         nodesTraversed.Push(prevNode);
                         searchEndIndex++;
                     }
@@ -213,9 +216,11 @@ namespace TunnelQuest.AppLogic
                     var lastNode = nodesTraversed.Pop();
                     if (lastNode.ItemName != null)
                     {
-                        segmentList.Add(new AuctionSegment(new Auction()
+                        parsedLine.Segments.Add(new AuctionLinkSegment(parsedLine, new Auction()
                         {
-                            ItemName = lastNode.ItemName
+                            ItemName = lastNode.ItemName,
+                            CreatedAt = parsedLine.Timestamp,
+                            UpdatedAt = parsedLine.Timestamp
                         }));
 
                         break;
@@ -224,19 +229,17 @@ namespace TunnelQuest.AppLogic
 
                 if (nodesTraversed.Count == 0)
                 {
-                    if (playerTypedText[searchStartIndex] == ' ')
+                    if (parsedLine.PlayerTypedText[searchStartIndex] == ' ')
                     {
-                        segmentList.Add(new ChatSegment(currentSegmentText));
+                        parsedLine.Segments.Add(new BaseSegment(parsedLine, currentSegmentText));
                         currentSegmentText = "";
                     }
                     else
-                        currentSegmentText += playerTypedText[searchStartIndex];
+                        currentSegmentText += parsedLine.PlayerTypedText[searchStartIndex];
                 }
 
                 searchStartIndex += nodesTraversed.Count + 1;
             }
-
-            return segmentList;
         }
 
 

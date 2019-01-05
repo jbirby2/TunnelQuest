@@ -11,10 +11,8 @@ namespace TunnelQuest.Data.Migrations
 {
     public partial class InsertItemAndSpellData : Migration
     {
-        public static void STUB()
-        {
-            new InsertItemAndSpellData().Up(null);
-        }
+        // This is the big ugly migration that contains all the logic for parsing the scraped wiki data 
+        // in the json files and inserting the database rows for items and spells.
 
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -100,7 +98,7 @@ namespace TunnelQuest.Data.Migrations
         }
 
 
-        // private helpers
+        // private
 
         private AllItemsAndSpells getAllItemsAndSpells()
         {

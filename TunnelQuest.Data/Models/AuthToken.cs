@@ -22,6 +22,10 @@ namespace TunnelQuest.Data.Models
         [Column("value")]
         public string Value { get; set; }
 
-        // STUB TODO: add Status property (enum with values { Pending, Approved, Declined }
+        [Required]
+        [ForeignKey("AuthTokenStatus")]
+        [Column("auth_token_status_code")]
+        public string AuthTokenStatusCode { get; set; }
+        public AuthTokenStatus AuthTokenStatus { get; set; }
     }
 }

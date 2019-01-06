@@ -5,6 +5,7 @@ using TunnelQuest.Data;
 using TunnelQuest.Data.Models;
 using System.Threading;
 using TunnelQuest.AppLogic.ChatSegments;
+using System.Runtime.Caching;
 
 namespace TunnelQuest.AppLogic
 {
@@ -14,33 +15,9 @@ namespace TunnelQuest.AppLogic
 
         private static readonly Dictionary<string, short> tokenCache = new Dictionary<string, short>();
         private static readonly object CHAT_LINE_LOCK = new object();
-        private static Node rootNode = new Node();
-
-        // static constructor pulls a list of every item name and builds a big tree of letter paths for every possible name
-        static ChatLogic()
-        {
-            IEnumerable<string> itemNames;
-            using (var context = new TunnelQuestContext())
-            {
-                itemNames = (from item in context.Items
-                             orderby item.ItemName
-                             select item.ItemName).ToArray();
-            }
-
-            foreach (string name in itemNames)
-            {
-                Node currentNode = rootNode;
-                foreach (char letter in name)
-                {
-                    if (!currentNode.NextChars.ContainsKey(letter))
-                        currentNode.NextChars[letter] = new Node();
-                    currentNode = currentNode.NextChars[letter];
-                }
-                currentNode.ItemName = name;
-            }
-        }
-
-
+        private static readonly TimeSpan DUPLICATE_LINE_FILTER_THRESHOLD = TimeSpan.FromSeconds(10);
+        
+        
         // non-static stuff
 
         private TunnelQuestContext context;
@@ -52,7 +29,7 @@ namespace TunnelQuest.AppLogic
             this.context = _context;
         }
 
-        public ChatLine ProcessLogLine(string authTokenValue, string serverCode, string logLine)
+        public void ProcessLogLine(string authTokenValue, string serverCode, string logLine)
         {
             if (String.IsNullOrWhiteSpace(authTokenValue))
                 throw new Exception("authTokenValue cannot be empty");
@@ -64,35 +41,93 @@ namespace TunnelQuest.AppLogic
             if (String.IsNullOrWhiteSpace(serverCode))
                 throw new Exception("serverCode cannot be empty");
 
-            if (!tokenCache.ContainsKey(authTokenValue))
-            {
-                short tokenId = (from token in context.AuthTokens
-                                 where token.Value == authTokenValue
-                                 select token.AuthTokenId).FirstOrDefault();
+            string[] lineWords = logLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                if (tokenId <= 0)
-                    throw new InvalidAuthTokenException();
-                else
-                    tokenCache[authTokenValue] = tokenId;
+            try
+            {
+                if (lineWords.Length < 8 || lineWords[0][0] != '[' || lineWords[4][4] != ']' || lineWords[6] != "auctions,")
+                    throw new InvalidLogLineException(logLine);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                throw new InvalidLogLineException(logLine);
             }
 
-            var newChatLine = new ChatLine();
-            newChatLine.AuthTokenId = tokenCache[authTokenValue];
+            string logLineWithoutTimestamp = logLine.Substring(27);
+            string playerName = lineWords[5];
+            string playerTypedText = String.Join(' ', lineWords, 7, lineWords.Length - 7).Trim('\'');
 
             Monitor.Enter(CHAT_LINE_LOCK);
             try
             {
+                short authTokenId;
+                if (!tokenCache.ContainsKey(authTokenValue))
+                {
+                    authTokenId = (from token in context.AuthTokens
+                                   where token.Value == authTokenValue && token.AuthTokenStatusCode == AuthTokenStatusCodes.Approved
+                                   select token.AuthTokenId).FirstOrDefault();
+
+                    if (authTokenId <= 0)
+                        throw new InvalidAuthTokenException();
+                    else
+                        tokenCache[authTokenValue] = authTokenId;
+                }
+                else
+                    authTokenId = tokenCache[authTokenValue];
+
+                var newChatLine = new ChatLine();
+                newChatLine.AuthTokenId = tokenCache[authTokenValue];
                 newChatLine.ServerCode = serverCode;
+                newChatLine.PlayerName = playerName;
+                newChatLine.SentAt = DateTime.UtcNow;  // completely ignore the timestamp in the beginning of logLine, because the client device's internal clock could be wrong
 
-                var parsedLine = parseChatLine(logLine);
-                newChatLine.PlayerName = parsedLine.PlayerName;
-                newChatLine.SentAt = parsedLine.Timestamp;  // completely ignore the timestamp in the beginning of logLine, because the client device's internal clock could be wrong
+                ParsedChatLine parsedLine;
+                string cacheKey = serverCode + logLineWithoutTimestamp;
+                var cachedLine = (CachedLine)MemoryCache.Default[cacheKey];
+                if (cachedLine == null)
+                {
+                    parsedLine = new ParsedChatLine(playerTypedText, context, newChatLine.SentAt);
+                }
+                else
+                {
+                    // Kill two birds with one stone:
+                    //  1. prevent the same line being posted by multiple TunnelWatchers
+                    //  2. prevent excessive spam of duplicate lines (probably not really necessary but 1. definitely is)
+                    if ((DateTime.UtcNow - cachedLine.Timestamp) < DUPLICATE_LINE_FILTER_THRESHOLD)
+                        return;
 
-                // search for existing auctions to reuse instead, based on AuctionLogic
+                    parsedLine = cachedLine.ParsedLine;
+
+                    // create new Auction objects instead of reusing the Auction objects that were previously saved to database,
+                    // just to be sure there's no unexpected entity framework behavior
+                    var recreatedAuctions = new Dictionary<string, Auction>();
+                    foreach (var segment in parsedLine.Segments)
+                    {
+                        if (segment is AuctionLinkSegment)
+                        {
+                            var auctionSegment = (AuctionLinkSegment)segment;
+                            if (!recreatedAuctions.ContainsKey(auctionSegment.Auction.ItemName))
+                                recreatedAuctions.Add(auctionSegment.Auction.ItemName, new Auction(auctionSegment.Auction, newChatLine.SentAt));
+                            auctionSegment.Auction = recreatedAuctions[auctionSegment.Auction.ItemName];
+                        }
+                    }
+                }
+
+                // apply AuctionLogic
                 var auctionLogic = new AuctionLogic(context);
-                auctionLogic.ApplyAuctionRules(serverCode, parsedLine);
-                var finalAuctions = parsedLine.GetAuctions();
-                foreach (var auction in finalAuctions)
+                var normalizedAuctions = auctionLogic.GetNormalizedAuctions(serverCode, playerName, newChatLine.SentAt, parsedLine.GetAuctions());
+
+                // go back through the chat segments and make them all point at the correct Auction objects
+                foreach (var chatSegment in parsedLine.Segments)
+                {
+                    if (chatSegment is AuctionLinkSegment)
+                    {
+                        var auctionSegment = (AuctionLinkSegment)chatSegment;
+                        auctionSegment.Auction = normalizedAuctions[auctionSegment.Auction.ItemName];
+                    }
+                }
+
+                foreach (var auction in normalizedAuctions.Values)
                 {
                     newChatLine.Auctions.Add(new ChatLineAuction()
                     {
@@ -106,7 +141,7 @@ namespace TunnelQuest.AppLogic
                 {
                     try
                     {
-                        context.AddRange(finalAuctions.Where(auction => auction.AuctionId == 0));
+                        context.AddRange(normalizedAuctions.Values.Where(auction => auction.AuctionId <= 0));
                         context.SaveChanges();
 
                         // Now that we've saved the auctions to the database and populated the Auction objects
@@ -123,133 +158,32 @@ namespace TunnelQuest.AppLogic
                         throw;
                     }
                 }
+
+                MemoryCache.Default.Set(cacheKey, new CachedLine()
+                {
+                    AuthTokenId = authTokenId,
+                    PlayerName = playerName,
+                    ServerCode = serverCode,
+                    Timestamp = newChatLine.SentAt,
+                    ParsedLine = parsedLine
+                }, DateTimeOffset.Now.AddMinutes(10));
             }
             finally
             {
                 Monitor.Exit(CHAT_LINE_LOCK);
             }
-            
-            return newChatLine;
         }
 
 
-        // private
+        // private helper class
 
-        private ParsedChatLine parseChatLine(string logLine)
+        private class CachedLine
         {
-            // stub here!
-            var parsedLine = new ParsedChatLine(logLine);
-
-            parseItemNames(parsedLine);
-
-            // At this point, the only types of segments in segmentList are AuctionSegments and ChatSegments.  We want
-            // to loop through and attempt to replace each of the generic ChatSegments (which represent unknown text)
-            // with more specific Segments that represent data elements.
-            for (int i = 0; i < parsedLine.Segments.Count; i++)
-            {
-                var segment = parsedLine.Segments[i];
-                if (segment.GetType() == typeof(BaseSegment))
-                {
-                    BaseSegment parsedSegment = NumberSegment.TryParse(parsedLine, segment);
-
-                    if (parsedSegment == null)
-                        parsedSegment = BuySellTradeSegment.TryParse(parsedLine, segment);
-
-                    if (parsedSegment == null)
-                        parsedSegment = OrBestOfferSegment.TryParse(parsedLine, segment);
-
-                    if (parsedSegment != null)
-                        parsedLine.Segments[i] = parsedSegment;
-                }
-            }
-
-            // Now that we've parsed all the segments that we can recognize, loop through them again and
-            // use their values to update the Auction objects
-            for (int i = 0; i < parsedLine.Segments.Count; i++)
-            {
-
-            }
-
-
-            // STUB TO DO: build properties below for each AuctionSegment by examining previous and subsequent Segments
-            /*
-                * IsBuying = false,           // STUB
-                Price = 124,                // STUB
-                IsPriceNegotiable = false,  // STUB
-                IsAcceptingTrades = false,   // STUB
-            */
-
-
-            // STUB TO DO - step through tokens and artificially add entries to itemNames for text that doesn't match known items.
-            // Do it here, last, after creating all other strongly typed segments, because we can use them for hints to deduce weak
-            // item names (i.e. anything between two NumberSegments basically)
-
-            return parsedLine;
+            public int AuthTokenId { get; set; }
+            public string PlayerName { get; set; }
+            public string ServerCode { get; set; }
+            public DateTime Timestamp { get; set; }
+            public ParsedChatLine ParsedLine { get; set; }
         }
-
-        private void parseItemNames(ParsedChatLine parsedLine)
-        {
-            int searchStartIndex = 0;
-            string currentSegmentText = "";
-            while (searchStartIndex < parsedLine.PlayerTypedText.Length)
-            {
-                Node prevNode = rootNode;
-                var nodesTraversed = new Stack<Node>();
-                int searchEndIndex = searchStartIndex;
-
-                // build nodesTraversed
-                while (searchEndIndex < parsedLine.PlayerTypedText.Length)
-                {
-                    if (prevNode.NextChars.ContainsKey(parsedLine.PlayerTypedText[searchEndIndex]))
-                    {
-                        prevNode = prevNode.NextChars[parsedLine.PlayerTypedText[searchEndIndex]];
-                        nodesTraversed.Push(prevNode);
-                        searchEndIndex++;
-                    }
-                    else
-                        break;
-                }
-
-                // now traverse backwards through nodesTraversed and find the deepest Node that had an itemName (if any)
-                while (nodesTraversed.Count > 0)
-                {
-                    var lastNode = nodesTraversed.Pop();
-                    if (lastNode.ItemName != null)
-                    {
-                        parsedLine.Segments.Add(new AuctionLinkSegment(parsedLine, new Auction()
-                        {
-                            ItemName = lastNode.ItemName,
-                            CreatedAt = parsedLine.Timestamp,
-                            UpdatedAt = parsedLine.Timestamp
-                        }));
-
-                        break;
-                    }
-                }
-
-                if (nodesTraversed.Count == 0)
-                {
-                    if (parsedLine.PlayerTypedText[searchStartIndex] == ' ')
-                    {
-                        parsedLine.Segments.Add(new BaseSegment(parsedLine, currentSegmentText));
-                        currentSegmentText = "";
-                    }
-                    else
-                        currentSegmentText += parsedLine.PlayerTypedText[searchStartIndex];
-                }
-
-                searchStartIndex += nodesTraversed.Count + 1;
-            }
-        }
-
-
-        // private helper classes
-
-        private class Node
-        {
-            public string ItemName { get; set; } = null;
-            public Dictionary<char, Node> NextChars { get; } = new Dictionary<char, Node>();
-        }
-
     }
 }

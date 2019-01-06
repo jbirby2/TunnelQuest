@@ -16,6 +16,7 @@ namespace TunnelQuest.Data.Migrations
             using (var context = new TunnelQuestContext())
             {
                 insertServers(context);
+                insertAuthTokenStatuses(context);
                 insertAuthTokens(context);
                 insertClasses(context);
                 insertRaces(context);
@@ -35,6 +36,7 @@ namespace TunnelQuest.Data.Migrations
             {
                 deleteServers(context);
                 deleteAuthTokens(context);
+                deleteAuthTokenStatuses(context);
                 deleteClasses(context);
                 deleteRaces(context);
                 deleteSizes(context);
@@ -92,7 +94,35 @@ namespace TunnelQuest.Data.Migrations
             return new AuthToken[] {
                 new AuthToken() {
                     Name = "default",
+                    AuthTokenStatusCode = AuthTokenStatusCodes.Approved,
                     Value = Guid.NewGuid().ToString()   // generate a different random token every time this is run
+                }
+            };
+        }
+        #endregion
+
+        #region auth_token_status
+        private void insertAuthTokenStatuses(TunnelQuestContext context)
+        {
+            context.AddRange(getAuthTokenStatuses());
+        }
+
+        private void deleteAuthTokenStatuses(TunnelQuestContext context)
+        {
+            context.RemoveRange(getAuthTokenStatuses());
+        }
+
+        private IEnumerable<AuthTokenStatus> getAuthTokenStatuses()
+        {
+            return new AuthTokenStatus[] {
+                new AuthTokenStatus() {
+                    AuthTokenStatusCode = AuthTokenStatusCodes.Pending
+                },
+                new AuthTokenStatus() {
+                    AuthTokenStatusCode = AuthTokenStatusCodes.Approved
+                },
+                new AuthTokenStatus() {
+                    AuthTokenStatusCode = AuthTokenStatusCodes.Declined
                 }
             };
         }

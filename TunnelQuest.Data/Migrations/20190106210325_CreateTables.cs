@@ -28,17 +28,14 @@ namespace TunnelQuest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "auth_token",
+                name: "auth_token_status",
                 columns: table => new
                 {
-                    auth_token_id = table.Column<short>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    name = table.Column<string>(nullable: false),
-                    value = table.Column<string>(nullable: false)
+                    auth_token_status_code = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_auth_token", x => x.auth_token_id);
+                    table.PrimaryKey("PK_auth_token_status", x => x.auth_token_status_code);
                 });
 
             migrationBuilder.CreateTable(
@@ -146,31 +143,23 @@ namespace TunnelQuest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "chat_line",
+                name: "auth_token",
                 columns: table => new
                 {
-                    chat_line_id = table.Column<long>(nullable: false)
+                    auth_token_id = table.Column<short>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    auth_token_id = table.Column<short>(nullable: false),
-                    server_code = table.Column<string>(nullable: false),
-                    player_name = table.Column<string>(nullable: false),
-                    text = table.Column<string>(nullable: false),
-                    sent_at = table.Column<DateTime>(nullable: false)
+                    name = table.Column<string>(nullable: false),
+                    value = table.Column<string>(nullable: false),
+                    auth_token_status_code = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_chat_line", x => x.chat_line_id);
+                    table.PrimaryKey("PK_auth_token", x => x.auth_token_id);
                     table.ForeignKey(
-                        name: "FK_chat_line_auth_token_auth_token_id",
-                        column: x => x.auth_token_id,
-                        principalTable: "auth_token",
-                        principalColumn: "auth_token_id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_chat_line_server_server_code",
-                        column: x => x.server_code,
-                        principalTable: "server",
-                        principalColumn: "server_code",
+                        name: "FK_auth_token_auth_token_status_auth_token_status_code",
+                        column: x => x.auth_token_status_code,
+                        principalTable: "auth_token_status",
+                        principalColumn: "auth_token_status_code",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -326,26 +315,31 @@ namespace TunnelQuest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "chat_line_auction",
+                name: "chat_line",
                 columns: table => new
                 {
-                    chat_line_id = table.Column<long>(nullable: false),
-                    auction_id = table.Column<long>(nullable: false)
+                    chat_line_id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    auth_token_id = table.Column<short>(nullable: false),
+                    server_code = table.Column<string>(nullable: false),
+                    player_name = table.Column<string>(nullable: false),
+                    text = table.Column<string>(nullable: false),
+                    sent_at = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_chat_line_auction", x => new { x.chat_line_id, x.auction_id });
+                    table.PrimaryKey("PK_chat_line", x => x.chat_line_id);
                     table.ForeignKey(
-                        name: "FK_chat_line_auction_auction_auction_id",
-                        column: x => x.auction_id,
-                        principalTable: "auction",
-                        principalColumn: "auction_id",
+                        name: "FK_chat_line_auth_token_auth_token_id",
+                        column: x => x.auth_token_id,
+                        principalTable: "auth_token",
+                        principalColumn: "auth_token_id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_chat_line_auction_chat_line_chat_line_id",
-                        column: x => x.chat_line_id,
-                        principalTable: "chat_line",
-                        principalColumn: "chat_line_id",
+                        name: "FK_chat_line_server_server_code",
+                        column: x => x.server_code,
+                        principalTable: "server",
+                        principalColumn: "server_code",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -465,10 +459,39 @@ namespace TunnelQuest.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "chat_line_auction",
+                columns: table => new
+                {
+                    chat_line_id = table.Column<long>(nullable: false),
+                    auction_id = table.Column<long>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_chat_line_auction", x => new { x.chat_line_id, x.auction_id });
+                    table.ForeignKey(
+                        name: "FK_chat_line_auction_auction_auction_id",
+                        column: x => x.auction_id,
+                        principalTable: "auction",
+                        principalColumn: "auction_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_chat_line_auction_chat_line_chat_line_id",
+                        column: x => x.chat_line_id,
+                        principalTable: "chat_line",
+                        principalColumn: "chat_line_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_auction_item_name",
                 table: "auction",
                 column: "item_name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_auth_token_auth_token_status_code",
+                table: "auth_token",
+                column: "auth_token_status_code");
 
             migrationBuilder.CreateIndex(
                 name: "IX_chat_line_auth_token_id",
@@ -663,6 +686,9 @@ namespace TunnelQuest.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "weapon_skill");
+
+            migrationBuilder.DropTable(
+                name: "auth_token_status");
         }
     }
 }

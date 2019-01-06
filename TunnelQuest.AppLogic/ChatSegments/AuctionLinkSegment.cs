@@ -9,7 +9,7 @@ namespace TunnelQuest.AppLogic.ChatSegments
     // of AuctionLinkSegment is to REPLACE its original player-typed text (or actually in 99% of cases,
     // the name of a player-linked item) with a special token string representing the item's AuctionId.
 
-    internal class AuctionLinkSegment : BaseSegment
+    internal class AuctionLinkSegment : TextSegment
     {
         // static
 

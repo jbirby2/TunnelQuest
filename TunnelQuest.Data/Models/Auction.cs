@@ -41,7 +41,16 @@ namespace TunnelQuest.Data.Models
         public ICollection<ChatLineAuction> ChatLines { get; set; } = new List<ChatLineAuction>();
 
 
-        // helper methods
+        public Auction()
+        {
+        }
+
+        public Auction(Auction auctionToCopy, DateTime timestamp)
+        {
+            this.CopyValuesFrom(auctionToCopy);
+            this.CreatedAt = timestamp;
+            this.UpdatedAt = timestamp;
+        }
 
         public override bool Equals(object obj)
         {

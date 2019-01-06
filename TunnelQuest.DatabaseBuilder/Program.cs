@@ -15,10 +15,12 @@ namespace TunnelQuest.DatabaseBuilder
             //stub
             using (var context = new TunnelQuestContext())
             {
-                string authToken = "237d683f-bd5b-40c3-a068-2d685be717dd";
+                string authToken = "7384321a-473d-4f09-81e6-99f00802425d";
 
                 var chatLogic = new ChatLogic(context);
-                var result = chatLogic.ProcessLogLine(authToken, ServerCodes.Blue, @"[Sun Dec 16 22:09:23 2018] Luluo auctions, 'WTS Velium Fire Wedding RingSpell: Celestial HealingVelium Fire Wedding Ring obo Velium Fire Wedding Ring 200 or best offer Nephrite 100 Kobold Jester's Crown 1000 Crystal Chitin Gauntlets 600 Golden Efreeti Boots 1100 Velium Fire Wedding Ring'");
+                chatLogic.ProcessLogLine(authToken, ServerCodes.Blue, @"[Sun Dec 16 22:11:05 2018] Madworld auctions, 'WTS/T Manna Robe 140k  Tanglewood Shield 35k  Circlet of Shadow (pre-nerf) 25k  Matchless Dragonhorn Bracers 10k/ea  Silver Chitin Wristband 4.5k  Netted Kelp Tunic 2k'");
+                chatLogic.ProcessLogLine(authToken, ServerCodes.Blue, @"[Sun Dec 16 22:11:05 2018] Madworld auctions, 'WTS/T Manna Robe 140k  Tanglewood Shield 35k  Circlet of Shadow (pre-nerf) 25k  Matchless Dragonhorn Bracers 10k/ea  Silver Chitin Wristband 4.5k  Netted Kelp Tunic 2k'");
+                chatLogic.ProcessLogLine(authToken, ServerCodes.Blue, @"[Sun Dec 16 22:11:05 2018] Madworld auctions, 'WTS/T Manna Robe 140k  Tanglewood Shield 35k  Circlet of Shadow (pre-nerf) 25k  Matchless Dragonhorn Bracers 10k/ea  Silver Chitin Wristband 4.5k  Netted Kelp Tunic 2k'");
                 var stub = 1;
             }
             return;

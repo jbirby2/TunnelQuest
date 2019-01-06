@@ -28,21 +28,17 @@ namespace TunnelQuest.AppLogic
             this.context = _context;
         }
 
-        public void ApplyAuctionRules(string serverCode, ParsedChatLine parsedLine)
+        public Dictionary<string, Auction> GetNormalizedAuctions(string serverCode, string playerName, DateTime timestamp, IEnumerable<Auction> pendingAuctions)
         {
             // It's possible that, for whatever reason, the same item will be listed in a chat line more than once.  When that happens,
             // we'll apply some logic to decide which auction is more "correct", and make all the AuctionSegments point at that same Auction object.
             var normalizedAuctions = new Dictionary<string, Auction>();
-            foreach (var segment in parsedLine.Segments)
+            foreach (var pendingAuction in pendingAuctions)
             {
-                if (segment is AuctionLinkSegment)
-                {
-                    var auctionSegment = (AuctionLinkSegment)segment;
-                    if (normalizedAuctions.ContainsKey(auctionSegment.Auction.ItemName))
-                        normalizedAuctions[auctionSegment.Auction.ItemName] = whichAuctionIsMoreComplete(auctionSegment.Auction, normalizedAuctions[auctionSegment.Auction.ItemName]);
-                    else
-                        normalizedAuctions[auctionSegment.Auction.ItemName] = auctionSegment.Auction;
-                }
+                if (normalizedAuctions.ContainsKey(pendingAuction.ItemName))
+                    normalizedAuctions[pendingAuction.ItemName] = whichAuctionIsMoreComplete(pendingAuction, normalizedAuctions[pendingAuction.ItemName]);
+                else
+                    normalizedAuctions[pendingAuction.ItemName] = pendingAuction;
             }
 
             // For each auction that the player is advertising, check to see if it's a re-post of an
@@ -51,25 +47,13 @@ namespace TunnelQuest.AppLogic
             {
                 var pendingNewAuction = normalizedAuctions[itemName];
 
-                // don't allow any nonsense prices
-                if (pendingNewAuction.Price <= 0)
-                    pendingNewAuction.Price = null;
-
                 // See if there's an existing auction we should reuse instead of posting this new one.  If so, use it instead of the pending new auction.
-                Auction auctionToReuse = getReusableAuction(serverCode, parsedLine, pendingNewAuction);
+                Auction auctionToReuse = getReusableAuction(serverCode, playerName, timestamp, pendingNewAuction);
                 if (auctionToReuse != null)
                     normalizedAuctions[itemName] = auctionToReuse;
             }
 
-            // Lastly, go back through the chat segments and make them all point at the correct Auction objects
-            foreach (var chatSegment in parsedLine.Segments)
-            {
-                if (chatSegment is AuctionLinkSegment)
-                {
-                    var auctionSegment = (AuctionLinkSegment)chatSegment;
-                    auctionSegment.Auction = normalizedAuctions[auctionSegment.Auction.ItemName];
-                }
-            }
+            return normalizedAuctions;
         }
 
 
@@ -111,14 +95,14 @@ namespace TunnelQuest.AppLogic
         // Returns an Auction if there's an existing Auction which can be reused instead of pendingAuction, based on
         // the rules defined within the function.  If there is no existing auction that we want to reuse, then return
         // null.
-        private Auction getReusableAuction(string serverCode, ParsedChatLine parsedLine, Auction pendingNewAuction)
+        private Auction getReusableAuction(string serverCode, string playerName, DateTime timestamp, Auction pendingNewAuction)
         {
             Auction lastAuctionBySamePlayerForSameItem = (from auction in context.Auctions
                                                           join chatLineAuction in context.ChatLineAuctions on auction.AuctionId equals chatLineAuction.AuctionId
                                                           join chatLine in context.ChatLines on chatLineAuction.ChatLineId equals chatLine.ChatLineId
                                                           where
                                                             chatLine.ServerCode == serverCode
-                                                            && chatLine.PlayerName == parsedLine.PlayerName
+                                                            && chatLine.PlayerName == playerName
                                                             && auction.ItemName == pendingNewAuction.ItemName
                                                           orderby auction.UpdatedAt descending
                                                           select auction).FirstOrDefault();
@@ -159,7 +143,7 @@ namespace TunnelQuest.AppLogic
                         // It hasn't been long enough since the last time this player created a new auction
                         // for this item: update the existing auction with the new values.
                         lastAuctionBySamePlayerForSameItem.CopyValuesFrom(pendingNewAuction);
-                        lastAuctionBySamePlayerForSameItem.UpdatedAt = parsedLine.Timestamp;
+                        lastAuctionBySamePlayerForSameItem.UpdatedAt = timestamp;
                         return lastAuctionBySamePlayerForSameItem;
                     }
                     else

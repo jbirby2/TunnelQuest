@@ -9,8 +9,8 @@ using TunnelQuest.Data.Models;
 namespace TunnelQuest.Data.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    [Migration("20190105151919_InsertStaticData")]
-    partial class InsertStaticData
+    [Migration("20190106210325_CreateTables")]
+    partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -60,6 +60,10 @@ namespace TunnelQuest.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("auth_token_id");
 
+                    b.Property<string>("AuthTokenStatusCode")
+                        .IsRequired()
+                        .HasColumnName("auth_token_status_code");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name");
@@ -70,7 +74,20 @@ namespace TunnelQuest.Data.Migrations
 
                     b.HasKey("AuthTokenId");
 
+                    b.HasIndex("AuthTokenStatusCode");
+
                     b.ToTable("auth_token");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.AuthTokenStatus", b =>
+                {
+                    b.Property<string>("AuthTokenStatusCode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("auth_token_status_code");
+
+                    b.HasKey("AuthTokenStatusCode");
+
+                    b.ToTable("auth_token_status");
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ChatLine", b =>
@@ -551,6 +568,14 @@ namespace TunnelQuest.Data.Migrations
                     b.HasKey("WeaponSkillCode");
 
                     b.ToTable("weapon_skill");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.AuthToken", b =>
+                {
+                    b.HasOne("TunnelQuest.Data.Models.AuthTokenStatus", "AuthTokenStatus")
+                        .WithMany()
+                        .HasForeignKey("AuthTokenStatusCode")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.ChatLine", b =>

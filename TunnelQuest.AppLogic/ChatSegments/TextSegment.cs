@@ -4,12 +4,12 @@ using System.Text;
 
 namespace TunnelQuest.AppLogic.ChatSegments
 {
-    internal class BaseSegment
+    internal class TextSegment
     {
         public ParsedChatLine ParentLine { get; private set; }
         public virtual string Text { get; protected set; }
 
-        public BaseSegment (ParsedChatLine parentLine, string text)
+        public TextSegment (ParsedChatLine parentLine, string text)
         {
             if (parentLine == null)
                 throw new Exception("parentLine cannot be null");
@@ -18,12 +18,12 @@ namespace TunnelQuest.AppLogic.ChatSegments
             this.Text = text;
         }
 
-        public BaseSegment NextSegment()
+        public TextSegment NextSegment()
         {
             return ParentLine.NextSegment(this);
         }
 
-        public BaseSegment PrevSegment()
+        public TextSegment PrevSegment()
         {
             return ParentLine.PrevSegment(this);
         }

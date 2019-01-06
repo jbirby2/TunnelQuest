@@ -4,21 +4,21 @@ using System.Text;
 
 namespace TunnelQuest.AppLogic.ChatSegments
 {
-    internal class OrBestOfferSegment : BaseSegment
+    internal class OrBestOfferSegment : TextSegment
     {
         // static
 
-        public static OrBestOfferSegment TryParse(ParsedChatLine parentLine, BaseSegment textSegment)
+        public static OrBestOfferSegment TryParse(ParsedChatLine parentLine, TextSegment textSegment)
         {
             if (textSegment.Text.Equals("obo", StringComparison.InvariantCultureIgnoreCase))
                 return new OrBestOfferSegment(parentLine, textSegment.Text);
             else if (textSegment.Text.Equals("or", StringComparison.InvariantCultureIgnoreCase))
             {
                 var nextSegment = parentLine.NextSegment(textSegment);
-                if (nextSegment != null && nextSegment.GetType() == typeof(BaseSegment) && nextSegment.Text.Equals("best", StringComparison.InvariantCultureIgnoreCase))
+                if (nextSegment != null && nextSegment.GetType() == typeof(TextSegment) && nextSegment.Text.Equals("best", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var nextNextSegment = parentLine.NextSegment(nextSegment);
-                    if (nextNextSegment != null && nextNextSegment.GetType() == typeof(BaseSegment) && nextNextSegment.Text.Equals("offer", StringComparison.InvariantCultureIgnoreCase))
+                    if (nextNextSegment != null && nextNextSegment.GetType() == typeof(TextSegment) && nextNextSegment.Text.Equals("offer", StringComparison.InvariantCultureIgnoreCase))
                     {
                         parentLine.Segments.Remove(nextNextSegment);
                         parentLine.Segments.Remove(nextSegment);

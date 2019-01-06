@@ -4,16 +4,21 @@ using System.Text;
 
 namespace TunnelQuest.AppLogic.ChatSegments
 {
-    internal class BuySellTradeSegment : BaseSegment
+    internal class BuySellTradeSegment : TextSegment
     {
         // static
 
-        public static BuySellTradeSegment TryParse(ParsedChatLine parentLine, BaseSegment textSegment)
+        public static BuySellTradeSegment TryParse(ParsedChatLine parentLine, TextSegment textSegment)
         {
+            
+
             var upperText = textSegment.Text.ToUpper();
 
+            if (upperText == "BUYING")
+                return new BuySellTradeSegment(parentLine, textSegment.Text, true, null);
+
             // the "< 7" condition is just a sanity check to reduce the likelihood of trying to parse some weird player word that starts with "wt"
-            if (upperText.Length > 2 && upperText.Length < 7 && upperText[0] == 'W' && upperText[1] == 'T')
+            else if (upperText.Length > 2 && upperText.Length < 7 && upperText[0] == 'W' && upperText[1] == 'T')
             {
                 // sigh.
                 if (upperText.StartsWith("WTF"))

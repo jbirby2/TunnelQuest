@@ -29,6 +29,7 @@ namespace TunnelQuest.Data.Models
         public DbSet<ChatLineAuction> ChatLineAuctions { get; set; }
         public DbSet<Auction> Auctions { get; set; }
         public DbSet<AuthToken> AuthTokens { get; set; }
+        public DbSet<AuthTokenStatus> AuthTokenStatuses { get; set; }
         
 
         public TunnelQuestContext ()

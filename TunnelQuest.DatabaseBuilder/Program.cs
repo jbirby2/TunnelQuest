@@ -13,6 +13,7 @@ namespace TunnelQuest.DatabaseBuilder
         static void Main(string[] args)
         {
             //stub
+            /*
             using (var context = new TunnelQuestContext())
             {
                 string authToken = "7384321a-473d-4f09-81e6-99f00802425d";
@@ -24,6 +25,7 @@ namespace TunnelQuest.DatabaseBuilder
                 var stub = 1;
             }
             return;
+            */
 
             try
             {

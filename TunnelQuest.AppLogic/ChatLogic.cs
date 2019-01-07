@@ -29,7 +29,7 @@ namespace TunnelQuest.AppLogic
             this.context = _context;
         }
 
-        public void ProcessLogLine(string authTokenValue, string serverCode, string logLine)
+        public ChatLine ProcessLogLine(string authTokenValue, string serverCode, string logLine)
         {
             if (String.IsNullOrWhiteSpace(authTokenValue))
                 throw new Exception("authTokenValue cannot be empty");
@@ -45,7 +45,7 @@ namespace TunnelQuest.AppLogic
 
             try
             {
-                if (lineWords.Length < 8 || lineWords[0][0] != '[' || lineWords[4][4] != ']' || lineWords[6] != "auctions,")
+                if (lineWords.Length < 3 || lineWords[1] != "auctions,")
                     throw new InvalidLogLineException(logLine);
             }
             catch (IndexOutOfRangeException)
@@ -53,9 +53,8 @@ namespace TunnelQuest.AppLogic
                 throw new InvalidLogLineException(logLine);
             }
 
-            string logLineWithoutTimestamp = logLine.Substring(27);
-            string playerName = lineWords[5];
-            string playerTypedText = String.Join(' ', lineWords, 7, lineWords.Length - 7).Trim('\'');
+            string playerName = lineWords[0];
+            string playerTypedText = String.Join(' ', lineWords, 2, lineWords.Length - 2).Trim('\'');
 
             Monitor.Enter(CHAT_LINE_LOCK);
             try
@@ -82,7 +81,7 @@ namespace TunnelQuest.AppLogic
                 newChatLine.SentAt = DateTime.UtcNow;  // completely ignore the timestamp in the beginning of logLine, because the client device's internal clock could be wrong
 
                 ParsedChatLine parsedLine;
-                string cacheKey = serverCode + logLineWithoutTimestamp;
+                string cacheKey = serverCode + logLine;
                 var cachedLine = (CachedLine)MemoryCache.Default[cacheKey];
                 if (cachedLine == null)
                 {
@@ -94,7 +93,7 @@ namespace TunnelQuest.AppLogic
                     //  1. prevent the same line being posted by multiple TunnelWatchers
                     //  2. prevent excessive spam of duplicate lines (probably not really necessary but 1. definitely is)
                     if ((DateTime.UtcNow - cachedLine.Timestamp) < DUPLICATE_LINE_FILTER_THRESHOLD)
-                        return;
+                        return null;
 
                     parsedLine = cachedLine.ParsedLine;
 
@@ -167,6 +166,8 @@ namespace TunnelQuest.AppLogic
                     Timestamp = newChatLine.SentAt,
                     ParsedLine = parsedLine
                 }, DateTimeOffset.Now.AddMinutes(10));
+
+                return newChatLine;
             }
             finally
             {

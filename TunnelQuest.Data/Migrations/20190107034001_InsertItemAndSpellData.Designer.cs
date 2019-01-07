@@ -9,8 +9,8 @@ using TunnelQuest.Data.Models;
 namespace TunnelQuest.Data.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    [Migration("20190106210331_InsertStaticData")]
-    partial class InsertStaticData
+    [Migration("20190107034001_InsertItemAndSpellData")]
+    partial class InsertItemAndSpellData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,6 +33,9 @@ namespace TunnelQuest.Data.Migrations
 
                     b.Property<bool>("IsBuying")
                         .HasColumnName("is_buying");
+
+                    b.Property<bool>("IsKnownItem")
+                        .HasColumnName("is_known_item");
 
                     b.Property<bool>("IsOrBestOffer")
                         .HasColumnName("is_or_best_offer");

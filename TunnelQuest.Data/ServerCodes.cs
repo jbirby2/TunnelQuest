@@ -7,8 +7,8 @@ namespace TunnelQuest.Data
 {
     public static class ServerCodes
     {
-        public static readonly string Blue = "BLUE";
-        public static readonly string Red = "RED";
+        public const string Blue = "BLUE";
+        public const string Red = "RED";
 
         public static readonly IEnumerable<string> All = new string[] { Blue, Red };
 

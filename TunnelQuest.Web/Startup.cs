@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TunnelQuest.Data.Models;
 using TunnelQuest.Web.Config;
+using TunnelQuest.Web.Hubs;
 
 namespace TunnelQuest.Web
 {
@@ -40,6 +41,7 @@ namespace TunnelQuest.Web
 
             // STUB add api throttling
 
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,7 +59,14 @@ namespace TunnelQuest.Web
             // STUB uncomment this
             //app.UseHttpsRedirection();
 
+            app.UseStaticFiles();
             app.UseMvc();
+
+            app.UseSignalR(route => 
+            {
+                route.MapHub<BlueHub>("/blue_hub");
+                route.MapHub<RedHub>("/red_hub");
+            });
         }
     }
 }

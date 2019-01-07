@@ -142,6 +142,7 @@ namespace TunnelQuest.AppLogic
                         Segments.Insert(i, new AuctionLinkSegment(this, new Auction()
                         {
                             ItemName = mergedText,
+                            IsKnownItem = false,
                             CreatedAt = timestamp,
                             UpdatedAt = timestamp
                         }));
@@ -285,6 +286,7 @@ namespace TunnelQuest.AppLogic
                         Segments.Add(new AuctionLinkSegment(this, new Auction()
                         {
                             ItemName = lastNode.ItemName,
+                            IsKnownItem = true,
                             CreatedAt = timestamp,
                             UpdatedAt = timestamp
                         }));

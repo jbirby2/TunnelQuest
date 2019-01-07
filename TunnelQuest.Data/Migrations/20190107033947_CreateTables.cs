@@ -15,6 +15,7 @@ namespace TunnelQuest.Data.Migrations
                     auction_id = table.Column<long>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     item_name = table.Column<string>(nullable: false),
+                    is_known_item = table.Column<bool>(nullable: false),
                     is_buying = table.Column<bool>(nullable: false),
                     price = table.Column<int>(nullable: true),
                     is_or_best_offer = table.Column<bool>(nullable: false),

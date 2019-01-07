@@ -20,6 +20,9 @@ namespace TunnelQuest.Data.Models
         [Column("item_name")]
         public string ItemName { get; set; }
 
+        [Column("is_known_item")]
+        public bool IsKnownItem { get; set; }
+
         [Column("is_buying")]
         public bool IsBuying { get; set; }  // "WTB"
         
@@ -64,6 +67,7 @@ namespace TunnelQuest.Data.Models
         {
             return (this.IsBuying == auction.IsBuying
                 && this.ItemName == auction.ItemName
+                && this.IsKnownItem == auction.IsKnownItem
                 && this.Price == auction.Price
                 && this.IsOrBestOffer == auction.IsOrBestOffer
                 && this.IsAcceptingTrades == auction.IsAcceptingTrades);
@@ -73,6 +77,7 @@ namespace TunnelQuest.Data.Models
         {
             this.IsBuying = auction.IsBuying;
             this.ItemName = auction.ItemName;
+            this.IsKnownItem = auction.IsKnownItem;
             this.Price = auction.Price;
             this.IsOrBestOffer = auction.IsOrBestOffer;
             this.IsAcceptingTrades = auction.IsAcceptingTrades;

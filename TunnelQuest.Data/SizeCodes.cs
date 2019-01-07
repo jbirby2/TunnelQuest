@@ -6,11 +6,11 @@ namespace TunnelQuest.Data
 {
     public static class SizeCodes
     {
-        public static readonly string Tiny = "TINY";
-        public static readonly string Small = "SMALL";
-        public static readonly string Medium = "MEDIUM";
-        public static readonly string Large = "LARGE";
-        public static readonly string Giant = "GIANT";
+        public const string Tiny = "TINY";
+        public const string Small = "SMALL";
+        public const string Medium = "MEDIUM";
+        public const string Large = "LARGE";
+        public const string Giant = "GIANT";
 
         public static readonly IEnumerable<string> All = new string[] { Tiny, Small, Medium, Large, Giant };
     }

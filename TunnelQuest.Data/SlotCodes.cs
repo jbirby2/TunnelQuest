@@ -6,24 +6,24 @@ namespace TunnelQuest.Data
 {
     public static class SlotCodes
     {
-        public static readonly string Arms = "ARMS";
-        public static readonly string Back = "BACK";
-        public static readonly string Chest = "CHEST";
-        public static readonly string Ear = "EAR";
-        public static readonly string Face = "FACE";
-        public static readonly string Feet = "FEET";
-        public static readonly string Finger = "FINGER";
-        public static readonly string Hands = "HANDS";
-        public static readonly string Head = "HEAD";
-        public static readonly string Legs = "LEGS";
-        public static readonly string Neck = "NECK";
-        public static readonly string Shoulders = "SHOULDERS";
-        public static readonly string Waist = "WAIST";
-        public static readonly string Wrist = "WRIST";
-        public static readonly string Primary = "PRIMARY";
-        public static readonly string Secondary = "SECONDARY";
-        public static readonly string Range = "RANGE";
-        public static readonly string Ammo = "AMMO";
+        public const string Arms = "ARMS";
+        public const string Back = "BACK";
+        public const string Chest = "CHEST";
+        public const string Ear = "EAR";
+        public const string Face = "FACE";
+        public const string Feet = "FEET";
+        public const string Finger = "FINGER";
+        public const string Hands = "HANDS";
+        public const string Head = "HEAD";
+        public const string Legs = "LEGS";
+        public const string Neck = "NECK";
+        public const string Shoulders = "SHOULDERS";
+        public const string Waist = "WAIST";
+        public const string Wrist = "WRIST";
+        public const string Primary = "PRIMARY";
+        public const string Secondary = "SECONDARY";
+        public const string Range = "RANGE";
+        public const string Ammo = "AMMO";
 
         public static readonly IEnumerable<string> All = new string[] { Arms, Back, Chest, Ear, Face, Feet, Finger, Hands, Head, Legs, Neck, Shoulders, Waist, Wrist, Primary, Secondary, Range, Ammo };
     }

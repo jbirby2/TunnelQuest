@@ -59,6 +59,7 @@ namespace TunnelQuest.Web
             // STUB uncomment this
             //app.UseHttpsRedirection();
 
+            app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseMvc();
 

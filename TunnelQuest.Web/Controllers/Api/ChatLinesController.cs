@@ -69,18 +69,21 @@ namespace TunnelQuest.Web.Controllers.Api
                     }
                 }
 
-                switch (payload.ServerCode)
+                if (addedLines.Count > 0)
                 {
-                    case ServerCodes.Blue:
-                        await blueHub.Clients.All.SendAsync("HandleNewLines", addedLines);
-                        break;
+                    switch (payload.ServerCode)
+                    {
+                        case ServerCodes.Blue:
+                            await blueHub.Clients.All.SendAsync("HandleNewLines", addedLines);
+                            break;
 
-                    case ServerCodes.Red:
-                        await redHub.Clients.All.SendAsync("HandleNewLines", addedLines);
-                        break;
+                        case ServerCodes.Red:
+                            await redHub.Clients.All.SendAsync("HandleNewLines", addedLines);
+                            break;
 
-                    default:
-                        throw new Exception("Unrecognized serverCode '" + payload.ServerCode + "'");
+                        default:
+                            throw new Exception("Unrecognized serverCode '" + payload.ServerCode + "'");
+                    }
                 }
             }
             catch (Exception ex)

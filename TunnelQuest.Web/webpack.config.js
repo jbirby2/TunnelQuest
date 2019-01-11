@@ -2,6 +2,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
     entry: "./src/index.ts",
@@ -47,11 +48,12 @@ module.exports = {
                     name: '[name].[ext]?[hash]'
                 }
             },
-
+            /*
             {
                 test: /\.ts$/,
                 use: "ts-loader"
             },
+            */
             {
                 test: /\.css$/,
                 use: [MiniCssExtractPlugin.loader, "css-loader"]
@@ -77,13 +79,17 @@ module.exports = {
         }),
         new MiniCssExtractPlugin({
             filename: "css/[name].[chunkhash].css"
-        })
+        }),
+        new VueLoaderPlugin()
     ]
 }
 
 
 if (process.env.NODE_ENV === 'production') {
     module.exports.devtool = '#source-map'
+
+    // (adding plugins for production only)
+
     // http://vue-loader.vuejs.org/en/workflow/production.html
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({

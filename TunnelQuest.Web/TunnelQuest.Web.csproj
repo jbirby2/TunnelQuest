@@ -3,10 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="src\index.ts" />
+    <None Remove="src\interfaces\Auction.ts" />
+    <None Remove="src\interfaces\ChatLine.ts" />
+    <None Remove="src\vue-shims.d.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +25,9 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="src\index.ts" />
+    <TypeScriptCompile Include="src\interfaces\ChatLine.ts" />
+    <TypeScriptCompile Include="src\interfaces\Auction.ts" />
+    <TypeScriptCompile Include="src\vue-shims.d.ts" />
   </ItemGroup>
 
 </Project>

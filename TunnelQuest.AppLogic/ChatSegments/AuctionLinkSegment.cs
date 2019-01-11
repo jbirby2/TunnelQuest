@@ -13,8 +13,6 @@ namespace TunnelQuest.AppLogic.ChatSegments
     {
         // static
 
-        public static readonly string AUCTION_TOKEN = "#TQAUC_";
-
 
         // non-static
 
@@ -41,7 +39,7 @@ namespace TunnelQuest.AppLogic.ChatSegments
         {
             get
             {
-                return AUCTION_TOKEN + this._Auction.AuctionId.ToString();
+                return ChatLogic.AUCTION_TOKEN + this._Auction.AuctionId.ToString();
             }
         }
     }

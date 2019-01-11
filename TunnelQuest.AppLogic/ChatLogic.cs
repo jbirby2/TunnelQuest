@@ -11,6 +11,8 @@ namespace TunnelQuest.AppLogic
 {
     public class ChatLogic
     {
+        public const string AUCTION_TOKEN = "#TQAUC_";
+
         // static stuff
 
         private static readonly Dictionary<string, short> tokenCache = new Dictionary<string, short>();

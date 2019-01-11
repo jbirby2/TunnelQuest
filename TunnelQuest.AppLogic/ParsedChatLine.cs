@@ -67,7 +67,7 @@ namespace TunnelQuest.AppLogic
                 var segment = Segments[i];
                 if (segment.GetType() == typeof(TextSegment))
                 {
-                    if (segment.Text.StartsWith(AuctionLinkSegment.AUCTION_TOKEN, StringComparison.InvariantCultureIgnoreCase))
+                    if (segment.Text.StartsWith(ChatLogic.AUCTION_TOKEN, StringComparison.InvariantCultureIgnoreCase))
                     {
                         // in case anybody tries to be mischevious and actually type the AUCTION_TOKEN string into chat
                         Segments.RemoveAt(i);

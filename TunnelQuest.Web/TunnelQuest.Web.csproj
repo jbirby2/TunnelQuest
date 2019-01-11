@@ -10,6 +10,7 @@
     <None Remove="src\index.ts" />
     <None Remove="src\interfaces\Auction.ts" />
     <None Remove="src\interfaces\ChatLine.ts" />
+    <None Remove="src\interfaces\Settings.ts" />
     <None Remove="src\vue-shims.d.ts" />
   </ItemGroup>
 
@@ -25,6 +26,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="src\index.ts" />
+    <TypeScriptCompile Include="src\interfaces\Settings.ts" />
     <TypeScriptCompile Include="src\interfaces\ChatLine.ts" />
     <TypeScriptCompile Include="src\interfaces\Auction.ts" />
     <TypeScriptCompile Include="src\vue-shims.d.ts" />

@@ -12,7 +12,6 @@ namespace TunnelQuest.Web.Models.Api
         public string PlayerName { get; set; }
         public string Text { get; set; }
         public DateTime SentAt { get; set; }
-        public Dictionary<long, ClientAuction> Auctions { get; set; }
 
         public ClientChatLine()
         {
@@ -24,12 +23,6 @@ namespace TunnelQuest.Web.Models.Api
             this.PlayerName = line.PlayerName;
             this.Text = line.Text;
             this.SentAt = line.SentAt;
-
-            this.Auctions = new Dictionary<long, ClientAuction>();
-            foreach (var auction in line.Auctions)
-            {
-                this.Auctions[auction.AuctionId] = new ClientAuction(auction.Auction);
-            }
         }
     }
 }

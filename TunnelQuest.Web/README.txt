@@ -1,8 +1,7 @@
 ﻿
-The TunnelQuest.Web contains a javascript single-page-application (SPA) written in TypeScript and Vue, and compiled using Webpack and Node Package Manager.
+TunnelQuest.Web contains a javascript single-page-application (SPA) written in TypeScript and Vue, and compiled using Webpack and Node Package Manager (npm).
 At the very least, you'll need to install Node on your development machine to globally install the "npm" command line executable on your machine
 for the steps below.
-
 
 SETUP:
 
@@ -11,7 +10,6 @@ SETUP:
 	source control but necessary at webpack buildtime:
 
 		npm install
-
 
 MAKING SPA CODE CHANGES:
 

@@ -1,12 +1,9 @@
 ﻿
-import Auction from "./Auction";
-
 interface ChatLine {
     id: number,
     playerName: string,
     text: string,
-    sentAt: Date,
-    auctions: Auction[]
+    sentAt: Date
 }
 
 export default ChatLine;

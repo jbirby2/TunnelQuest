@@ -10,5 +10,4 @@ interface Auction {
     createdAt: Date,
     updatedAt: Date
 }
-
 export default Auction;

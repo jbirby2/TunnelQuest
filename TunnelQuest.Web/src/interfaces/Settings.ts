@@ -1,6 +1,8 @@
 ﻿
 interface Settings {
-    auctionToken: string
+    auctionToken: string,
+    maxChatLines: number,
+    maxAuctions: number
 }
 
 export default Settings;

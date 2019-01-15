@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.HttpOverrides;
 using TunnelQuest.Data.Models;
 using TunnelQuest.Web.Config;
 using TunnelQuest.Web.Hubs;
@@ -47,6 +48,11 @@ namespace TunnelQuest.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions()
+            {
+                ForwardedHeaders = ForwardedHeaders.All
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -55,10 +61,7 @@ namespace TunnelQuest.Web
             {
                 app.UseHsts();
             }
-
-            // STUB uncomment this
-            //app.UseHttpsRedirection();
-
+            
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseMvc();

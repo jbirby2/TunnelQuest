@@ -1,18 +1,28 @@
 ﻿<template>
-    <div>
-        {{chatLine.playerName}} auctions, '<span id="textSpan"></span>'
+    <div class="chatLineView">
+        <time-stamp :time="chatLine.sentAt"></time-stamp> {{chatLine.playerName}} auctions, '<span class="playerText"></span>'
     </div>
 </template>
 
 <script lang="ts">
     import Vue from "vue";
+
     import ChatLine from "../interfaces/ChatLine";
+    import Auction from "../interfaces/Auction";
     import Settings from "../interfaces/Settings";
+
+    import SlidingList from "../classes/SlidingList";
+
+    import TimeStamp from "./TimeStamp.vue";
 
     export default Vue.extend({
         props: {
             settings: {
                 type: Object as () => Settings,
+                required: true
+            },
+            auctions: {
+                type: Object as () => SlidingList<Auction>,
                 required: true
             },
             chatLine: {
@@ -27,11 +37,7 @@
         created: function () {
         },
         mounted: function () {
-            let textSpan = document.querySelector("#textSpan") as HTMLSpanElement;
-
-            // STUB
-            //textSpan.innerHTML = this.chatLine.text;
-            //console.log(this.chatLine.text);
+            let textSpan = this.$el.querySelector(".playerText") as HTMLSpanElement;
 
             let wordsSoFar : string | null = null;
             let textWords = this.chatLine.text.split(" ");
@@ -46,14 +52,10 @@
                     textSpan.appendChild(document.createTextNode(wordsSoFar));
                     wordsSoFar = "";
 
-                    let stub = [];
-                    stub[1] = true;
-
-
                     let auctionId = parseInt(word.substring(this.settings.auctionToken.length));
                     let linkElem = document.createElement("a") as HTMLAnchorElement;
                     linkElem.href = "#auction_id=" + auctionId.toString();
-                    linkElem.text = this.chatLine.auctions[auctionId].itemName;
+                    linkElem.text = this.auctions.dict[auctionId].itemName;
                     textSpan.appendChild(linkElem);
                 }
                 else {
@@ -64,6 +66,7 @@
                 textSpan.appendChild(document.createTextNode(wordsSoFar));
         },
         components: {
+            TimeStamp
         }
     });
 </script>

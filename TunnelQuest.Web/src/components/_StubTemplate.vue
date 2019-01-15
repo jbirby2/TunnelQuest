@@ -6,6 +6,12 @@
     import Vue from "vue";
 
     export default Vue.extend({
+        props: {
+            stub: {
+                type: Object,
+                required: true
+            }
+        },
         data: function () {
             return {
             };

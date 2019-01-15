@@ -27,6 +27,13 @@ namespace TunnelQuest.Web.Controllers.Api
             this.redHub = _redHub;
         }
 
+        // GET api/chat_lines
+        [HttpGet]
+        public GetChatLinesResult Get([FromQuery]string serverCode, [FromQuery]long? minId = null, [FromQuery]long? maxId = null)
+        {
+            var coreResult = new ChatLogic(context).GetLines(serverCode, minId, maxId);
+            return new GetChatLinesResult(coreResult.Lines);
+        }
 
         // POST api/chat_lines
         [HttpPost]
@@ -49,7 +56,7 @@ namespace TunnelQuest.Web.Controllers.Api
             try
             {
                 var chatLogic = new ChatLogic(context);
-                var addedLines = new List<ClientChatLine>();
+                var addedLines = new List<ChatLine>();
                 foreach (string line in payload.Lines)
                 {
                     try
@@ -57,7 +64,7 @@ namespace TunnelQuest.Web.Controllers.Api
                         var chatLine = chatLogic.ProcessLogLine(authToken, payload.ServerCode, line);
 
                         if (chatLine != null)
-                            addedLines.Add(new ClientChatLine(chatLine));
+                            addedLines.Add(chatLine);
                     }
                     catch (InvalidAuthTokenException)
                     {
@@ -71,14 +78,15 @@ namespace TunnelQuest.Web.Controllers.Api
 
                 if (addedLines.Count > 0)
                 {
+                    var result = new GetChatLinesResult(addedLines.ToArray());
                     switch (payload.ServerCode)
                     {
                         case ServerCodes.Blue:
-                            await blueHub.Clients.All.SendAsync("HandleNewLines", addedLines);
+                            await blueHub.Clients.All.SendAsync("ProcessNewLines", result);
                             break;
 
                         case ServerCodes.Red:
-                            await redHub.Clients.All.SendAsync("HandleNewLines", addedLines);
+                            await redHub.Clients.All.SendAsync("ProcessNewLines", result);
                             break;
 
                         default:

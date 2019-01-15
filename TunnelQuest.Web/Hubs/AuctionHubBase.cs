@@ -10,9 +10,5 @@ namespace TunnelQuest.Web.Hubs
 {
     public class AuctionHubBase : Hub
     {
-        public ClientSettings GetSettings()
-        {
-            return new ClientSettings();
-        }
     }
 }

@@ -8,10 +8,13 @@ using TunnelQuest.AppLogic.ChatSegments;
 
 namespace TunnelQuest.AppLogic
 {
-    internal class AuctionLogic
+    public class AuctionLogic
     {
+        public const int MAX_AUCTIONS = 1000;
+
+
         // static stuff
-        
+
         private static readonly TimeSpan MIN_NEW_AUCTION_THRESHOLD = TimeSpan.FromHours(1);
         private static readonly TimeSpan MAX_NEW_AUCTION_THRESHOLD = TimeSpan.FromHours(24);
 

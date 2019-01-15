@@ -6,12 +6,14 @@ using TunnelQuest.Data.Models;
 using System.Threading;
 using TunnelQuest.AppLogic.ChatSegments;
 using System.Runtime.Caching;
+using Microsoft.EntityFrameworkCore;
 
 namespace TunnelQuest.AppLogic
 {
     public class ChatLogic
     {
         public const string AUCTION_TOKEN = "#TQAUC_";
+        public const int MAX_CHAT_LINES = 1000;
 
         // static stuff
 
@@ -29,6 +31,30 @@ namespace TunnelQuest.AppLogic
                 throw new Exception("_context cannot be null");
 
             this.context = _context;
+        }
+
+        public GetLinesResult GetLines(string serverCode, long? minId = null, long? maxId = null)
+        {
+            var query = context.ChatLines
+                .Include(line => line.Auctions)
+                    .ThenInclude(chatLineAuctions => chatLineAuctions.Auction)
+                .Where(line => line.ServerCode == serverCode);
+
+            if (minId != null)
+                query = query.Where(line => line.ChatLineId >= minId.Value);
+
+            if (maxId != null)
+                query = query.Where(line => line.ChatLineId <= maxId.Value);
+
+            var result = new GetLinesResult();
+            result.Lines = query
+                .OrderByDescending(line => line.ChatLineId) // order by descending in the sql query, to make sure we get the most recent lines if we run afoul of MAX_CHAT_LINES
+                .Take(MAX_CHAT_LINES)
+                .ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
+                .OrderBy(line => line.ChatLineId) // now that we've got the results from the database (possibly truncated by MAX_CHAT_LINES), re-order them correctly
+                .ToArray();
+
+            return result;
         }
 
         public ChatLine ProcessLogLine(string authTokenValue, string serverCode, string logLine)
@@ -177,6 +203,13 @@ namespace TunnelQuest.AppLogic
             }
         }
 
+
+        // public helper class
+
+        public class GetLinesResult
+        {
+            public ChatLine[] Lines { get; set; }
+        }
 
         // private helper class
 

@@ -11,8 +11,8 @@
     <None Remove="src\index.ts" />
     <None Remove="src\interfaces\Auction.ts" />
     <None Remove="src\interfaces\ChatLine.ts" />
-    <None Remove="src\interfaces\GetChatLinesResult.ts" />
     <None Remove="src\interfaces\Idable.ts" />
+    <None Remove="src\interfaces\LinesAndAuctions.ts" />
     <None Remove="src\interfaces\Settings.ts" />
     <None Remove="src\vue-shims.d.ts" />
   </ItemGroup>
@@ -30,8 +30,8 @@
   <ItemGroup>
     <TypeScriptCompile Include="src\classes\SlidingList.ts" />
     <TypeScriptCompile Include="src\index.ts" />
+    <TypeScriptCompile Include="src\interfaces\LinesAndAuctions.ts" />
     <TypeScriptCompile Include="src\interfaces\Idable.ts" />
-    <TypeScriptCompile Include="src\interfaces\GetChatLinesResult.ts" />
     <TypeScriptCompile Include="src\interfaces\Settings.ts" />
     <TypeScriptCompile Include="src\interfaces\ChatLine.ts" />
     <TypeScriptCompile Include="src\interfaces\Auction.ts" />

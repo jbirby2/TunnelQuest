@@ -42,19 +42,18 @@ class SlidingList<T extends Idable> {
         for (let i = entries.length - 1; i >= 0; i--) {
             let entry = entries[i];
 
-            // If there's already an entry with this id, remove and re-add it.
-            // This should really only happen for new chat lines that are added exactly
-            // at the moment the client is loading, so that the same line gets delivered
-            // by both signalr and the initial call to GET /api/chat_lines
+            // If there's already an entry with this id, replace it with the new object
             if (this.contains(entry.id))
                 this.remove(entry.id);
 
             this.array.unshift(entry);
             this.dict[entry.id] = entry;
 
-            // Intentionally do NOT enforce maxSize when adding to start, so that the user can scroll
-            // downwards infinitely into old records without deleting anything.  The next time addToEnd() is called to display
-            // new records, it'll enforce maxSize and purge the oldest stuff from the start of the list.
+            // Do NOT enforce maxSize when adding to start; let users manually add as many rows as they want
+            // by repeatedly downscrolling.  This way they can quickly scroll back to top through all the cached
+            // entries instead of having to repeatedly wait on loads while going back to the top.  The next time
+            // addToEnd() is called by a signalr update, the maxLength will get enforced and the extra entries
+            // will finally be trimmed.
             /*
             while (this.array.length > this.maxSize) {
                 let removedEntry = this.array.pop();
@@ -70,10 +69,7 @@ class SlidingList<T extends Idable> {
         for (let i = 0; i < entries.length; i++) {
             let entry = entries[i];
 
-            // If there's already an entry with this id, remove and re-add it.
-            // This should really only happen for new chat lines that are added exactly
-            // at the moment the client is loading, so that the same line gets delivered
-            // by both signalr and the initial call to GET /api/chat_lines
+            // If there's already an entry with this id, replace it with the new object
             if (this.contains(entry.id))
                 this.remove(entry.id);
 

@@ -8,6 +8,7 @@ interface Auction {
     isOrBestOffer: boolean,
     isAcceptingTrades: boolean,
     createdAt: Date,
-    updatedAt: Date
+    updatedAt: Date,
+    chatLineId: number
 }
 export default Auction;

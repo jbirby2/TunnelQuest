@@ -17,12 +17,13 @@ namespace TunnelQuest.Web.Models.Api
         public bool IsAcceptingTrades { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public long ChatLineId { get; set; }
         
         public ClientAuction()
         {
         }
 
-        public ClientAuction(Auction auction)
+        public ClientAuction(Auction auction, long chatLineId)
         {
             this.Id = auction.AuctionId;
             this.ItemName = auction.ItemName;
@@ -33,6 +34,7 @@ namespace TunnelQuest.Web.Models.Api
             this.IsAcceptingTrades = auction.IsAcceptingTrades;
             this.CreatedAt = auction.CreatedAt;
             this.UpdatedAt = auction.UpdatedAt;
+            this.ChatLineId = chatLineId;
         }
     }
 }

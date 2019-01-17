@@ -13,7 +13,7 @@ namespace TunnelQuest.AppLogic
     public class ChatLogic
     {
         public const string AUCTION_TOKEN = "#TQAUC_";
-        public const int MAX_CHAT_LINES = 1000;
+        public const int MAX_CHAT_LINES = 100;
 
         // static stuff
 

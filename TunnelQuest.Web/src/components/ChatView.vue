@@ -1,12 +1,9 @@
 ﻿<template>
     <div>
         <div>Chat View:</div>
-        <div><input v-model="filterText" type="text" /></div>
-        <div>{{filterText}}</div>
-
-        <sliding-list-view :slidingList="chatLines">
+        <div>
             <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :settings="settings" :auctions="auctions" :chatLine="chatLine"></chat-line-view>
-        </sliding-list-view>
+        </div>
     </div>
 </template>
 
@@ -20,7 +17,6 @@
 
     import SlidingList from "../classes/SlidingList";
 
-    import SlidingListView from "./SlidingListView.vue";
     import ChatLineView from "./ChatLineView.vue";
 
     export default Vue.extend({
@@ -40,7 +36,6 @@
         },
         data: function () {
             return {
-                filterText: ""
             };
         },
         computed: {
@@ -51,33 +46,14 @@
         created: function () {
         },
         mounted: function () {
+            this.$parent.$on("hit-bottom", this.onHitBottom);
         },
         methods: {
-            /*
-            doesLineMatchFilter: function (line: ChatLine) {
-                if (this.filterText == "")
-                    return true;
-                else {
-                    let cleanText = this.filterText.trim();
-
-                    if (line.playerName.toLowerCase().indexOf(cleanText) >= 0)
-                        return true;
-                    else if (line.text.toLowerCase().indexOf(cleanText) >= 0)
-                        return true;
-                    else {
-                        for (let aucId in line.auctions) {
-                            if (line.auctions[aucId].itemName.toLowerCase().indexOf(cleanText) >= 0)
-                                return true;
-                        }
-                    }
-                }
-
-                return false;
+            onHitBottom: function () {
+                console.log("stub ChatView.onHitBottom()");
             }
-            */
         },
         components: {
-            SlidingListView,
             ChatLineView
         }
     });

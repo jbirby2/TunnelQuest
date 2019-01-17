@@ -70,7 +70,7 @@ module.exports = {
         hints: false
     },
 
-    devtool: '#eval-source-map',
+    //devtool: '#eval-source-map',
 
     plugins: [
         new CleanWebpackPlugin(["wwwroot"], { exclude: ['images'] }),
@@ -84,9 +84,9 @@ module.exports = {
     ]
 }
 
-
+/*
 if (process.env.NODE_ENV === 'production') {
-    module.exports.devtool = '#source-map'
+    //module.exports.devtool = '#source-map'
 
     // (adding plugins for production only)
 
@@ -108,4 +108,4 @@ if (process.env.NODE_ENV === 'production') {
         })
     ])
 }
-
+*/

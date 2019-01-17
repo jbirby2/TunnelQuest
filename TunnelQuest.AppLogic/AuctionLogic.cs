@@ -10,7 +10,7 @@ namespace TunnelQuest.AppLogic
 {
     public class AuctionLogic
     {
-        public const int MAX_AUCTIONS = 1000;
+        public const int MAX_AUCTIONS = 100;
 
 
         // static stuff

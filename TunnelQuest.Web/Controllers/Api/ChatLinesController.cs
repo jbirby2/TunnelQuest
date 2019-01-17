@@ -29,10 +29,10 @@ namespace TunnelQuest.Web.Controllers.Api
 
         // GET api/chat_lines
         [HttpGet]
-        public GetChatLinesResult Get([FromQuery]string serverCode, [FromQuery]long? minId = null, [FromQuery]long? maxId = null)
+        public LinesAndAuctions Get([FromQuery]string serverCode, [FromQuery]long? minId = null, [FromQuery]long? maxId = null)
         {
             var coreResult = new ChatLogic(context).GetLines(serverCode, minId, maxId);
-            return new GetChatLinesResult(coreResult.Lines);
+            return new LinesAndAuctions(coreResult.Lines);
         }
 
         // POST api/chat_lines
@@ -76,17 +76,18 @@ namespace TunnelQuest.Web.Controllers.Api
                     }
                 }
 
+                // send the new lines to every connected signalr client
                 if (addedLines.Count > 0)
                 {
-                    var result = new GetChatLinesResult(addedLines.ToArray());
+                    var newClientLines = new LinesAndAuctions(addedLines.ToArray());
                     switch (payload.ServerCode)
                     {
                         case ServerCodes.Blue:
-                            await blueHub.Clients.All.SendAsync("ProcessNewLines", result);
+                            await blueHub.Clients.All.SendAsync("HandleNewChatLines", newClientLines);
                             break;
 
                         case ServerCodes.Red:
-                            await redHub.Clients.All.SendAsync("ProcessNewLines", result);
+                            await redHub.Clients.All.SendAsync("HandleNewChatLines", newClientLines);
                             break;
 
                         default:

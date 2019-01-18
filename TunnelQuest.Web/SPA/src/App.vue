@@ -1,13 +1,21 @@
-<template>
-    <div>
-        <sticky-header></sticky-header>
-        <chat-view ref="chatView" :settings="settings" :chatLines="chatLines" :auctions="auctions"></chat-view>
-        <auction-list-view :auctions="auctions"></auction-list-view>
-    </div>
+<template id="main-page">
+    <v-ons-page>
+        <v-ons-toolbar>
+            <div class="center" v-if="isScrolledToTop_">TunnelQuest</div>
+            <div class="center" v-if="!isScrolledToTop_">TunnelQuest (scroll up for new auctions)</div>
+        </v-ons-toolbar>
+
+        <div class="content" @scroll="onScroll">
+            <chat-view ref="chatView" :settings="settings" :chatLines="chatLines" :auctions="auctions"></chat-view>
+            <auction-list-view :auctions="auctions"></auction-list-view>
+        </div>
+
+    </v-ons-page>
 </template>
 
 <script lang="ts">
     import Vue from "vue";
+    //import * as onsenui from "onsenui";
     import axios from "axios";
     import * as signalR from "@aspnet/signalr";
 
@@ -18,7 +26,6 @@
 
     import SlidingList from "./classes/SlidingList";
 
-    import StickyHeader from "./components/StickyHeader.vue";
     import ChatView from "./components/ChatView.vue";
     import AuctionListView from "./components/AuctionListView.vue";
 
@@ -37,14 +44,14 @@
                 connection_: null as signalR.HubConnection | null,
                 isScrolledToTop_: true,
                 isScrolledToBottom_: false,
-                docElement_: null as HTMLElement | null
+                contentDiv_: null as HTMLElement | null
             };
         },
         created: function () {
 
         },
         mounted: function () {
-            this.docElement_ = ((document as Document).documentElement as HTMLElement);
+            this.contentDiv_ = this.$el.querySelector(".content") as HTMLElement;
 
             axios.get('/api/settings')
                 .then(response => {
@@ -52,38 +59,7 @@
                     this.chatLines.maxSize = this.settings.maxChatLines;
                     this.auctions.maxSize = this.settings.maxAuctions;
 
-                    // wire up window events
-                    window.onscroll = () => {
-
-                        if (this.docElement_ == null)
-                            return;
-
-                        let wasAtTop = this.isScrolledToTop_;
-                        let wasAtBottom = this.isScrolledToBottom_;
-
-                        this.isScrolledToTop_ = this.docElement_.scrollTop == 0;
-                        this.isScrolledToBottom_ = this.docElement_.scrollTop + window.innerHeight === this.docElement_.offsetHeight;
-
-                        if (this.connection_ != null) {
-                            if (wasAtTop) {
-                                // disconnect from signalr and stop receiving new lines if we leave the top of the list
-                                console.log("stub disconnecting");
-                                this.connection_.stop();
-                                this.$emit("disconnected");
-                            }
-                            else if (this.isScrolledToTop_) {
-                                // reconnect to signalr and also request the next set of lines after the last one we received
-                                console.log("stub reconnecting and catching up");
-                                this.reconnectAndCatchUp();
-                                this.$emit("connecting");
-                            }
-                        }
-
-                        this.$emit("scroll");
-
-                        if (this.isScrolledToBottom_)
-                            this.$emit("hit-bottom");
-                    }; // end window.onscroll
+                    window.onscroll = this.onScroll;
 
                     this.connection_ = new signalR.HubConnectionBuilder()
                         .withUrl(this.hubUrl)
@@ -109,6 +85,35 @@
             }
         },
         methods: {
+
+            onScroll: function () {
+                if (this.contentDiv_ == null)
+                    return;
+
+                let wasAtTop = this.isScrolledToTop_;
+                let wasAtBottom = this.isScrolledToBottom_;
+
+                this.isScrolledToTop_ = (this.contentDiv_.scrollTop == 0);
+                this.isScrolledToBottom_ = (this.contentDiv_.scrollTop == this.contentDiv_.scrollHeight - this.contentDiv_.offsetHeight);
+
+                if (this.connection_ != null) {
+                    if (wasAtTop) {
+                        // disconnect from signalr and stop receiving new lines if we leave the top of the list
+                        this.connection_.stop();
+                        this.$emit("disconnected");
+                    }
+                    else if (this.isScrolledToTop_) {
+                        // reconnect to signalr and also request the next set of lines after the last one we received
+                        this.reconnectAndCatchUp();
+                        this.$emit("connecting");
+                    }
+                }
+
+                this.$emit("scroll");
+
+                if (this.isScrolledToBottom_)
+                    this.$emit("hit-bottom");
+            },
 
             reconnectAndCatchUp: function () {
                 (this.connection_ as signalR.HubConnection)
@@ -154,7 +159,6 @@
             }
         }, // end methods
         components: {
-            StickyHeader,
             ChatView,
             AuctionListView
         }

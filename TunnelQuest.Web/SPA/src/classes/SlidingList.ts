@@ -85,6 +85,14 @@ class SlidingList<T extends Idable> {
         }
     }
 
+    clear() {
+        while (this.array.length > 0) {
+            let removedEntry = this.array.shift();
+            if (removedEntry)
+                delete this.dict[removedEntry.id];
+        }
+    }
+
     consoleDump(name: string) {
         console.log(name + ".consoleDump():");
 

@@ -11,16 +11,13 @@
     import Auction from "../interfaces/Auction";
     import Settings from "../interfaces/Settings";
 
+    import TQGlobals from "../classes/TQGlobals";
     import SlidingList from "../classes/SlidingList";
 
     import TimeStamp from "./TimeStamp.vue";
 
     export default Vue.extend({
         props: {
-            settings: {
-                type: Object as () => Settings,
-                required: true
-            },
             auctions: {
                 type: Object as () => SlidingList<Auction>,
                 required: true
@@ -47,12 +44,12 @@
                 else
                     wordsSoFar += " ";
 
-                if (word.substring(0, this.settings.auctionToken.length) === this.settings.auctionToken) {
+                if (word.substring(0, TQGlobals.settings.auctionToken.length) === TQGlobals.settings.auctionToken) {
                     // createTextNode() html encodes the player-typed text to protect against html injection attacks
                     textSpan.appendChild(document.createTextNode(wordsSoFar));
                     wordsSoFar = "";
 
-                    let auctionId = parseInt(word.substring(this.settings.auctionToken.length));
+                    let auctionId = parseInt(word.substring(TQGlobals.settings.auctionToken.length));
                     let linkElem = document.createElement("a") as HTMLAnchorElement;
                     linkElem.href = "#auction_id=" + auctionId.toString();
                     linkElem.text = this.auctions.dict[auctionId].itemName;

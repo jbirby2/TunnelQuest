@@ -1,8 +1,8 @@
 ﻿<template>
     <div>
-        <div>Chat View:</div>
+        <div>Auction View:</div>
         <div>
-            <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :auctions="auctions" :chatLine="chatLine"></chat-line-view>
+            <auction-view v-for="auction in viewAuctions" :key="auction.id" :auction="auction"></auction-view>
         </div>
     </div>
 </template>
@@ -16,44 +16,30 @@
 
     import LiveView from "../mixins/LiveView";
 
-    import ChatLineView from "./ChatLineView.vue";
-
     import TQGlobals from "../classes/TQGlobals";
+
+    import AuctionView from "./AuctionView.vue";
 
 
     export default mixins(LiveView).extend({
-
         computed: {
-            viewLines: function () {
-                return _.clone(this.chatLines.array).reverse();
+            viewAuctions: function () {
+                return _.clone(this.auctions.array).reverse();
             }
         },
-        /*
         created: function () {
-            console.log("stub created");
         },
         mounted: function () {
-            console.log("stub mounted");
         },
-        activated: function () {
-            console.log("stub activated");
-        },
-        deactivated: function () {
-            console.log("stub deactivated");
-        },
-        beforeDestroy: function () {
-            console.log("stub beforeDestroy");
-        },
-        */
         methods: {
 
             // inherited from LiveView
             getLatestContent: function () {
                 let minId: number | null = null;
-                if (this.chatLines.array.length > 0)
-                    minId = this.chatLines.array[this.chatLines.array.length - 1].id + 1;
+                if (this.auctions.array.length > 0)
+                    minId = this.auctions.array[this.auctions.array.length - 1].id + 1;
 
-                axios.get('/api/chat_lines?serverCode=' + TQGlobals.serverCode + "&minId=" + (minId == null ? "" : minId.toString()))
+                axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&minId=" + (minId == null ? "" : minId.toString()))
                     .then(response => {
                         let result = response.data as LinesAndAuctions;
                         this.onNewContent(result);
@@ -71,7 +57,7 @@
 
         },
         components: {
-            ChatLineView
+            AuctionView
         }
     });
 </script>

@@ -39,5 +39,20 @@ namespace TunnelQuest.Web.Models.Api
             this.Lines = clientLines;
             this.Auctions = clientAuctions.Values.OrderBy(auction => auction.Id).ToArray();
         }
+
+        public LinesAndAuctions(Auction[] auctions)
+        {
+            var clientLines = new ClientChatLine[auctions.Length];
+            var clientAuctions = new ClientAuction[auctions.Length];
+
+            for (int i = 0; i < auctions.Length; i++)
+            {
+                clientLines[i] = new ClientChatLine(auctions[i].ChatLines.First().ChatLine);
+                clientAuctions[i] = new ClientAuction(auctions[i], clientLines[i].Id);
+            }
+
+            this.Lines = clientLines;
+            this.Auctions = clientAuctions;
+        }
     }
 }

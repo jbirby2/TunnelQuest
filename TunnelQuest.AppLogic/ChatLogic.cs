@@ -14,6 +14,7 @@ namespace TunnelQuest.AppLogic
     {
         public const string AUCTION_TOKEN = "#TQAUC_";
         public const int MAX_CHAT_LINES = 100;
+        public const int BACKSCROLL_FETCH_SIZE = 20;
 
         // static stuff
 
@@ -33,7 +34,7 @@ namespace TunnelQuest.AppLogic
             this.context = _context;
         }
 
-        public GetLinesResult GetLines(string serverCode, long? minId = null, long? maxId = null)
+        public ChatLine[] GetLines(string serverCode, long? minId = null, long? maxId = null)
         {
             var query = context.ChatLines
                 .Include(line => line.Auctions)
@@ -46,15 +47,12 @@ namespace TunnelQuest.AppLogic
             if (maxId != null)
                 query = query.Where(line => line.ChatLineId <= maxId.Value);
 
-            var result = new GetLinesResult();
-            result.Lines = query
+            return query
                 .OrderByDescending(line => line.ChatLineId) // order by descending in the sql query, to make sure we get the most recent lines if we run afoul of MAX_CHAT_LINES
                 .Take(MAX_CHAT_LINES)
                 .ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
                 .OrderBy(line => line.ChatLineId) // now that we've got the results from the database (possibly truncated by MAX_CHAT_LINES), re-order them correctly
                 .ToArray();
-
-            return result;
         }
 
         public ChatLine ProcessLogLine(string authTokenValue, string serverCode, string logLine)
@@ -203,13 +201,6 @@ namespace TunnelQuest.AppLogic
             }
         }
 
-
-        // public helper class
-
-        public class GetLinesResult
-        {
-            public ChatLine[] Lines { get; set; }
-        }
 
         // private helper class
 

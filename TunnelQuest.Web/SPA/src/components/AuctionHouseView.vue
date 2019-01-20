@@ -53,6 +53,23 @@
             // inherited from LiveView
             getEarlierContent: function () {
                 // stub
+                /*
+                let minId: number | null = null;
+                let maxId: number | null = null;
+
+                if (this.auctions.array.length > 0)
+                    minId = this.auctions.array[this.auctions.array.length - 1].id + 1;
+
+                axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&minId=" + (minId == null ? "" : minId.toString()))
+                    .then(response => {
+                        let result = response.data as LinesAndAuctions;
+                        this.onNewContent(result);
+                    })
+                    .catch(err => {
+                        // stub
+                        console.log(err);
+                    }); // end axios.get(chat_lines)
+                */
             },
 
         },

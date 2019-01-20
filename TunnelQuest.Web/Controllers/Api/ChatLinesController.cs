@@ -31,8 +31,8 @@ namespace TunnelQuest.Web.Controllers.Api
         [HttpGet]
         public LinesAndAuctions Get([FromQuery]string serverCode, [FromQuery]long? minId = null, [FromQuery]long? maxId = null)
         {
-            var coreResult = new ChatLogic(context).GetLines(serverCode, minId, maxId);
-            return new LinesAndAuctions(coreResult.Lines);
+            var chatLines = new ChatLogic(context).GetLines(serverCode, minId, maxId);
+            return new LinesAndAuctions(chatLines);
         }
 
         // POST api/chat_lines
@@ -83,11 +83,11 @@ namespace TunnelQuest.Web.Controllers.Api
                     switch (payload.ServerCode)
                     {
                         case ServerCodes.Blue:
-                            await blueHub.Clients.All.SendAsync("HandleNewChatLines", newClientLines);
+                            await blueHub.Clients.All.SendAsync("NewChatLines", newClientLines);
                             break;
 
                         case ServerCodes.Red:
-                            await redHub.Clients.All.SendAsync("HandleNewChatLines", newClientLines);
+                            await redHub.Clients.All.SendAsync("NewChatLines", newClientLines);
                             break;
 
                         default:

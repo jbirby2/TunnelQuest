@@ -5,12 +5,14 @@ using TunnelQuest.Data;
 using TunnelQuest.Data.Models;
 using System.Threading;
 using TunnelQuest.AppLogic.ChatSegments;
+using Microsoft.EntityFrameworkCore;
 
 namespace TunnelQuest.AppLogic
 {
     public class AuctionLogic
     {
         public const int MAX_AUCTIONS = 100;
+        public const int BACKSCROLL_FETCH_SIZE = 20;
 
 
         // static stuff
@@ -23,12 +25,53 @@ namespace TunnelQuest.AppLogic
 
         private TunnelQuestContext context;
 
-        internal AuctionLogic(TunnelQuestContext _context)
+        public AuctionLogic(TunnelQuestContext _context)
         {
             if (_context == null)
                 throw new Exception("_context cannot be null");
 
             this.context = _context;
+        }
+
+        public Auction[] GetAuctions(string serverCode, long? minId = null, long? maxId = null)
+        {
+            var auctionQuery = context.Auctions
+               .Include(auction => auction.ChatLines)
+                   .ThenInclude(auctionChatLine => auctionChatLine.ChatLine)
+                .Where(auction => auction.ChatLines.Any(auctionChat => auctionChat.ChatLine.ServerCode == serverCode));
+            
+            if (minId != null)
+                auctionQuery = auctionQuery.Where(auction => auction.AuctionId >= minId.Value);
+
+            if (maxId != null)
+                auctionQuery = auctionQuery.Where(auction => auction.AuctionId <= maxId.Value);
+
+            // STUB TODO: come back and rewrite this more efficiently.
+            //
+            // This query sucks because it returns ALL associated rows from ChatLineAuction, and THEN discards
+            // all but the most recent ChatLineAuction row.  I got tired of trying to figure out how to make
+            // Entity Framework select the parent record + only the most recent child record, AND its associated ChatLine record.
+            // Luckily the SQL Server is running on the same machine as the web server, so we can probably get away with this
+            // shameful wastefulness.
+
+            var auctions = auctionQuery
+                .OrderByDescending(auction => auction.UpdatedAt) // order by descending in the sql query, to make sure we get the most recent auctions if we run afoul of MAX_AUCTIONS
+                .Take(MAX_AUCTIONS)
+                .ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
+                .OrderBy(auction => auction.UpdatedAt) // now that we've got the results from the database (possibly truncated by MAX_AUCTIONS), re-order them correctly
+                .ToArray();
+
+            // now discard all but the most recent chat line
+            foreach (var auction in auctions)
+            {
+                var lastChatLine = auction.ChatLines.LastOrDefault();
+                var newCollection = new List<ChatLineAuction>();
+                if (lastChatLine != null)
+                    newCollection.Add(lastChatLine);
+                auction.ChatLines = newCollection;
+            }
+
+            return auctions;
         }
 
         public Dictionary<string, Auction> GetNormalizedAuctions(string serverCode, string playerName, DateTime timestamp, IEnumerable<Auction> pendingAuctions)

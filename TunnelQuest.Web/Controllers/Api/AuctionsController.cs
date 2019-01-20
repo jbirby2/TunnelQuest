@@ -25,9 +25,9 @@ namespace TunnelQuest.Web.Controllers.Api
 
         // GET api/auctions
         [HttpGet]
-        public LinesAndAuctions Get([FromQuery]string serverCode, [FromQuery]long? minId = null, [FromQuery]long? maxId = null)
+        public LinesAndAuctions Get([FromQuery]string serverCode, [FromQuery]DateTime? minUpdatedAt = null, [FromQuery]DateTime? maxUpdatedAt = null, [FromQuery]int? maxResults = null)
         {
-            var coreResult = new AuctionLogic(context).GetAuctions(serverCode, minId, maxId);
+            var coreResult = new AuctionLogic(context).GetAuctions(serverCode, minUpdatedAt, maxUpdatedAt, maxResults);
             return new LinesAndAuctions(coreResult);
         }
 

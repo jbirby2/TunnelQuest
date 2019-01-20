@@ -11,8 +11,8 @@ namespace TunnelQuest.AppLogic
 {
     public class AuctionLogic
     {
-        public const int MAX_AUCTIONS = 100;
-        public const int BACKSCROLL_FETCH_SIZE = 20;
+        public const int MAX_AUCTIONS = 50;
+        public const int BACKSCROLL_FETCH_SIZE = 10;
 
 
         // static stuff
@@ -33,18 +33,21 @@ namespace TunnelQuest.AppLogic
             this.context = _context;
         }
 
-        public Auction[] GetAuctions(string serverCode, long? minId = null, long? maxId = null)
+        public Auction[] GetAuctions(string serverCode, DateTime? minUpdatedAt = null, DateTime? maxUpdatedAt = null, int? maxResults = null)
         {
+            if (maxResults == null)
+                maxResults = MAX_AUCTIONS;
+
             var auctionQuery = context.Auctions
                .Include(auction => auction.ChatLines)
                    .ThenInclude(auctionChatLine => auctionChatLine.ChatLine)
                 .Where(auction => auction.ChatLines.Any(auctionChat => auctionChat.ChatLine.ServerCode == serverCode));
             
-            if (minId != null)
-                auctionQuery = auctionQuery.Where(auction => auction.AuctionId >= minId.Value);
+            if (minUpdatedAt != null)
+                auctionQuery = auctionQuery.Where(auction => auction.UpdatedAt >= minUpdatedAt.Value);
 
-            if (maxId != null)
-                auctionQuery = auctionQuery.Where(auction => auction.AuctionId <= maxId.Value);
+            if (maxUpdatedAt != null)
+                auctionQuery = auctionQuery.Where(auction => auction.UpdatedAt <= maxUpdatedAt.Value);
 
             // STUB TODO: come back and rewrite this more efficiently.
             //
@@ -55,10 +58,10 @@ namespace TunnelQuest.AppLogic
             // shameful wastefulness.
 
             var auctions = auctionQuery
-                .OrderByDescending(auction => auction.UpdatedAt) // order by descending in the sql query, to make sure we get the most recent auctions if we run afoul of MAX_AUCTIONS
-                .Take(MAX_AUCTIONS)
+                .OrderByDescending(auction => auction.UpdatedAt) // order by descending in the sql query, to make sure we get the most recent auctions if we hit the limit imposed by maxResults
+                .Take(maxResults.Value)
                 .ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
-                .OrderBy(auction => auction.UpdatedAt) // now that we've got the results from the database (possibly truncated by MAX_AUCTIONS), re-order them correctly
+                .OrderBy(auction => auction.UpdatedAt) // now that we've got the results from the database (possibly truncated by maxResults), re-order them correctly
                 .ToArray();
 
             // now discard all but the most recent chat line

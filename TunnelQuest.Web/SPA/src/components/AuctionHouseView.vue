@@ -27,19 +27,19 @@
                 return _.clone(this.auctions.array).reverse();
             }
         },
-        created: function () {
-        },
-        mounted: function () {
-        },
         methods: {
 
             // inherited from LiveView
             getLatestContent: function () {
-                let minId: number | null = null;
-                if (this.auctions.array.length > 0)
-                    minId = this.auctions.array[this.auctions.array.length - 1].id + 1;
+                let minUpdatedAt: Date | null = null;
+                if (this.auctions.array.length > 0) {
+                    minUpdatedAt = new Date(this.auctions.array[this.auctions.array.length - 1].updatedAtString);
 
-                axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&minId=" + (minId == null ? "" : minId.toString()))
+                    // add 1 ms so we don't always get one auction that we already know about in the results
+                    minUpdatedAt = new Date(minUpdatedAt.getTime() + 1);
+                }
+
+                axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&minUpdatedAt=" + (minUpdatedAt == null ? "" : minUpdatedAt.toISOString()))
                     .then(response => {
                         let result = response.data as LinesAndAuctions;
                         this.onNewContent(result);
@@ -52,15 +52,16 @@
 
             // inherited from LiveView
             getEarlierContent: function () {
-                // stub
-                /*
-                let minId: number | null = null;
-                let maxId: number | null = null;
 
-                if (this.auctions.array.length > 0)
-                    minId = this.auctions.array[this.auctions.array.length - 1].id + 1;
+                let maxUpdatedAt: Date | null = null;
+                if (this.auctions.array.length > 0) {
+                    maxUpdatedAt = new Date(this.auctions.array[0].updatedAtString);
 
-                axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&minId=" + (minId == null ? "" : minId.toString()))
+                    // subtract 1 ms so we don't always get one auction that we already know about in the results
+                    maxUpdatedAt = new Date(maxUpdatedAt.getTime() - 1);
+                }
+
+                axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&maxUpdatedAt=" + (maxUpdatedAt == null ? "" : maxUpdatedAt.toISOString()) + "&maxResults=" + TQGlobals.settings.auctionBackScrollFetchSize.toString())
                     .then(response => {
                         let result = response.data as LinesAndAuctions;
                         this.onNewContent(result);
@@ -69,7 +70,6 @@
                         // stub
                         console.log(err);
                     }); // end axios.get(chat_lines)
-                */
             },
 
         },

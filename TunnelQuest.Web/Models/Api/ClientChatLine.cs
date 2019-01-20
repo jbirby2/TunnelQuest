@@ -11,7 +11,7 @@ namespace TunnelQuest.Web.Models.Api
         public long Id { get; set; }
         public string PlayerName { get; set; }
         public string Text { get; set; }
-        public DateTime SentAt { get; set; }
+        public DateTime SentAtString { get; set; } // named String even though it's a DateTime in C# because it will be serialized as a string in javascript
         public long[] AuctionIds { get; set; }
 
         public ClientChatLine()
@@ -23,7 +23,7 @@ namespace TunnelQuest.Web.Models.Api
             this.Id = line.ChatLineId;
             this.PlayerName = line.PlayerName;
             this.Text = line.Text;
-            this.SentAt = line.SentAt;
+            this.SentAtString = line.SentAt;
 
             this.AuctionIds = new long[line.Auctions.Count];
             int i = 0;

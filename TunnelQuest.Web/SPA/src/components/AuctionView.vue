@@ -1,7 +1,7 @@
 ﻿<template>
     <div class="auctionView">
-        <time-stamp :time="auction.updatedAt"></time-stamp>
-       {{ auction.isBuying ? "WTB" : "WTS" }} {{ auction.itemName }} - {{ auction.price }}
+        [{{ auction.id }}] <time-stamp :time="auction.updatedAtString"></time-stamp>
+        {{ auction.isBuying ? "WTB" : "WTS" }} {{ auction.itemName }} - {{ auction.price }}
     </div>
 </template>
 

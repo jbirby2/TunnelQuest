@@ -53,9 +53,8 @@ export default mixins(LiveComponent).extend({
             console.log("LiveView.onNewContent():");
             console.log(newLines);
 
-            // STUB - will need to refactor this when implementing downscroll, because those new lines will need to use addToBeginning() instead of addToEnd()
-            this.auctions.addToEnd(newLines.auctions);
-            this.chatLines.addToEnd(newLines.lines);
+            this.auctions.add(newLines.auctions);
+            this.chatLines.add(newLines.lines);
 
             // stub
             //this.chatLines.consoleDump("chatLines");

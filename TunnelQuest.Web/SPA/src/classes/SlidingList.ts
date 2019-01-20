@@ -37,7 +37,43 @@ class SlidingList<T extends Idable> {
             return false;
     }
 
-    addToStart(entries: Array<T>) {
+    clear() {
+        while (this.array.length > 0) {
+            let removedEntry = this.array.shift();
+            if (removedEntry)
+                delete this.dict[removedEntry.id];
+        }
+    }
+
+    consoleDump(name: string) {
+        console.log(name + ".consoleDump():");
+
+        console.log("dict:");
+        console.log(this.dict);
+
+        console.log("array:");
+        console.log(this.array);
+    }
+
+    add(entries: Array<T>) {
+        // STUB
+        //console.log("STUB SlidingList.add()");
+        //console.log(entries);
+
+        if (entries.length == 0)
+            return;
+        else if (this.array.length == 0)
+            this.addToEnd(entries); // or addToStart(), either would work here since the array is empty
+        else if (entries[0].id >= this.array[this.array.length - 1].id)
+            this.addToEnd(entries);
+        else
+            this.addToStart(entries);
+    }
+
+
+    // private
+
+    private addToStart(entries: Array<T>) {
 
         for (let i = entries.length - 1; i >= 0; i--) {
             let entry = entries[i];
@@ -64,7 +100,7 @@ class SlidingList<T extends Idable> {
         }
     }
 
-    addToEnd(entries: Array<T>) {
+    private addToEnd(entries: Array<T>) {
 
         for (let i = 0; i < entries.length; i++) {
             let entry = entries[i];
@@ -84,27 +120,6 @@ class SlidingList<T extends Idable> {
             }
         }
     }
-
-    clear() {
-        while (this.array.length > 0) {
-            let removedEntry = this.array.shift();
-            if (removedEntry)
-                delete this.dict[removedEntry.id];
-        }
-    }
-
-    consoleDump(name: string) {
-        console.log(name + ".consoleDump():");
-
-        console.log("dict:");
-        console.log(this.dict);
-
-        console.log("array:");
-        console.log(this.array);
-    }
-
-
-    // private
 
     private remove(id: number) {
         // sanity check

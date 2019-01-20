@@ -13,8 +13,8 @@ namespace TunnelQuest.AppLogic
     public class ChatLogic
     {
         public const string AUCTION_TOKEN = "#TQAUC_";
-        public const int MAX_CHAT_LINES = 100;
-        public const int BACKSCROLL_FETCH_SIZE = 20;
+        public const int MAX_CHAT_LINES = 50;
+        public const int BACKSCROLL_FETCH_SIZE = 10;
 
         // static stuff
 
@@ -34,8 +34,11 @@ namespace TunnelQuest.AppLogic
             this.context = _context;
         }
 
-        public ChatLine[] GetLines(string serverCode, long? minId = null, long? maxId = null)
+        public ChatLine[] GetLines(string serverCode, long? minId = null, long? maxId = null, int? maxResults = null)
         {
+            if (maxResults == null)
+                maxResults = MAX_CHAT_LINES;
+
             var query = context.ChatLines
                 .Include(line => line.Auctions)
                     .ThenInclude(chatLineAuctions => chatLineAuctions.Auction)
@@ -48,10 +51,10 @@ namespace TunnelQuest.AppLogic
                 query = query.Where(line => line.ChatLineId <= maxId.Value);
 
             return query
-                .OrderByDescending(line => line.ChatLineId) // order by descending in the sql query, to make sure we get the most recent lines if we run afoul of MAX_CHAT_LINES
-                .Take(MAX_CHAT_LINES)
+                .OrderByDescending(line => line.ChatLineId) // order by descending in the sql query, to make sure we get the most recent lines if we hit the limit imposed by maxResults
+                .Take(maxResults.Value)
                 .ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
-                .OrderBy(line => line.ChatLineId) // now that we've got the results from the database (possibly truncated by MAX_CHAT_LINES), re-order them correctly
+                .OrderBy(line => line.ChatLineId) // now that we've got the results from the database (possibly truncated by maxResults), re-order them correctly
                 .ToArray();
         }
 

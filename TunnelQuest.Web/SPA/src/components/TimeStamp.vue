@@ -8,8 +8,8 @@
 
     export default Vue.extend({
         props: {
-            time: {
-                type: Object as () => Date,
+            timeString: {
+                type: String,
                 required: true
             }
         },
@@ -25,7 +25,7 @@
         created: function () {
         },
         mounted: function () {
-            this.moment_ = moment.utc(this.time);
+            this.moment_ = moment.utc(this.timeString);
             this.tick();
             this.interval_ = setInterval(this.tick, 60000);
         },

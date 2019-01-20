@@ -1,6 +1,6 @@
 ﻿<template>
     <div class="chatLineView">
-        [{{ chatLine.id }}] <time-stamp :time="chatLine.sentAt"></time-stamp> {{chatLine.playerName}} auctions, '<span class="playerText"></span>'
+        [{{ chatLine.id }}] <time-stamp :time="chatLine.sentAtString"></time-stamp> {{chatLine.playerName}} auctions, '<span class="playerText"></span>'
     </div>
 </template>
 

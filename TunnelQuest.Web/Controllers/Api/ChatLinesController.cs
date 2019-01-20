@@ -29,9 +29,9 @@ namespace TunnelQuest.Web.Controllers.Api
 
         // GET api/chat_lines
         [HttpGet]
-        public LinesAndAuctions Get([FromQuery]string serverCode, [FromQuery]long? minId = null, [FromQuery]long? maxId = null)
+        public LinesAndAuctions Get([FromQuery]string serverCode, [FromQuery]long? minId = null, [FromQuery]long? maxId = null, [FromQuery]int? maxResults = null)
         {
-            var chatLines = new ChatLogic(context).GetLines(serverCode, minId, maxId);
+            var chatLines = new ChatLogic(context).GetLines(serverCode, minId, maxId, maxResults);
             return new LinesAndAuctions(chatLines);
         }
 

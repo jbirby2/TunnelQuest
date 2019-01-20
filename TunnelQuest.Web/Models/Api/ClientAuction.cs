@@ -15,8 +15,8 @@ namespace TunnelQuest.Web.Models.Api
         public int? Price { get; set; }
         public bool IsOrBestOffer { get; set; }
         public bool IsAcceptingTrades { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTime CreatedAtString { get; set; } // named String even though it's a DateTime in C# because it will be serialized as a string in javascript
+        public DateTime UpdatedAtString { get; set; } // named String even though it's a DateTime in C# because it will be serialized as a string in javascript
         public long ChatLineId { get; set; }
         
         public ClientAuction()
@@ -32,8 +32,8 @@ namespace TunnelQuest.Web.Models.Api
             this.Price = auction.Price;
             this.IsOrBestOffer = auction.IsOrBestOffer;
             this.IsAcceptingTrades = auction.IsAcceptingTrades;
-            this.CreatedAt = auction.CreatedAt;
-            this.UpdatedAt = auction.UpdatedAt;
+            this.CreatedAtString = auction.CreatedAt;
+            this.UpdatedAtString = auction.UpdatedAt;
             this.ChatLineId = chatLineId;
         }
     }

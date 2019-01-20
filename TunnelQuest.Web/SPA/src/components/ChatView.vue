@@ -28,23 +28,6 @@
                 return _.clone(this.chatLines.array).reverse();
             }
         },
-        /*
-        created: function () {
-            console.log("stub created");
-        },
-        mounted: function () {
-            console.log("stub mounted");
-        },
-        activated: function () {
-            console.log("stub activated");
-        },
-        deactivated: function () {
-            console.log("stub deactivated");
-        },
-        beforeDestroy: function () {
-            console.log("stub beforeDestroy");
-        },
-        */
         methods: {
 
             // inherited from LiveView
@@ -66,7 +49,19 @@
 
             // inherited from LiveView
             getEarlierContent: function () {
-                // stub
+                let maxId: number | null = null;
+                if (this.chatLines.array.length > 0)
+                    maxId = this.chatLines.array[0].id - 1;
+
+                axios.get('/api/chat_lines?serverCode=' + TQGlobals.serverCode + "&maxId=" + (maxId == null ? "" : maxId.toString()) + "&maxResults=" + TQGlobals.settings.chatLineBackScrollFetchSize.toString())
+                    .then(response => {
+                        let result = response.data as LinesAndAuctions;
+                        this.onNewContent(result);
+                    })
+                    .catch(err => {
+                        // stub
+                        console.log(err);
+                    }); // end axios.get(chat_lines)
             },
 
         },

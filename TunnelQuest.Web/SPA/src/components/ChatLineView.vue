@@ -1,6 +1,8 @@
 ﻿<template>
-    <div class="chatLineView">
-        [{{ chatLine.id }}] <time-stamp :time="chatLine.sentAtString"></time-stamp> {{chatLine.playerName}} auctions, '<span class="playerText"></span>'
+    <div class="tqChatLineView">
+        [{{ chatLine.id }}] 
+        <time-stamp v-if="showTimestamp" :timeString="chatLine.sentAtString"></time-stamp>
+        <span class="tqChatLineView_PlayerName">{{chatLine.playerName}} auctions,</span> '<span class="tqChatLineView_PlayerText"></span>'
     </div>
 </template>
 
@@ -9,7 +11,6 @@
 
     import ChatLine from "../interfaces/ChatLine";
     import Auction from "../interfaces/Auction";
-    import Settings from "../interfaces/Settings";
 
     import TQGlobals from "../classes/TQGlobals";
     import SlidingList from "../classes/SlidingList";
@@ -25,16 +26,22 @@
             chatLine: {
                 type: Object as () => ChatLine,
                 required: true
+            },
+            showTimestamp: {
+                type: Boolean,
+                required: true
+            },
+            itemNameLinks: {
+                type: Boolean,
+                required: true
             }
         },
         data: function () {
             return {
             };
         },
-        created: function () {
-        },
         mounted: function () {
-            let textSpan = this.$el.querySelector(".playerText") as HTMLSpanElement;
+            let textSpan = this.$el.querySelector(".tqChatLineView_PlayerText") as HTMLSpanElement;
 
             let wordsSoFar : string | null = null;
             let textWords = this.chatLine.text.split(" ");
@@ -50,10 +57,16 @@
                     wordsSoFar = "";
 
                     let auctionId = parseInt(word.substring(TQGlobals.settings.auctionToken.length));
-                    let linkElem = document.createElement("a") as HTMLAnchorElement;
-                    linkElem.href = "#auction_id=" + auctionId.toString();
-                    linkElem.text = this.auctions.dict[auctionId].itemName;
-                    textSpan.appendChild(linkElem);
+
+                    if (this.itemNameLinks) {
+                        let linkElem = document.createElement("a") as HTMLAnchorElement;
+                        linkElem.href = "#auction_id=" + auctionId.toString();
+                        linkElem.text = this.auctions.dict[auctionId].itemName;
+                        textSpan.appendChild(linkElem);
+                    }
+                    else {
+                        wordsSoFar += this.auctions.dict[auctionId].itemName;
+                    }
                 }
                 else {
                     wordsSoFar += word;
@@ -69,4 +82,14 @@
 </script>
 
 <style>
+    .tqChatLineView {
+    }
+
+    .tqChatLineView_PlayerName {
+        font-style: italic;
+    }
+
+    .tqChatLineView_PlayerText {
+    }
+
 </style>

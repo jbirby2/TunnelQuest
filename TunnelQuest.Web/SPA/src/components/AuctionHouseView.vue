@@ -2,7 +2,7 @@
     <div>
         <div>Auction View:</div>
         <div>
-            <auction-view v-for="auction in viewAuctions" :key="auction.id" :auction="auction"></auction-view>
+            <auction-view v-for="auction in viewAuctions" :key="auction.id" :auction="auction" :auctions="auctions" :chatLine="getChatLineFor(auction)"></auction-view>
         </div>
     </div>
 </template>
@@ -12,6 +12,7 @@
     import mixins from 'vue-typed-mixins';
     import * as _ from "lodash";
 
+    import Auction from "../interfaces/Auction";
     import LinesAndAuctions from "../interfaces/LinesAndAuctions";
 
     import LiveView from "../mixins/LiveView";
@@ -28,6 +29,10 @@
             }
         },
         methods: {
+
+            getChatLineFor(auction: Auction) {
+                return this.chatLines.dict[auction.chatLineId];
+            },
 
             // inherited from LiveView
             getLatestContent: function () {

@@ -1,10 +1,9 @@
 <template>
     <div id="app">
 
-        <div id="nav">
-            <router-link to="/">Main Menu</router-link> |
-            <router-link to="/chat">Chat View</router-link> |
-            <router-link to="/auctionhouse">Auction House View</router-link>
+        <div class="tqNavBar">
+            <router-link to="/">Auction House View</router-link> |
+            <router-link to="/chat">Chat View</router-link>
         </div>
 
         <transition>
@@ -40,25 +39,21 @@
 </script>
 
 <style>
-
-    #app {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
+    document {
+        padding: 0;
+        margin: 0;
     }
 
-    #nav {
-        padding: 30px;
+    body {
+        padding: 0;
+        margin: 0;
+        background-image: url("/assets/background.png");
+        background-size: cover;
+        background-attachment: fixed;
+        color: #ffffff;
     }
 
-    #nav a {
-        font-weight: bold;
-        color: #2c3e50;
-    }
-
-    #nav a.router-link-exact-active {
-        color: #42b983;
+    .tqNavBar {
+        background-color: #d19200;
     }
 </style>

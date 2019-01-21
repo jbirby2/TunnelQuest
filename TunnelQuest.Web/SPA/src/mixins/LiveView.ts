@@ -28,9 +28,6 @@ export default mixins(LiveComponent).extend({
         };
     },
 
-    mounted: function () {
-    },
-
     deactivated: function () {
         window.removeEventListener("scroll", this.onScroll);
     },
@@ -39,12 +36,17 @@ export default mixins(LiveComponent).extend({
 
         // inherited from LiveComponent
         onInitialized: function () {
-            window.addEventListener("scroll", this.onScroll);
-
             this.chatLines.maxSize = TQGlobals.settings.maxChatLines;
             this.auctions.maxSize = TQGlobals.settings.maxAuctions;
 
-            this.reconnectAndCatchUp();
+            window.addEventListener("scroll", this.onScroll);
+
+            // If the window is already scrolled to the top, then call reconnectAndCatchUp() directly.  Else, force the window
+            // to scroll to the top, which will trigger onScroll, which will call reconnectAndCatchUp().
+            if (document != null && document.documentElement != null && document.documentElement.scrollTop == 0)
+                this.reconnectAndCatchUp();
+            else
+                window.scrollTo(0, 0);
         },
 
         // inherited from LiveComponent
@@ -62,7 +64,6 @@ export default mixins(LiveComponent).extend({
         },
 
         onScroll: function () {
-
             if (document == null || document.documentElement == null)
                 return;
 
@@ -72,7 +73,10 @@ export default mixins(LiveComponent).extend({
             this.isScrolledToTop_ = (document.documentElement.scrollTop == 0);
             this.isScrolledToBottom_ = (document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight);
 
-            if (wasAtTop) {
+            if (wasAtTop && !this.isScrolledToTop_) {
+                // stub
+                console.log("disconnecting");
+
                 // disconnect from signalr and stop receiving new lines if we leave the top of the list
                 TQGlobals.connection.stop();
             }
@@ -87,11 +91,15 @@ export default mixins(LiveComponent).extend({
         },
 
         reconnectAndCatchUp: function () {
+            console.log("stub: reconnectAndCatchUp()");
+            console.log(TQGlobals.connection.state);
 
             if (TQGlobals.connection.state != HubConnectionState.Connected) {
+                console.log("starting connection");
                 TQGlobals.connection
                     .start()
                     .then(() => {
+                        console.log("connected");
                         // Don't make the call to getLatestContent() until AFTER we've connected to signalr.
                         // This ensures that we don't miss any lines, but it also means there's a slight possibility
                         // that we'll get a few duplicate lines.  That's ok however, because SlidingList will handle duplicates.
@@ -99,7 +107,7 @@ export default mixins(LiveComponent).extend({
                     })
                     .catch(err => {
                         // stub
-                        console.log(err)
+                        console.log(err);
                     }); // end connection.start()
             }
             else {

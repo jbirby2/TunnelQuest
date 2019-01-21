@@ -58,19 +58,19 @@ namespace TunnelQuest.AppLogic
 
             parseItemNames(timestamp);
 
-            // At this point, the only types of segments in Segments are AuctionSegments and ChatSegments.  We want
-            // to loop through and attempt to replace each of the generic ChatSegments (which represent unknown text)
-            // with more specific Segments that represent data elements.
+            // At this point, the only types of segments in Segments are TextSegments and AuctionLinkSegments.  We want
+            // to loop through and attempt to replace each of the generic TextSegments (which represent unrecognized text)
+            // with more specific Segments which represent recognized data elements.
 
-            for (int i = 0; i < Segments.Count; i++)
+            for (int i = 0; i < this.Segments.Count; i++)
             {
-                var segment = Segments[i];
+                var segment = this.Segments[i];
                 if (segment.GetType() == typeof(TextSegment))
                 {
                     if (segment.Text.StartsWith(ChatLogic.AUCTION_TOKEN, StringComparison.InvariantCultureIgnoreCase))
                     {
                         // in case anybody tries to be mischevious and actually type the AUCTION_TOKEN string into chat
-                        Segments.RemoveAt(i);
+                        this.Segments[i] = new TextSegment(this, "clever girl");
                     }
                     else
                     {

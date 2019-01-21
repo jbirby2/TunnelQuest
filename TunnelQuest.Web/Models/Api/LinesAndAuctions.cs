@@ -37,21 +37,27 @@ namespace TunnelQuest.Web.Models.Api
             }
 
             this.Lines = clientLines;
-            this.Auctions = clientAuctions.Values.OrderBy(auction => auction.Id).ToArray();
+            this.Auctions = clientAuctions.Values.OrderBy(auction => auction.UpdatedAtString).ToArray();
         }
 
         public LinesAndAuctions(Auction[] auctions)
         {
-            var clientLines = new ClientChatLine[auctions.Length];
+            // remember that multiple Auctions could have instances of the same ChatLine record, so use a Dictionary to filter out duplicates
+
+            var clientLines = new Dictionary<long, ClientChatLine>();
             var clientAuctions = new ClientAuction[auctions.Length];
 
             for (int i = 0; i < auctions.Length; i++)
             {
-                clientLines[i] = new ClientChatLine(auctions[i].ChatLines.First().ChatLine);
-                clientAuctions[i] = new ClientAuction(auctions[i], clientLines[i].Id);
+                var chatLine = auctions[i].ChatLines.First().ChatLine;
+
+                if (!clientLines.ContainsKey(chatLine.ChatLineId))
+                    clientLines.Add(chatLine.ChatLineId, new ClientChatLine(chatLine));
+
+                clientAuctions[i] = new ClientAuction(auctions[i], chatLine.ChatLineId);
             }
 
-            this.Lines = clientLines;
+            this.Lines = clientLines.Values.OrderBy(chatLine => chatLine.Id).ToArray();
             this.Auctions = clientAuctions;
         }
     }

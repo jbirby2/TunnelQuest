@@ -1,8 +1,14 @@
-﻿<template>
+﻿
+<style>
+</style>
+
+<template>
     <div>
         <div>Auction View:</div>
         <div>
-            <auction-view v-for="auction in viewAuctions" :key="auction.id" :auction="auction" :auctions="auctions" :chatLine="getChatLineFor(auction)"></auction-view>
+            <transition-group :name="transitionName">
+                <auction-view v-for="auction in viewAuctions" :key="auction.id" :auction="auction"></auction-view>
+            </transition-group>
         </div>
     </div>
 </template>
@@ -18,11 +24,19 @@
     import LiveView from "../mixins/LiveView";
 
     import TQGlobals from "../classes/TQGlobals";
+    import SlidingList from "../classes/SlidingList";
 
     import AuctionView from "./AuctionView.vue";
 
 
     export default mixins(LiveView).extend({
+
+        data: function () {
+            return {
+                auctions: new SlidingList<Auction>()
+            };
+        },
+
         computed: {
             viewAuctions: function () {
                 return _.clone(this.auctions.array).reverse();
@@ -30,8 +44,11 @@
         },
         methods: {
 
-            getChatLineFor(auction: Auction) {
-                return this.chatLines.dict[auction.chatLineId];
+            // inherited from LiveView
+            onInitialized: function () {
+                console.log("stub AuctionHouseView.onInitialized");
+
+                this.auctions.maxSize = TQGlobals.settings.maxAuctions;
             },
 
             // inherited from LiveView
@@ -77,12 +94,23 @@
                     }); // end axios.get(chat_lines)
             },
 
+            // inherited from LiveView
+            onNewContent: function (newContent: LinesAndAuctions) {
+                // stub
+                console.log("AuctionHouseView.onNewContent():");
+                console.log(newContent);
+
+                this.wireUpRelationships(newContent);
+                this.auctions.add(newContent.auctions);
+            },
+
+            // inherited from LiveView
+            onDestroying: function () {
+                this.auctions.clear();
+            },
         },
         components: {
             AuctionView
-        }
+        },
     });
 </script>
-
-<style>
-</style>

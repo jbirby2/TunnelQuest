@@ -1,133 +1,134 @@
 ﻿
-import mixins from 'vue-typed-mixins';
-import { HubConnectionState } from '@aspnet/signalr';
+import Vue from "vue";
 
-import LiveComponent from "./LiveComponent";
-
-import ChatLine from "../interfaces/ChatLine";
 import Auction from "../interfaces/Auction";
 import LinesAndAuctions from "../interfaces/LinesAndAuctions";
 
 import TQGlobals from "../classes/TQGlobals";
-import SlidingList from "../classes/SlidingList";
 
 
-// LiveView inherits from LiveComponent, and provides core functionality for components that need to display an overall
-// snapshot of the recent live data feed in real-time (i.e. ChatView and AuctionHouseView)
+// LiveView provides functionality for components that need to display an overall snapshot of the recent live data feed in real-time (i.e. ChatView and AuctionHouseView)
 
-export default mixins(LiveComponent).extend({
+export default Vue.extend({
 
     data: function () {
         return {
-            chatLines: new SlidingList<ChatLine>(),
-            auctions: new SlidingList<Auction>(),
-
-            // "private"
-            isScrolledToTop_: true,
-            isScrolledToBottom_: false
+            transitionName: "slidedown"
         };
+    },
+    mounted: function () {
+        TQGlobals.init(() => {
+            // wire event handlers
+            TQGlobals.connection.on("NewChatLines", this.onNewContent);
+            TQGlobals.connection.onConnected(this.onConnected);
+            TQGlobals.connection.onDisconnected(this.onDisconnected);
+
+            // pull the initial data
+            if (TQGlobals.connection.isConnected())
+                this.getLatestContent();
+            else
+                TQGlobals.connection.connect();
+
+            this.onInitialized();
+        });
+    },
+
+    activated: function () {
+        console.log("stub activated");
+        window.addEventListener("scroll", this.onScroll);
+        
+        // force scroll to top, if not already scrolled to top
+        if (document != null && document.documentElement != null && document.documentElement.scrollTop != 0)
+            window.scrollTo(0, 0);
     },
 
     deactivated: function () {
+        console.log("stub deactivated");
         window.removeEventListener("scroll", this.onScroll);
+    },
+
+    beforeDestroy: function () {
+        // unwire event handlers
+        TQGlobals.connection.off("NewChatLines", this.onNewContent);
+        TQGlobals.connection.offConnected(this.onConnected);
+        TQGlobals.connection.offDisconnected(this.onDisconnected);
+
+        this.onDestroying();
     },
 
     methods: {
 
-        // inherited from LiveComponent
-        onInitialized: function () {
-            this.chatLines.maxSize = TQGlobals.settings.maxChatLines;
-            this.auctions.maxSize = TQGlobals.settings.maxAuctions;
-
-            window.addEventListener("scroll", this.onScroll);
-
-            // If the window is already scrolled to the top, then call reconnectAndCatchUp() directly.  Else, force the window
-            // to scroll to the top, which will trigger onScroll, which will call reconnectAndCatchUp().
-            if (document != null && document.documentElement != null && document.documentElement.scrollTop == 0)
-                this.reconnectAndCatchUp();
-            else
-                window.scrollTo(0, 0);
+        onConnected: function () {
+            this.getLatestContent();
         },
 
-        // inherited from LiveComponent
-        onNewContent: function (newLines: LinesAndAuctions) {
-            // stub
-            console.log("LiveView.onNewContent():");
-            console.log(newLines);
-
-            this.auctions.add(newLines.auctions);
-            this.chatLines.add(newLines.lines);
-
-            // stub
-            //this.chatLines.consoleDump("chatLines");
-            //this.auctions.consoleDump("auctions");
+        onDisconnected: function () {
         },
 
         onScroll: function () {
+            //console.log("stub onScroll");
+
             if (document == null || document.documentElement == null)
                 return;
 
-            let wasAtTop = this.isScrolledToTop_;
-            let wasAtBottom = this.isScrolledToBottom_;
+            let isScrolledToTop = (document.documentElement.scrollTop == 0);
+            let isScrolledToBottom = (Math.ceil(document.documentElement.scrollTop) + window.innerHeight >= document.documentElement.scrollHeight);
 
-            this.isScrolledToTop_ = (document.documentElement.scrollTop == 0);
-            this.isScrolledToBottom_ = (document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight);
+            //console.log("scrollTop " + document.documentElement.scrollTop.toString() + " innerHeight " + window.innerHeight.toString() + " scrollheight " + document.documentElement.scrollHeight.toString());
 
-            if (wasAtTop && !this.isScrolledToTop_) {
-                // stub
-                console.log("disconnecting");
+            if (isScrolledToTop) {
+                this.transitionName = "slidedown";
 
-                // disconnect from signalr and stop receiving new lines if we leave the top of the list
-                TQGlobals.connection.stop();
+                if (!TQGlobals.connection.isConnected())
+                    TQGlobals.connection.connect();
             }
-            else if (this.isScrolledToTop_) {
-                // reconnect to signalr and also request the next set of lines after the last one we received
-                this.reconnectAndCatchUp();
+            else {
+                this.transitionName = "none";
+
+                if (TQGlobals.connection.isConnected())
+                    TQGlobals.connection.disconnect();
+
+                if (isScrolledToBottom)
+                    this.getEarlierContent();
+            }
+        },
+        
+        wireUpRelationships: function (newContent: LinesAndAuctions) {
+
+            // populate all of the auction.chatLine properties
+            for (let auctionId in newContent.auctions) {
+                let auction = newContent.auctions[auctionId];
+                auction.chatLine = newContent.lines[auction.chatLineId];
             }
 
-            if (this.isScrolledToBottom_) {
-                this.getEarlierContent();
+            // populate all of the chatLine.auction properties
+            for (let chatLineId in newContent.lines) {
+                let chatLine = newContent.lines[chatLineId];
+                chatLine.auctions = new Array<Auction>();
+                for (let auctionId of chatLine.auctionIds) {
+                    chatLine.auctions[auctionId] = newContent.auctions[auctionId];
+                }
             }
         },
 
-        reconnectAndCatchUp: function () {
-            console.log("stub: reconnectAndCatchUp()");
-            console.log(TQGlobals.connection.state);
-
-            if (TQGlobals.connection.state != HubConnectionState.Connected) {
-                console.log("starting connection");
-                TQGlobals.connection
-                    .start()
-                    .then(() => {
-                        console.log("connected");
-                        // Don't make the call to getLatestContent() until AFTER we've connected to signalr.
-                        // This ensures that we don't miss any lines, but it also means there's a slight possibility
-                        // that we'll get a few duplicate lines.  That's ok however, because SlidingList will handle duplicates.
-                        this.getLatestContent();
-                    })
-                    .catch(err => {
-                        // stub
-                        console.log(err);
-                    }); // end connection.start()
-            }
-            else {
-                // We're already connected, so just make sure we've got the latest content.
-                this.getLatestContent();
-            }
-            
+        onInitialized: function () {
+            // overridden by extending components
         },
 
         getLatestContent: function () {
             // overridden by extending components
         },
-        
+
         getEarlierContent: function () {
             // overridden by extending components
         },
-    },
 
-    beforeDestroy: function () {
-        this.chatLines.clear();
-        this.auctions.clear();
+        onNewContent: function (newContent: LinesAndAuctions) {
+            // overridden by extending components
+        },
+
+        onDestroying: function () {
+            // overridden by extending components
+        },
     }
 });

@@ -1,10 +1,19 @@
-﻿<template>
+﻿
+<style>
+    .tqAuctionView {
+        opacity: 0.85;
+        background-color: #595959;
+        margin-top: 1px;
+    }
+</style>
+
+<template>
     <div class="tqAuctionView">
         <div>
             [{{ auction.id }}] <time-stamp :timeString="auction.updatedAtString"></time-stamp>
             {{ auction.isBuying ? "WTB" : "WTS" }} {{ auction.itemName }} - {{ auction.price }}
         </div>
-        <chat-line-view :auctions="auctions" :chatLine="chatLine" :showTimestamp="false" :itemNameLinks="false"></chat-line-view>
+        <chat-line-view :chatLine="auction.chatLine" :showTimestamp="false" :itemNameLinks="false"></chat-line-view>
     </div>
 </template>
 
@@ -17,14 +26,9 @@
     import TimeStamp from "./TimeStamp.vue";
     import ChatLineView from "./ChatLineView.vue";
 
-    import SlidingList from "../classes/SlidingList";
 
     export default Vue.extend({
         props: {
-            auctions: {
-                type: Object as () => SlidingList<Auction>,
-                required: true
-            },
             auction: {
                 type: Object as () => Auction,
                 required: true
@@ -34,14 +38,6 @@
                 required: true
             }
         },
-        data: function () {
-            return {
-            };
-        },
-        created: function () {
-        },
-        mounted: function () {
-        },
         components: {
             TimeStamp,
             ChatLineView
@@ -49,10 +45,3 @@
     });
 </script>
 
-<style>
-    .tqAuctionView {
-        opacity: 0.85;
-        background-color: #595959;
-        margin-top: 1px;
-    }
-</style>

@@ -8,8 +8,8 @@ namespace TunnelQuest.Web.Models.Api
 {
     public class LinesAndAuctions
     {
-        public ClientChatLine[] Lines { get; set; }
-        public ClientAuction[] Auctions { get; set; }
+        public Dictionary<long, ClientChatLine> Lines { get; set; }
+        public Dictionary<long, ClientAuction> Auctions { get; set; }
 
         public LinesAndAuctions()
         {
@@ -17,48 +17,32 @@ namespace TunnelQuest.Web.Models.Api
 
         public LinesAndAuctions(ChatLine[] lines)
         {
-            var clientLines = new ClientChatLine[lines.Length];
-            
-            for (int i = 0; i < lines.Length; i++)
-            {
-                clientLines[i] = new ClientChatLine(lines[i]);
-            }
+            this.Lines = new Dictionary<long, ClientChatLine>();
+            this.Auctions = new Dictionary<long, ClientAuction>();
 
-            // Navigate backwards through the chat lines one more time to build the auctions.  This way we can easily create
-            // ClientAuction objects for only the most recent version of each Auction.
-            var clientAuctions = new Dictionary<long, ClientAuction>();
-            for (int i = lines.Length - 1; i >= 0; i--)
+            foreach (var line in lines)
             {
-                foreach (var chatAuction in lines[i].Auctions)
+                this.Lines[line.ChatLineId] = new ClientChatLine(line);
+                foreach (var lineAuction in line.Auctions)
                 {
-                    if (!clientAuctions.ContainsKey(chatAuction.AuctionId))
-                        clientAuctions.Add(chatAuction.Auction.AuctionId, new ClientAuction(chatAuction.Auction, lines[i].ChatLineId));
+                    this.Auctions[lineAuction.AuctionId] = new ClientAuction(lineAuction.Auction, line.ChatLineId);
                 }
             }
-
-            this.Lines = clientLines;
-            this.Auctions = clientAuctions.Values.OrderBy(auction => auction.UpdatedAtString).ToArray();
         }
 
         public LinesAndAuctions(Auction[] auctions)
         {
-            // remember that multiple Auctions could have instances of the same ChatLine record, so use a Dictionary to filter out duplicates
+            this.Lines = new Dictionary<long, ClientChatLine>();
+            this.Auctions = new Dictionary<long, ClientAuction>();
 
-            var clientLines = new Dictionary<long, ClientChatLine>();
-            var clientAuctions = new ClientAuction[auctions.Length];
-
-            for (int i = 0; i < auctions.Length; i++)
+            foreach (var auction in auctions)
             {
-                var chatLine = auctions[i].ChatLines.First().ChatLine;
-
-                if (!clientLines.ContainsKey(chatLine.ChatLineId))
-                    clientLines.Add(chatLine.ChatLineId, new ClientChatLine(chatLine));
-
-                clientAuctions[i] = new ClientAuction(auctions[i], chatLine.ChatLineId);
+                this.Auctions[auction.AuctionId] = new ClientAuction(auction, auction.ChatLines.First().ChatLineId);
+                foreach (var auctionLine in auction.ChatLines)
+                {
+                    this.Lines[auctionLine.ChatLineId] = new ClientChatLine(auctionLine.ChatLine);
+                }
             }
-
-            this.Lines = clientLines.Values.OrderBy(chatLine => chatLine.Id).ToArray();
-            this.Auctions = clientAuctions;
         }
     }
 }

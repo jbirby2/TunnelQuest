@@ -22,12 +22,16 @@
                 moment_: null as moment.Moment | null
             };
         },
-        created: function () {
-        },
         mounted: function () {
             this.moment_ = moment.utc(this.timeString);
             this.tick();
             this.interval_ = setInterval(this.tick, 60000);
+        },
+        watch: {
+            timeString: function (newValue, oldValue) {
+                this.moment_ = moment.utc(newValue);
+                this.tick();
+            }
         },
         beforeDestroy: function () {
             clearInterval(this.interval_);

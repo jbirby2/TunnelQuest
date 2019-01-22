@@ -11,14 +11,14 @@ namespace TunnelQuest.AppLogic
 {
     public class AuctionLogic
     {
-        public const int MAX_AUCTIONS = 100;
-        public const int BACKSCROLL_FETCH_SIZE = 20;
+        public const int MAX_AUCTIONS = 5;
+        public const int BACKSCROLL_FETCH_SIZE = 2;
 
 
         // static stuff
 
-        private static readonly TimeSpan MIN_NEW_AUCTION_THRESHOLD = TimeSpan.FromHours(1);
-        private static readonly TimeSpan MAX_NEW_AUCTION_THRESHOLD = TimeSpan.FromHours(24);
+        private static readonly TimeSpan MIN_AUCTION_HISTORY_THRESHOLD = TimeSpan.FromHours(1);
+        private static readonly TimeSpan MAX_AUCTION_HISTORY_THRESHOLD = TimeSpan.FromHours(24);
 
 
         // non-static stuff
@@ -163,45 +163,11 @@ namespace TunnelQuest.AppLogic
             }
             else
             {
-                if (lastAuctionBySamePlayerForSameItem.Equals(pendingNewAuction))
-                {
-                    // Player has auctioned this item before, and nothing has changed...
-
-                    DateTime createNewAuctionDate = lastAuctionBySamePlayerForSameItem.CreatedAt + MAX_NEW_AUCTION_THRESHOLD;
-
-                    if (DateTime.UtcNow < createNewAuctionDate)
-                    {
-                        // reuse the existing auction.
-                        return lastAuctionBySamePlayerForSameItem;
-                    }
-                    else
-                    {
-                        // create a new auction (even though nothing has changed) so that the old auction
-                        // can become historical data for reporting
-                        return null;
-                    }
-                }
-                else
-                {
-                    // Player has auctioned this item before, and something HAS changed (price, etc)...
-
-                    DateTime createNewAuctionDate = lastAuctionBySamePlayerForSameItem.CreatedAt + MIN_NEW_AUCTION_THRESHOLD;
-
-                    if (DateTime.UtcNow < createNewAuctionDate)
-                    {
-                        // It hasn't been long enough since the last time this player created a new auction
-                        // for this item: update the existing auction with the new values.
-                        lastAuctionBySamePlayerForSameItem.CopyValuesFrom(pendingNewAuction);
-                        lastAuctionBySamePlayerForSameItem.UpdatedAt = timestamp;
-                        return lastAuctionBySamePlayerForSameItem;
-                    }
-                    else
-                    {
-                        // It's been long enough since the last time this player created a new auction
-                        // for this item: create a new auction, and leave the old auction as a historical record.
-                        return null;
-                    }
-                }
+                // Player has auctioned this item before: re-use the existing auction, but copy over the values
+                // from the new chat line
+                lastAuctionBySamePlayerForSameItem.CopyValuesFrom(pendingNewAuction);
+                lastAuctionBySamePlayerForSameItem.UpdatedAt = timestamp;
+                return lastAuctionBySamePlayerForSameItem;
             }
 
         } // end function

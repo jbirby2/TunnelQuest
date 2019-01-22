@@ -1,8 +1,13 @@
-﻿<template>
+﻿<style>
+</style>
+
+<template>
     <div>
         <div>Chat View:</div>
         <div>
-            <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :auctions="auctions" :chatLine="chatLine" :showTimestamp="true" :itemNameLinks="true"></chat-line-view>
+            <transition-group name="none">
+                <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :chatLine="chatLine" :showTimestamp="true" :itemNameLinks="true"></chat-line-view>
+            </transition-group>
         </div>
     </div>
 </template>
@@ -12,6 +17,8 @@
     import mixins from 'vue-typed-mixins';
     import * as _ from "lodash";
 
+    import ChatLine from "../interfaces/ChatLine";
+    import Auction from "../interfaces/Auction";
     import LinesAndAuctions from "../interfaces/LinesAndAuctions";
 
     import LiveView from "../mixins/LiveView";
@@ -19,9 +26,15 @@
     import ChatLineView from "./ChatLineView.vue";
 
     import TQGlobals from "../classes/TQGlobals";
-
+    import SlidingList from "../classes/SlidingList";
 
     export default mixins(LiveView).extend({
+
+        data: function () {
+            return {
+                chatLines: new SlidingList<ChatLine>()
+            };
+        },
 
         computed: {
             viewLines: function () {
@@ -29,6 +42,13 @@
             }
         },
         methods: {
+
+            // inherited from LiveView
+            onInitialized: function () {
+                console.log("stub ChatView.onInitialized");
+
+                this.chatLines.maxSize = TQGlobals.settings.maxChatLines;
+            },
 
             // inherited from LiveView
             getLatestContent: function () {
@@ -49,6 +69,8 @@
 
             // inherited from LiveView
             getEarlierContent: function () {
+                console.log("stub ChatView.getEarlierContent()");
+
                 let maxId: number | null = null;
                 if (this.chatLines.array.length > 0)
                     maxId = this.chatLines.array[0].id - 1;
@@ -64,12 +86,23 @@
                     }); // end axios.get(chat_lines)
             },
 
+            // inherited from LiveView
+            onNewContent: function (newContent: LinesAndAuctions) {
+                // stub
+                console.log("ChatView.onNewContent():");
+                console.log(newContent);
+
+                this.wireUpRelationships(newContent);
+                this.chatLines.add(newContent.lines);
+            },
+
+            // inherited from LiveView
+            onDestroying: function () {
+                this.chatLines.clear();
+            },
         },
         components: {
             ChatLineView
-        }
+        },
     });
 </script>
-
-<style>
-</style>

@@ -10,19 +10,13 @@
     import Vue from "vue";
 
     import ChatLine from "../interfaces/ChatLine";
-    import Auction from "../interfaces/Auction";
 
     import TQGlobals from "../classes/TQGlobals";
-    import SlidingList from "../classes/SlidingList";
 
     import TimeStamp from "./TimeStamp.vue";
 
     export default Vue.extend({
         props: {
-            auctions: {
-                type: Object as () => SlidingList<Auction>,
-                required: true
-            },
             chatLine: {
                 type: Object as () => ChatLine,
                 required: true
@@ -36,44 +30,55 @@
                 required: true
             }
         },
-        data: function () {
-            return {
-            };
+        watch: {
+            chatLine: function (newValue, oldValue) {
+                this.rebuildText();
+            }
         },
         mounted: function () {
-            let textSpan = this.$el.querySelector(".tqChatLineView_PlayerText") as HTMLSpanElement;
+            this.rebuildText();
+        },
+        methods: {
+            rebuildText: function () {
+                let textSpan = this.$el.querySelector(".tqChatLineView_PlayerText") as HTMLSpanElement;
+                
+                // remove whatever text we built in there last time
+                while (textSpan.lastChild) {
+                    textSpan.removeChild(textSpan.lastChild);
+                }
 
-            let wordsSoFar : string | null = null;
-            let textWords = this.chatLine.text.split(" ");
-            for (let word of textWords) {
-                if (wordsSoFar == null)
-                    wordsSoFar = "";
-                else
-                    wordsSoFar += " ";
+                let wordsSoFar: string | null = null;
+                let textWords = this.chatLine.text.split(" ");
+                for (let word of textWords) {
+                    if (wordsSoFar == null)
+                        wordsSoFar = "";
+                    else
+                        wordsSoFar += " ";
 
-                if (word.substring(0, TQGlobals.settings.auctionToken.length) === TQGlobals.settings.auctionToken) {
-                    // createTextNode() html encodes the player-typed text to protect against html injection attacks
-                    textSpan.appendChild(document.createTextNode(wordsSoFar));
-                    wordsSoFar = "";
+                    if (word.substring(0, TQGlobals.settings.auctionToken.length) === TQGlobals.settings.auctionToken) {
+                        // createTextNode() html encodes the player-typed text to protect against html injection attacks
+                        textSpan.appendChild(document.createTextNode(wordsSoFar));
+                        wordsSoFar = "";
 
-                    let auctionId = parseInt(word.substring(TQGlobals.settings.auctionToken.length));
+                        let auctionId = parseInt(word.substring(TQGlobals.settings.auctionToken.length));
 
-                    if (this.itemNameLinks) {
-                        let linkElem = document.createElement("a") as HTMLAnchorElement;
-                        linkElem.href = "#auction_id=" + auctionId.toString();
-                        linkElem.text = this.auctions.dict[auctionId].itemName;
-                        textSpan.appendChild(linkElem);
+                        if (this.itemNameLinks) {
+                            let linkElem = document.createElement("a") as HTMLAnchorElement;
+                            linkElem.href = "#auction_id=" + auctionId.toString();
+                            linkElem.text = this.chatLine.auctions[auctionId].itemName;
+                            textSpan.appendChild(linkElem);
+                        }
+                        else {
+                            wordsSoFar += this.chatLine.auctions[auctionId].itemName;
+                        }
                     }
                     else {
-                        wordsSoFar += this.auctions.dict[auctionId].itemName;
+                        wordsSoFar += word;
                     }
                 }
-                else {
-                    wordsSoFar += word;
-                }
+                if (wordsSoFar != null && wordsSoFar != "")
+                    textSpan.appendChild(document.createTextNode(wordsSoFar));
             }
-            if (wordsSoFar != null && wordsSoFar != "")
-                textSpan.appendChild(document.createTextNode(wordsSoFar));
         },
         components: {
             TimeStamp

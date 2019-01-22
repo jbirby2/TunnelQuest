@@ -1,4 +1,5 @@
 ﻿
+import Vue from "vue";
 import Idable from "../interfaces/Idable";
 
 
@@ -22,7 +23,7 @@ class SlidingList<T extends Idable> {
     // constructor
 
     constructor() {
-        this.maxSize = 1000; // set a reasonable default until we get the real setting from the server
+        this.maxSize = 100; // set a reasonable default until we get the real setting from the server
         this.dict = new Array<T>();
         this.array = new Array<T>();
     }
@@ -30,12 +31,64 @@ class SlidingList<T extends Idable> {
 
     // public methods
 
-    contains(id: number) {
-        if (this.dict[id])
-            return true;
-        else
-            return false;
-    }
+    add(entries: Array<T>) {
+        // STUB
+        //console.log("STUB SlidingList.add()");
+        //console.log(entries);
+
+        for (let newEntryId in entries) {
+            let newEntry = entries[newEntryId];
+
+            let existingEntry = this.dict[newEntry.id];
+            if (existingEntry) {
+                // there's already an existing entry for this id; replace it with the new object (at its existing index in the array)
+
+                let existingIndex = this.array.indexOf(existingEntry);
+                Vue.set(this.array, existingIndex, newEntry); // same as "this.array[existingIndex] = newEntry;", but causes the UI to update with the new values
+            }
+            else {
+                // there is not already an existing entry for this id; figure out whether to add it to the beginning or the end of the array
+
+                if (this.array.length == 0) {
+                    this.array.push(newEntry);
+                }
+                else {
+                    if (newEntry.id < this.array[0].id) {
+                        // add the new entry to the start of the array
+                        this.array.unshift(newEntry);
+
+                        // Do NOT enforce maxSize when adding to start; let users manually add as many rows as they want
+                        // by repeatedly downscrolling.  This way they can quickly scroll back to top through all the cached
+                        // entries instead of having to repeatedly wait on loads while going back to the top.  The next time
+                        // addToEnd() is called by a signalr update, the maxLength will get enforced and the extra entries
+                        // will finally be trimmed.
+                        /*
+                        while (this.array.length > this.maxSize) {
+                            let removedEntry = this.array.pop();
+                            if (removedEntry)
+                                delete this.dict[removedEntry.id];
+                        }
+                        */
+                    }
+                    else {
+                        // add the new entry to the end of the array
+                        this.array.push(newEntry);
+                        
+                        // enforce maxSize
+                        while (this.array.length > this.maxSize) {
+                            let removedEntry = this.array.shift();
+                            if (removedEntry)
+                                delete this.dict[removedEntry.id];
+                        }
+                    }
+                }
+            }
+
+            this.dict[newEntry.id] = newEntry;
+
+        } // end for (let newEntry of entries)
+    } // end function add()
+
 
     clear() {
         while (this.array.length > 0) {
@@ -53,84 +106,6 @@ class SlidingList<T extends Idable> {
 
         console.log("array:");
         console.log(this.array);
-    }
-
-    add(entries: Array<T>) {
-        // STUB
-        //console.log("STUB SlidingList.add()");
-        //console.log(entries);
-
-        if (entries.length == 0)
-            return;
-        else if (this.array.length == 0)
-            this.addToEnd(entries); // or addToStart(), either would work here since the array is empty
-        else if (entries[0].id >= this.array[this.array.length - 1].id)
-            this.addToEnd(entries);
-        else
-            this.addToStart(entries);
-    }
-
-
-    // private
-
-    private addToStart(entries: Array<T>) {
-
-        for (let i = entries.length - 1; i >= 0; i--) {
-            let entry = entries[i];
-
-            // If there's already an entry with this id, replace it with the new object
-            if (this.contains(entry.id))
-                this.remove(entry.id);
-
-            this.array.unshift(entry);
-            this.dict[entry.id] = entry;
-
-            // Do NOT enforce maxSize when adding to start; let users manually add as many rows as they want
-            // by repeatedly downscrolling.  This way they can quickly scroll back to top through all the cached
-            // entries instead of having to repeatedly wait on loads while going back to the top.  The next time
-            // addToEnd() is called by a signalr update, the maxLength will get enforced and the extra entries
-            // will finally be trimmed.
-            /*
-            while (this.array.length > this.maxSize) {
-                let removedEntry = this.array.pop();
-                if (removedEntry)
-                    delete this.dict[removedEntry.id];
-            }
-            */
-        }
-    }
-
-    private addToEnd(entries: Array<T>) {
-
-        for (let i = 0; i < entries.length; i++) {
-            let entry = entries[i];
-
-            // If there's already an entry with this id, replace it with the new object
-            if (this.contains(entry.id))
-                this.remove(entry.id);
-
-            this.array.push(entry);
-            this.dict[entry.id] = entry;
-
-            // enforce maxSize
-            while (this.array.length > this.maxSize) {
-                let removedEntry = this.array.shift();
-                if (removedEntry)
-                    delete this.dict[removedEntry.id];
-            }
-        }
-    }
-
-    private remove(id: number) {
-        // sanity check
-        if (!this.contains(id))
-            return;
-
-        let entryToRemove = this.dict[id];
-        let arrayIndexToRemove = this.array.indexOf(entryToRemove);
-
-        this.array.splice(arrayIndexToRemove, 1);
-        delete this.dict[id];
     }
 }
 

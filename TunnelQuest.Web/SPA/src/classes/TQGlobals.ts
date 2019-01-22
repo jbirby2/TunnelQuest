@@ -1,8 +1,9 @@
 ﻿
-import * as signalR from "@aspnet/signalr";
 import axios from "axios";
 
 import Settings from "../interfaces/Settings";
+
+import ConnectionWrapper from "../classes/ConnectionWrapper";
 
 
 class TQGlobals {
@@ -11,8 +12,7 @@ class TQGlobals {
 
     static serverCode: string;
     static settings: Settings;
-    static connection: signalR.HubConnection;
-
+    static connection: ConnectionWrapper;
 
     static init(done:Function|null = null) {
         if (this.isInitialized) {
@@ -27,9 +27,7 @@ class TQGlobals {
             this.serverCode = "BLUE"; // STUB hard-coded
             let hubUrl = "/blue_hub"; // STUB hard-coded
 
-            this.connection = new signalR.HubConnectionBuilder()
-                .withUrl(hubUrl)
-                .build();
+            this.connection = new ConnectionWrapper(hubUrl);
 
             axios.get('/api/settings')
                 .then(response => {

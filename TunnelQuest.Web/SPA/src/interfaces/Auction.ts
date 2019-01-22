@@ -1,4 +1,6 @@
 ﻿
+import ChatLine from "../interfaces/ChatLine";
+
 interface Auction {
     id: number,
     itemName: string,
@@ -9,6 +11,9 @@ interface Auction {
     isAcceptingTrades: boolean,
     createdAtString: string,
     updatedAtString: string,
-    chatLineId: number
+    chatLineId: number,
+
+    // not actually passed in from server, but set in client code
+    chatLine: ChatLine
 }
 export default Auction;

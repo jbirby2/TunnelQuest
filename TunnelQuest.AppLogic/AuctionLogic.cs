@@ -12,7 +12,6 @@ namespace TunnelQuest.AppLogic
     public class AuctionLogic
     {
         public const int MAX_AUCTIONS = 100;
-        public const int BACKSCROLL_FETCH_SIZE = 20;
 
 
         // static stuff

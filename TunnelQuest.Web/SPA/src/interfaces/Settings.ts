@@ -2,9 +2,7 @@
 interface Settings {
     auctionToken: string,
     maxChatLines: number,
-    chatLineBackScrollFetchSize: number,
-    maxAuctions: number,
-    auctionBackScrollFetchSize: number
+    maxAuctions: number
 }
 
 export default Settings;

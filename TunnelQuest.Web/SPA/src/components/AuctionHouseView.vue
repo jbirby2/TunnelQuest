@@ -95,7 +95,7 @@
                     maxUpdatedAt = new Date(maxUpdatedAt.getTime() - 1);
                 }
 
-                axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&maxUpdatedAt=" + (maxUpdatedAt == null ? "" : maxUpdatedAt.toISOString()) + "&maxResults=" + TQGlobals.settings.auctionBackScrollFetchSize.toString())
+                axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&maxUpdatedAt=" + (maxUpdatedAt == null ? "" : maxUpdatedAt.toISOString()) + "&maxResults=" + TQGlobals.settings.maxAuctions.toString())
                     .then(response => {
                         let result = response.data as LinesAndAuctions;
                         this.onNewContent(result, false);

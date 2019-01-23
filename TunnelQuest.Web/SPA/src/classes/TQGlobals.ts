@@ -9,40 +9,43 @@ import ConnectionWrapper from "../classes/ConnectionWrapper";
 class TQGlobals {
 
     private static isInitialized: boolean = false;
+    private static onInitCallbacks: Array<Function> = new Array<Function>();
 
     static serverCode: string;
     static settings: Settings;
     static connection: ConnectionWrapper;
+    
+    static init() {
+        if (this.isInitialized)
+            return;
 
-    static init(done:Function|null = null) {
-        if (this.isInitialized) {
-            if (done)
-                done();
-        }
-        else {
-            // do the initialization
+        console.log("stub TQGlobals initializing");
 
-            console.log("stub TQGlobals initializing");
+        this.serverCode = "BLUE"; // STUB hard-coded
+        let hubUrl = "/blue_hub"; // STUB hard-coded
 
-            this.serverCode = "BLUE"; // STUB hard-coded
-            let hubUrl = "/blue_hub"; // STUB hard-coded
+        this.connection = new ConnectionWrapper(hubUrl);
 
-            this.connection = new ConnectionWrapper(hubUrl);
+        axios.get('/api/settings')
+            .then(response => {
+                this.settings = response.data as Settings;
+                this.isInitialized = true;
+                for (let callback of this.onInitCallbacks) {
+                    callback();
+                }
+            })
+            .catch(err => {
+                // stub
+                console.log(err);
+            }); // end axios.get(settings)
+    }
 
-            axios.get('/api/settings')
-                .then(response => {
-                    this.settings = response.data as Settings;
+    static onInit(callback: Function) {
+        this.onInitCallbacks.push(callback);
 
-                    this.isInitialized = true;
-
-                    if (done)
-                        done();
-                })
-                .catch(err => {
-                    // stub
-                    console.log(err);
-                }); // end axios.get(settings)
-        }
+        // if we're already initialized, callback immediately
+        if (this.isInitialized)
+            callback();
     }
 }
 

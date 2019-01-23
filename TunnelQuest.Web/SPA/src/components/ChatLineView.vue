@@ -1,5 +1,6 @@
 ﻿<template>
     <div class="tqChatLineView">
+        [{{chatLine.id}}]
         <time-stamp v-if="showTimestamp" :timeString="chatLine.sentAtString"></time-stamp>
         <span class="tqChatLineView_PlayerName">{{chatLine.playerName}} auctions,</span> '<span class="tqChatLineView_PlayerText"></span>'
     </div>

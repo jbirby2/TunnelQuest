@@ -16,21 +16,9 @@ export default Vue.extend({
             transitionName: "slidedown"
         };
     },
+
     mounted: function () {
-        TQGlobals.init(() => {
-            // wire event handlers
-            TQGlobals.connection.on("NewChatLines", this.onNewChatLines);
-            TQGlobals.connection.onConnected(this.onConnected);
-            TQGlobals.connection.onDisconnected(this.onDisconnected);
-
-            // pull the initial data
-            if (TQGlobals.connection.isConnected())
-                this.getLatestContent();
-            else
-                TQGlobals.connection.connect();
-
-            this.onInitialized();
-        });
+        TQGlobals.onInit(this.onInit);
     },
 
     activated: function () {
@@ -57,6 +45,21 @@ export default Vue.extend({
     },
 
     methods: {
+
+        onInit: function () {
+            // wire event handlers
+            TQGlobals.connection.on("NewChatLines", this.onNewChatLines);
+            TQGlobals.connection.onConnected(this.onConnected);
+            TQGlobals.connection.onDisconnected(this.onDisconnected);
+
+            // pull the initial data
+            if (TQGlobals.connection.isConnected())
+                this.getLatestContent();
+            else
+                TQGlobals.connection.connect();
+
+            this.onInitialized();
+        },
 
         onNewChatLines: function (newContent: LinesAndAuctions) {
             this.onNewContent(newContent, true);

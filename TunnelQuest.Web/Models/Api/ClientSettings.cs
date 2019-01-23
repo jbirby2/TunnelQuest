@@ -26,9 +26,7 @@ namespace TunnelQuest.Web.Models.Api
         {
             this.AuctionToken = ChatLogic.AUCTION_TOKEN;
             this.MaxChatLines = ChatLogic.MAX_CHAT_LINES;
-            this.ChatLineBackScrollFetchSize = ChatLogic.BACKSCROLL_FETCH_SIZE;
             this.MaxAuctions = AuctionLogic.MAX_AUCTIONS;
-            this.AuctionBackScrollFetchSize = AuctionLogic.BACKSCROLL_FETCH_SIZE;
         }
 
     }

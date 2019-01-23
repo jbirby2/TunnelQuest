@@ -8,7 +8,7 @@
 <template>
     <div>
         <div class="tqChatView">
-            <transition-group name="none">
+            <transition-group :name="transitionName">
                 <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :chatLine="chatLine" :showTimestamp="true" :itemNameLinks="true"></chat-line-view>
             </transition-group>
         </div>
@@ -85,7 +85,7 @@
                 if (this.chatLines.array.length > 0)
                     maxId = this.chatLines.array[0].id - 1;
 
-                axios.get('/api/chat_lines?serverCode=' + TQGlobals.serverCode + "&maxId=" + (maxId == null ? "" : maxId.toString()) + "&maxResults=" + TQGlobals.settings.chatLineBackScrollFetchSize.toString())
+                axios.get('/api/chat_lines?serverCode=' + TQGlobals.serverCode + "&maxId=" + (maxId == null ? "" : maxId.toString()) + "&maxResults=" + TQGlobals.settings.maxChatLines.toString())
                     .then(response => {
                         let result = response.data as LinesAndAuctions;
                         this.onNewContent(result, false);

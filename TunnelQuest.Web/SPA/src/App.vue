@@ -17,7 +17,7 @@
 
     /* fade transition */
 
-    .fade-enter-active, .fade-leave-active {
+    .fade-enter-active {
         transition: opacity .5s
     }
 
@@ -132,7 +132,9 @@
 
 
     export default Vue.extend({
-
+        mounted: function () {
+            TQGlobals.init();
+        },
         beforeDestroy: function () {
             TQGlobals.connection.disconnect();
         },

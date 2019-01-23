@@ -14,7 +14,6 @@ namespace TunnelQuest.AppLogic
     {
         public const string AUCTION_TOKEN = "#TQAUC_";
         public const int MAX_CHAT_LINES = 100;
-        public const int BACKSCROLL_FETCH_SIZE = 20;
 
         // static stuff
 

@@ -11,8 +11,8 @@ namespace TunnelQuest.AppLogic
 {
     public class AuctionLogic
     {
-        public const int MAX_AUCTIONS = 5;
-        public const int BACKSCROLL_FETCH_SIZE = 2;
+        public const int MAX_AUCTIONS = 100;
+        public const int BACKSCROLL_FETCH_SIZE = 20;
 
 
         // static stuff
@@ -41,6 +41,8 @@ namespace TunnelQuest.AppLogic
             var auctionQuery = context.Auctions
                .Include(auction => auction.ChatLines)
                    .ThenInclude(auctionChatLine => auctionChatLine.ChatLine)
+                       .ThenInclude(chatLine => chatLine.Auctions)
+                           .ThenInclude(chatLineAuction => chatLineAuction.Auction)
                 .Where(auction => auction.ChatLines.Any(auctionChat => auctionChat.ChatLine.ServerCode == serverCode));
             
             if (minUpdatedAt != null)

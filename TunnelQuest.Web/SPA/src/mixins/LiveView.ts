@@ -19,7 +19,7 @@ export default Vue.extend({
     mounted: function () {
         TQGlobals.init(() => {
             // wire event handlers
-            TQGlobals.connection.on("NewChatLines", this.onNewContent);
+            TQGlobals.connection.on("NewChatLines", this.onNewChatLines);
             TQGlobals.connection.onConnected(this.onConnected);
             TQGlobals.connection.onDisconnected(this.onDisconnected);
 
@@ -49,7 +49,7 @@ export default Vue.extend({
 
     beforeDestroy: function () {
         // unwire event handlers
-        TQGlobals.connection.off("NewChatLines", this.onNewContent);
+        TQGlobals.connection.off("NewChatLines", this.onNewChatLines);
         TQGlobals.connection.offConnected(this.onConnected);
         TQGlobals.connection.offDisconnected(this.onDisconnected);
 
@@ -57,6 +57,10 @@ export default Vue.extend({
     },
 
     methods: {
+
+        onNewChatLines: function (newContent: LinesAndAuctions) {
+            this.onNewContent(newContent, true);
+        },
 
         onConnected: function () {
             this.getLatestContent();
@@ -93,24 +97,6 @@ export default Vue.extend({
             }
         },
         
-        wireUpRelationships: function (newContent: LinesAndAuctions) {
-
-            // populate all of the auction.chatLine properties
-            for (let auctionId in newContent.auctions) {
-                let auction = newContent.auctions[auctionId];
-                auction.chatLine = newContent.lines[auction.chatLineId];
-            }
-
-            // populate all of the chatLine.auction properties
-            for (let chatLineId in newContent.lines) {
-                let chatLine = newContent.lines[chatLineId];
-                chatLine.auctions = new Array<Auction>();
-                for (let auctionId of chatLine.auctionIds) {
-                    chatLine.auctions[auctionId] = newContent.auctions[auctionId];
-                }
-            }
-        },
-
         onInitialized: function () {
             // overridden by extending components
         },
@@ -123,7 +109,7 @@ export default Vue.extend({
             // overridden by extending components
         },
 
-        onNewContent: function (newContent: LinesAndAuctions) {
+        onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
             // overridden by extending components
         },
 

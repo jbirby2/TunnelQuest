@@ -14,10 +14,6 @@
         color: #ffffff;
     }
 
-    .tqNavBar {
-        background-color: #d19200;
-    }
-
 
     /* fade transition */
 
@@ -116,11 +112,7 @@
 
 <template>
     <div id="app">
-
-        <div class="tqNavBar">
-            <router-link to="/">Auction House View</router-link> |
-            <router-link to="/chat">Chat View</router-link>
-        </div>
+        <sticky-header></sticky-header>
 
         <transition name="none">
             <keep-alive>
@@ -136,6 +128,8 @@
     
     import TQGlobals from "./classes/TQGlobals";
 
+    import StickyHeader from "./components/StickyHeader.vue";
+
 
     export default Vue.extend({
 
@@ -143,6 +137,7 @@
             TQGlobals.connection.disconnect();
         },
         components: {
+            StickyHeader
         }
     });
 </script>

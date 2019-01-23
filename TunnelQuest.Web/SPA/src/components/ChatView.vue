@@ -1,10 +1,13 @@
 ﻿<style>
+    .tqChatView {
+        opacity: 0.7;
+        background-color: #000000;
+    }
 </style>
 
 <template>
     <div>
-        <div>Chat View:</div>
-        <div>
+        <div class="tqChatView">
             <transition-group name="none">
                 <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :chatLine="chatLine" :showTimestamp="true" :itemNameLinks="true"></chat-line-view>
             </transition-group>
@@ -32,7 +35,14 @@
 
         data: function () {
             return {
-                chatLines: new SlidingList<ChatLine>()
+                chatLines: new SlidingList<ChatLine>(function (a: ChatLine, b: ChatLine) {
+                    if (a.id < b.id)
+                        return -1;
+                    else if (a.id > b.id)
+                        return 1;
+                    else
+                        return 0;
+                })
             };
         },
 
@@ -59,7 +69,7 @@
                 axios.get('/api/chat_lines?serverCode=' + TQGlobals.serverCode + "&minId=" + (minId == null ? "" : minId.toString()))
                     .then(response => {
                         let result = response.data as LinesAndAuctions;
-                        this.onNewContent(result);
+                        this.onNewContent(result, true);
                     })
                     .catch(err => {
                         // stub
@@ -78,7 +88,7 @@
                 axios.get('/api/chat_lines?serverCode=' + TQGlobals.serverCode + "&maxId=" + (maxId == null ? "" : maxId.toString()) + "&maxResults=" + TQGlobals.settings.chatLineBackScrollFetchSize.toString())
                     .then(response => {
                         let result = response.data as LinesAndAuctions;
-                        this.onNewContent(result);
+                        this.onNewContent(result, false);
                     })
                     .catch(err => {
                         // stub
@@ -87,13 +97,12 @@
             },
 
             // inherited from LiveView
-            onNewContent: function (newContent: LinesAndAuctions) {
+            onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
                 // stub
                 console.log("ChatView.onNewContent():");
                 console.log(newContent);
 
-                this.wireUpRelationships(newContent);
-                this.chatLines.add(newContent.lines);
+                this.chatLines.add(newContent.lines, enforceMaxSize);
             },
 
             // inherited from LiveView

@@ -19,23 +19,23 @@ class SlidingList<T extends Idable> {
     // ordered array of entries
     array: Array<T>;
 
+    sortFunction: (a: T, b: T) => number;
 
     // constructor
 
-    constructor() {
+    constructor(sortFn: (a: T, b: T) => number) {
         this.maxSize = 100; // set a reasonable default until we get the real setting from the server
         this.dict = new Array<T>();
         this.array = new Array<T>();
+        this.sortFunction = sortFn;
     }
 
 
     // public methods
 
-    add(entries: Array<T>) {
-        // STUB
-        //console.log("STUB SlidingList.add()");
-        //console.log(entries);
-
+    // entries is expected to be an associative array
+    add(entries: Array<T>, enforceMaxSize: boolean) {
+        
         for (let newEntryId in entries) {
             let newEntry = entries[newEntryId];
 
@@ -46,47 +46,22 @@ class SlidingList<T extends Idable> {
                 let existingIndex = this.array.indexOf(existingEntry);
                 Vue.set(this.array, existingIndex, newEntry); // same as "this.array[existingIndex] = newEntry;", but causes the UI to update with the new values
             }
-            else {
-                // there is not already an existing entry for this id; figure out whether to add it to the beginning or the end of the array
-
-                if (this.array.length == 0) {
-                    this.array.push(newEntry);
-                }
-                else {
-                    if (newEntry.id < this.array[0].id) {
-                        // add the new entry to the start of the array
-                        this.array.unshift(newEntry);
-
-                        // Do NOT enforce maxSize when adding to start; let users manually add as many rows as they want
-                        // by repeatedly downscrolling.  This way they can quickly scroll back to top through all the cached
-                        // entries instead of having to repeatedly wait on loads while going back to the top.  The next time
-                        // addToEnd() is called by a signalr update, the maxLength will get enforced and the extra entries
-                        // will finally be trimmed.
-                        /*
-                        while (this.array.length > this.maxSize) {
-                            let removedEntry = this.array.pop();
-                            if (removedEntry)
-                                delete this.dict[removedEntry.id];
-                        }
-                        */
-                    }
-                    else {
-                        // add the new entry to the end of the array
-                        this.array.push(newEntry);
-                        
-                        // enforce maxSize
-                        while (this.array.length > this.maxSize) {
-                            let removedEntry = this.array.shift();
-                            if (removedEntry)
-                                delete this.dict[removedEntry.id];
-                        }
-                    }
-                }
-            }
+            else
+                this.array.push(newEntry);
 
             this.dict[newEntry.id] = newEntry;
-
         } // end for (let newEntry of entries)
+
+        // enforce maxSize
+        if (enforceMaxSize) {
+            while (this.array.length > this.maxSize) {
+                let removedEntry = this.array.shift();
+                if (removedEntry)
+                    delete this.dict[removedEntry.id];
+            }
+        }
+
+        this.array.sort(this.sortFunction);
     } // end function add()
 
 

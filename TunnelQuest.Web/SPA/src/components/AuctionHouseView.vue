@@ -4,7 +4,6 @@
 
 <template>
     <div>
-        <div>Auction View:</div>
         <div>
             <transition-group :name="transitionName">
                 <auction-view v-for="auction in viewAuctions" :key="auction.id" :auction="auction"></auction-view>
@@ -33,7 +32,20 @@
 
         data: function () {
             return {
-                auctions: new SlidingList<Auction>()
+                auctions: new SlidingList<Auction>(function (a: Auction, b: Auction) {
+                    if (a.updatedAtString < b.updatedAtString)
+                        return -1;
+                    else if (a.updatedAtString > b.updatedAtString)
+                        return 1;
+                    else {
+                        if (a.id < b.id)
+                            return -1;
+                        else if (a.id > b.id)
+                            return 1;
+                        else
+                            return 0;
+                    }
+                })
             };
         },
 
@@ -64,7 +76,7 @@
                 axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&minUpdatedAt=" + (minUpdatedAt == null ? "" : minUpdatedAt.toISOString()))
                     .then(response => {
                         let result = response.data as LinesAndAuctions;
-                        this.onNewContent(result);
+                        this.onNewContent(result, true);
                     })
                     .catch(err => {
                         // stub
@@ -86,7 +98,7 @@
                 axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&maxUpdatedAt=" + (maxUpdatedAt == null ? "" : maxUpdatedAt.toISOString()) + "&maxResults=" + TQGlobals.settings.auctionBackScrollFetchSize.toString())
                     .then(response => {
                         let result = response.data as LinesAndAuctions;
-                        this.onNewContent(result);
+                        this.onNewContent(result, false);
                     })
                     .catch(err => {
                         // stub
@@ -95,19 +107,24 @@
             },
 
             // inherited from LiveView
-            onNewContent: function (newContent: LinesAndAuctions) {
+            onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
                 // stub
                 console.log("AuctionHouseView.onNewContent():");
                 console.log(newContent);
 
-                this.wireUpRelationships(newContent);
-                this.auctions.add(newContent.auctions);
+                // manually wire up auction.chatLine references
+                for (let auctionId in newContent.auctions) {
+                    let auction = newContent.auctions[auctionId];
+                    auction.chatLine = newContent.lines[auction.chatLineId];
+                }
+
+                this.auctions.add(newContent.auctions, enforceMaxSize);
             },
 
             // inherited from LiveView
             onDestroying: function () {
                 this.auctions.clear();
-            },
+            }
         },
         components: {
             AuctionView

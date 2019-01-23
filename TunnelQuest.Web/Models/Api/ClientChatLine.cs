@@ -12,7 +12,7 @@ namespace TunnelQuest.Web.Models.Api
         public string PlayerName { get; set; }
         public string Text { get; set; }
         public DateTime SentAtString { get; set; } // named String even though it's a DateTime in C# because it will be serialized as a string in javascript
-        public long[] AuctionIds { get; set; }
+        public Dictionary<long, ClientChatLineAuctionInfo> Auctions{ get; set; }
 
         public ClientChatLine()
         {
@@ -25,13 +25,23 @@ namespace TunnelQuest.Web.Models.Api
             this.Text = line.Text;
             this.SentAtString = line.SentAt;
 
-            this.AuctionIds = new long[line.Auctions.Count];
-            int i = 0;
+            this.Auctions = new Dictionary<long, ClientChatLineAuctionInfo>();
             foreach (var lineAuction in line.Auctions)
             {
-                this.AuctionIds[i] = lineAuction.Auction.AuctionId;
-                i++;
+                this.Auctions[lineAuction.AuctionId] = new ClientChatLineAuctionInfo()
+                {
+                    IsKnownItem = lineAuction.Auction.IsKnownItem,
+                    ItemName = lineAuction.Auction.ItemName
+                };
             }
+        }
+
+        
+        // inner class
+        public class ClientChatLineAuctionInfo
+        {
+            public bool IsKnownItem { get; set; }
+            public string ItemName { get; set; }
         }
     }
 }

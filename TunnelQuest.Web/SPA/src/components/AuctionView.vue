@@ -1,8 +1,8 @@
 ﻿
 <style>
     .tqAuctionView {
-        opacity: 0.85;
-        background-color: #595959;
+        opacity: 0.7;
+        background-color: #000000;
         margin-top: 1px;
     }
 </style>
@@ -10,7 +10,7 @@
 <template>
     <div class="tqAuctionView">
         <div>
-            [{{ auction.id }}] <time-stamp :timeString="auction.updatedAtString"></time-stamp>
+            <time-stamp :timeString="auction.updatedAtString"></time-stamp>
             {{ auction.isBuying ? "WTB" : "WTS" }} {{ auction.itemName }} - {{ auction.price }}
         </div>
         <chat-line-view :chatLine="auction.chatLine" :showTimestamp="false" :itemNameLinks="false"></chat-line-view>

@@ -14,6 +14,34 @@
         color: #ffffff;
     }
 
+    @media screen and (min-width: 992px) {
+        /* start of desktop styles */
+        body {
+            font-size: 10pt;
+        }
+    }
+
+    @media screen and (max-width: 991px) {
+        /* start of large tablet styles */
+        body {
+            font-size: 9pt;
+        }
+    }
+
+    @media screen and (max-width: 767px) {
+        /* start of medium tablet styles */
+        body {
+            font-size: 8pt;
+        }
+    }
+
+    @media screen and (max-width: 479px) {
+        /* start of phone styles */
+        body {
+            font-size: 7.5pt;
+        }
+    }
+
 
     /* fade transition */
 

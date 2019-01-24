@@ -68,11 +68,14 @@ namespace TunnelQuest.AppLogic
             // now discard all but the most recent chat line
             foreach (var auction in auctions)
             {
-                var lastChatLine = auction.ChatLines.LastOrDefault();
-                var newCollection = new List<ChatLineAuction>();
-                if (lastChatLine != null)
-                    newCollection.Add(lastChatLine);
-                auction.ChatLines = newCollection;
+                if (auction.ChatLines.Count > 1)
+                {
+                    var lastChatLineId = auction.ChatLines.Max(chatLineAuction => chatLineAuction.ChatLineId);
+
+                    var newCollection = new List<ChatLineAuction>();
+                    newCollection.Add(auction.ChatLines.First(auctionChatLine => auctionChatLine.ChatLineId == lastChatLineId));
+                    auction.ChatLines = newCollection;
+                }
             }
 
             return auctions;

@@ -9,7 +9,7 @@
     <div>
         <div class="tqChatView">
             <transition-group :name="transitionName">
-                <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :chatLine="chatLine" :showTimestamp="true" :itemNameLinks="true"></chat-line-view>
+                <chat-line-view v-for="chatLine in chatLines.array" :key="chatLine.id" :chatLine="chatLine" :showTimestamp="true" :itemNameLinks="true"></chat-line-view>
             </transition-group>
         </div>
     </div>
@@ -36,21 +36,17 @@
         data: function () {
             return {
                 chatLines: new SlidingList<ChatLine>(function (a: ChatLine, b: ChatLine) {
+                    // sort descending
                     if (a.id < b.id)
-                        return -1;
-                    else if (a.id > b.id)
                         return 1;
+                    else if (a.id > b.id)
+                        return -1;
                     else
                         return 0;
                 })
             };
         },
 
-        computed: {
-            viewLines: function () {
-                return _.clone(this.chatLines.array).reverse();
-            }
-        },
         methods: {
 
             // inherited from LiveView

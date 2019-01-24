@@ -1,5 +1,5 @@
 ﻿<template>
-    <span>{{text}}</span>
+    <span :class="cssClass">{{text}}</span>
 </template>
 
 <script lang="ts">
@@ -8,6 +8,10 @@
 
     export default Vue.extend({
         props: {
+            cssClass: {
+                type: String,
+                required: false
+            },
             timeString: {
                 type: String,
                 required: true
@@ -24,56 +28,58 @@
         },
         mounted: function () {
             this.moment_ = moment.utc(this.timeString).local();
-            this.tick();
+            this.updateText();
         },
         watch: {
             timeString: function (newValue, oldValue) {
-                this.moment_ = moment.utc(newValue);
-                this.tick();
+                this.moment_ = moment.utc(newValue).local();
+                this.updateText();
             }
         },
         beforeDestroy: function () {
-            clearTimeout(this.timer_);
+            if (this.timer_ > 0)
+                clearTimeout(this.timer_);
         },
         methods: {
-            tick: function () {
+            
+            updateText: function () {
                 let timestampMoment = (this.moment_ as moment.Moment);
-
                 let nowMoment = moment.default();
                 let sinceTimestamp = moment.duration(nowMoment.diff(timestampMoment));
 
                 let asMinutes = sinceTimestamp.asMinutes();
+                let asHours = sinceTimestamp.asHours();
 
+                let timerDelay = -1;
                 let newText = "";
-                if (asMinutes < 1)
+                if (asMinutes < 1) {
                     newText = Math.floor(sinceTimestamp.asSeconds()).toString() + " seconds ago";
-                else if (sinceTimestamp.asMinutes() < 2)
-                    newText = "1 minute ago";
-                else if (sinceTimestamp.asHours() < 1)
-                    newText = sinceTimestamp.minutes().toString() + " minutes ago";
-                else if (sinceTimestamp.asDays() < 1)
-                    newText = sinceTimestamp.hours().toString() + " hours ago";
-                /*
-                else if (sinceTimestamp.asDays() < 3)
-                    newText = Math.floor(sinceTimestamp.asHours()).toString() + " hours ago";
-                else if (sinceTimestamp.asMonths() < 1)
-                    newText = Math.floor(sinceTimestamp.asDays()).toString() + " days ago";
-                else if (sinceTimestamp.asYears() < 1)
-                    newText = Math.floor(sinceTimestamp.asMonths()).toString() + " months ago";
-                else {
-                    newText = Math.floor(sinceTimestamp.asYears()).toString() + " years ago";
+                    timerDelay = 1000; // 1 second
                 }
-                */
+                else if (asMinutes < 2) {
+                    newText = "1 minute ago";
+                    timerDelay = 60000; // 1 minute
+                }
+                else if (asHours < 1) {
+                    newText = sinceTimestamp.minutes().toString() + " minutes ago";
+                    timerDelay = 60000; // 1 minute
+                }
+                else if (asHours < 2) {
+                    newText = "1 hour ago";
+                    timerDelay = 3600000; // 1 hour
+                }
+                else if (sinceTimestamp.asDays() < 1) {
+                    newText = sinceTimestamp.hours().toString() + " hours ago";
+                    timerDelay = 3600000; // 1 hour
+                }
                 else
                     newText = timestampMoment.format('YYYY-MM-DD HH:mm:ss');
 
                 this.text = newText;
                 //this.text = timestampMoment.fromNow();
 
-                if (asMinutes < 1)
-                    this.timer_ = setTimeout(this.tick, 1000);
-                else
-                    this.timer_ = setTimeout(this.tick, 60000);
+                if (timerDelay > 0)
+                    this.timer_ = setTimeout(this.updateText, timerDelay);
             }
         },
         components: {

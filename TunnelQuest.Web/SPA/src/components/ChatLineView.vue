@@ -1,8 +1,74 @@
-﻿<template>
+﻿
+<style>
+
+    .tqChatLineId {
+        color: #08ff68;
+    }
+
+    .tqChatLineView {
+    }
+
+    .tqChatLineView_PlayerName {
+        font-style: italic;
+    }
+
+    .tqChatLineView_auctions {
+        font-style: italic;
+    }
+
+    .tqChatLineView_PlayerText {
+    }
+
+    .tqItemLink {
+        color: #e049ff;
+        text-decoration: none;
+    }
+
+
+    .tqChatLineTimeStamp {
+        font-family: Courier New, Courier, monospace;
+        color: #c9c9c9;
+        font-size: 0.8em;
+    }
+
+    @media screen and (min-width: 992px) {
+        /* start of desktop styles */
+        .tqChatLineTimeStamp {
+            margin-right: 7px;
+        }
+    }
+    @media screen and (max-width: 991px) {
+        /* start of large tablet styles */
+        .tqChatLineTimeStamp {
+            margin-right: 6px;
+        }
+    }
+
+    @media screen and (max-width: 767px) {
+        /* start of medium tablet styles */
+        .tqChatLineTimeStamp {
+            margin-right: 5px;
+        }
+    }
+
+    @media screen and (max-width: 479px) {
+        /* start of phone styles */
+        .tqChatLineTimeStamp {
+            margin-right: 4px;
+        }
+    }
+
+</style>
+
+<template>
     <div class="tqChatLineView">
-        [{{chatLine.id}}]
-        <time-stamp v-if="showTimestamp" :timeString="chatLine.sentAtString"></time-stamp>
-        <span class="tqChatLineView_PlayerName">{{chatLine.playerName}} auctions,</span> '<span class="tqChatLineView_PlayerText"></span>'
+        <if-debug>
+            <span class="tqChatLineId">[C{{chatLine.id}}]</span>
+        </if-debug>
+        <time-stamp v-if="showTimestamp" :timeString="chatLine.sentAtString" cssClass="tqChatLineTimeStamp"></time-stamp>
+        <span class="tqChatLineView_PlayerName">{{chatLine.playerName}}</span>
+        <span class="tqChatLineView_auctions"> auctions, </span>
+        <span class="tqChatLineView_PlayerText"></span>
     </div>
 </template>
 
@@ -13,6 +79,7 @@
 
     import TQGlobals from "../classes/TQGlobals";
 
+    import IfDebug from "./IfDebug.vue";
     import TimeStamp from "./TimeStamp.vue";
 
     export default Vue.extend({
@@ -28,6 +95,10 @@
             itemNameLinks: {
                 type: Boolean,
                 required: true
+            },
+            auctionIdToHighlight: {
+                type: Number,
+                required: false
             }
         },
         watch: {
@@ -41,13 +112,14 @@
         methods: {
             rebuildText: function () {
                 let textSpan = this.$el.querySelector(".tqChatLineView_PlayerText") as HTMLSpanElement;
-                
+
                 // remove whatever text we built in there last time
                 while (textSpan.lastChild) {
                     textSpan.removeChild(textSpan.lastChild);
                 }
 
-                let nextItemNameIndex = 0;
+                textSpan.appendChild(document.createTextNode("'"));
+
                 let wordsSoFar: string | null = null;
                 let textWords = this.chatLine.text.split(" ");
                 for (let word of textWords) {
@@ -66,9 +138,16 @@
 
                         if (this.itemNameLinks && auctionInfo.isKnownItem) {
                             let linkElem = document.createElement("a") as HTMLAnchorElement;
+                            linkElem.classList.add("tqItemLink");
                             linkElem.href = "#/item/" + auctionInfo.itemName;
                             linkElem.text = auctionInfo.itemName;
                             textSpan.appendChild(linkElem);
+                        }
+                        else if (this.auctionIdToHighlight == auctionId) {
+                            let spanElem = document.createElement("span") as HTMLSpanElement;
+                            spanElem.classList.add("tqItemLink");
+                            spanElem.innerText = auctionInfo.itemName;
+                            textSpan.appendChild(spanElem);
                         }
                         else {
                             wordsSoFar += auctionInfo.itemName;
@@ -78,25 +157,16 @@
                         wordsSoFar += word;
                     }
                 }
+
                 if (wordsSoFar != null && wordsSoFar != "")
                     textSpan.appendChild(document.createTextNode(wordsSoFar));
+
+                textSpan.appendChild(document.createTextNode("'"));
             }
         },
         components: {
+            IfDebug,
             TimeStamp
         }
     });
 </script>
-
-<style>
-    .tqChatLineView {
-    }
-
-    .tqChatLineView_PlayerName {
-        font-style: italic;
-    }
-
-    .tqChatLineView_PlayerText {
-    }
-
-</style>

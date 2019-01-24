@@ -1,4 +1,5 @@
 ﻿
+import * as moment from "moment";
 import ChatLine from "../interfaces/ChatLine";
 
 interface Auction {
@@ -13,7 +14,8 @@ interface Auction {
     updatedAtString: string,
     chatLineId: number,
 
-    // not actually passed in from server, but set in client code
-    chatLine: ChatLine
+    chatLine: ChatLine,                 // not actually passed in from server, but set in client code
+    updatedAtMoment: moment.Moment,     // not actually passed in from server, but set in client code
+    firstSeenDate: Date,                // not actually passed in from server, but set in client code
 }
 export default Auction;

@@ -4,9 +4,16 @@
 
 <template>
     <div>
+        <div>Recent auctions:</div>
         <div>
             <transition-group :name="transitionName">
-                <auction-view v-for="auction in viewAuctions" :key="auction.id" :auction="auction"></auction-view>
+                <auction-view v-for="auction in recentlyUpdatedAuctions" :key="auction.id" :auction="auction"></auction-view>
+            </transition-group>
+        </div>
+        <div>Older auctions:</div>
+        <div>
+            <transition-group :name="transitionName">
+                <auction-view v-for="auction in notRecentlyUpdatedAuctions" :key="auction.id" :auction="auction"></auction-view>
             </transition-group>
         </div>
     </div>
@@ -16,6 +23,7 @@
     import axios from "axios";
     import mixins from 'vue-typed-mixins';
     import * as _ from "lodash";
+    import * as moment from "moment";
 
     import Auction from "../interfaces/Auction";
     import LinesAndAuctions from "../interfaces/LinesAndAuctions";
@@ -32,26 +40,55 @@
 
         data: function () {
             return {
-                auctions: new SlidingList<Auction>(function (a: Auction, b: Auction) {
-                    if (a.updatedAtString < b.updatedAtString)
-                        return -1;
-                    else if (a.updatedAtString > b.updatedAtString)
-                        return 1;
-                    else {
-                        if (a.id < b.id)
-                            return -1;
-                        else if (a.id > b.id)
-                            return 1;
-                        else
-                            return 0;
-                    }
-                })
+                auctions: new SlidingList<Auction>(null)
             };
         },
 
         computed: {
-            viewAuctions: function () {
-                return _.clone(this.auctions.array).reverse();
+            recentlyUpdatedAuctions: function () {
+                return this.auctions.array
+                    .filter(function (auction: Auction, index: number) {
+                        return moment.duration(moment.default().diff(auction.updatedAtMoment)).asMinutes() <= 5;
+                    })
+                    .sort(function (a: Auction, b: Auction) {
+                        // sort descending firstSeenDate
+                        if (a.firstSeenDate < b.firstSeenDate)
+                            return 1;
+                        else if (a.firstSeenDate > b.firstSeenDate)
+                            return -1;
+                        else {
+                            // sort descending id
+                            if (a.id < b.id)
+                                return 1;
+                            else if (a.id > b.id)
+                                return -1;
+                            else
+                                return 0;
+                        }
+                    });
+            },
+
+            notRecentlyUpdatedAuctions: function () {
+                return this.auctions.array
+                    .filter(function (auction: Auction, index: number) {
+                        return moment.duration(moment.default().diff(auction.updatedAtMoment)).asMinutes() > 5;
+                    })
+                    .sort(function (a: Auction, b: Auction) {
+                        // sort descending updatedAtString
+                        if (a.updatedAtString < b.updatedAtString)
+                            return 1;
+                        else if (a.updatedAtString > b.updatedAtString)
+                            return -1;
+                        else {
+                            // sort descending id
+                            if (a.id < b.id)
+                                return 1;
+                            else if (a.id > b.id)
+                                return -1;
+                            else
+                                return 0;
+                        }
+                    });
             }
         },
         methods: {
@@ -112,10 +149,18 @@
                 console.log("AuctionHouseView.onNewContent():");
                 console.log(newContent);
 
-                // manually wire up auction.chatLine references
+                // manually set some properties on the auction objects
                 for (let auctionId in newContent.auctions) {
                     let auction = newContent.auctions[auctionId];
                     auction.chatLine = newContent.lines[auction.chatLineId];
+                    auction.updatedAtMoment = moment.utc(auction.updatedAtString).local();
+
+                    // transfer the firstSeenMoment from the previously existing entry, if it exists
+                    let existingEntry = this.auctions.dict[auction.id];
+                    if (existingEntry)
+                        auction.firstSeenDate = existingEntry.firstSeenDate;
+                    else
+                        auction.firstSeenDate = new Date();
                 }
 
                 this.auctions.add(newContent.auctions, enforceMaxSize);

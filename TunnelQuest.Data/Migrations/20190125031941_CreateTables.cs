@@ -277,7 +277,7 @@ namespace TunnelQuest.Data.Migrations
                     capacity = table.Column<int>(nullable: true),
                     capacity_size_code = table.Column<string>(nullable: true),
                     weight_reduction = table.Column<float>(nullable: true),
-                    is_expendable = table.Column<bool>(nullable: false),
+                    is_expendable = table.Column<bool>(nullable: true),
                     max_charges = table.Column<int>(nullable: true)
                 },
                 constraints: table =>

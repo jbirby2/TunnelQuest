@@ -9,7 +9,7 @@ using TunnelQuest.Data.Models;
 namespace TunnelQuest.Data.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    [Migration("20190107033947_CreateTables")]
+    [Migration("20190125031941_CreateTables")]
     partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -255,7 +255,7 @@ namespace TunnelQuest.Data.Migrations
                     b.Property<bool>("IsArtifact")
                         .HasColumnName("is_artifact");
 
-                    b.Property<bool>("IsExpendable")
+                    b.Property<bool?>("IsExpendable")
                         .HasColumnName("is_expendable");
 
                     b.Property<bool>("IsLore")

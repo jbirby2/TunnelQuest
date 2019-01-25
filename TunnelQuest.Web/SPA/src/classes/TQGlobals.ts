@@ -4,6 +4,7 @@ import axios from "axios";
 import Settings from "../interfaces/Settings";
 
 import ConnectionWrapper from "../classes/ConnectionWrapper";
+import ItemRepo from "../classes/ItemRepo";
 
 
 class TQGlobals {
@@ -14,7 +15,8 @@ class TQGlobals {
     static serverCode: string;
     static settings: Settings;
     static connection: ConnectionWrapper;
-    
+    static items: ItemRepo;
+
     static init() {
         if (this.isInitialized)
             return;
@@ -25,6 +27,7 @@ class TQGlobals {
         let hubUrl = "/blue_hub"; // STUB hard-coded
 
         this.connection = new ConnectionWrapper(hubUrl);
+        this.items = new ItemRepo();
 
         axios.get('/api/settings')
             .then(response => {

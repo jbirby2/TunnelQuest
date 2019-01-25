@@ -9,7 +9,7 @@
     <div>
         <div class="tqChatView">
             <transition-group :name="transitionName">
-                <chat-line-view v-for="chatLine in chatLines.array" :key="chatLine.id" :chatLine="chatLine" :showTimestamp="true" :itemNameLinks="true"></chat-line-view>
+                <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :chatLine="chatLine" :showTimestamp="true" :itemNameLinks="true"></chat-line-view>
             </transition-group>
         </div>
     </div>
@@ -36,15 +36,21 @@
         data: function () {
             return {
                 chatLines: new SlidingList<ChatLine>(function (a: ChatLine, b: ChatLine) {
-                    // sort descending
+                    // sort ascending
                     if (a.id < b.id)
-                        return 1;
-                    else if (a.id > b.id)
                         return -1;
+                    else if (a.id > b.id)
+                        return 1;
                     else
                         return 0;
                 })
             };
+        },
+
+        computed: {
+            viewLines: function () {
+                return _.clone(this.chatLines.array).reverse();
+            }
         },
 
         methods: {
@@ -75,11 +81,11 @@
 
             // inherited from LiveView
             getEarlierContent: function () {
-                console.log("stub ChatView.getEarlierContent()");
-
                 let maxId: number | null = null;
                 if (this.chatLines.array.length > 0)
                     maxId = this.chatLines.array[0].id - 1;
+
+                console.log("stub ChatView.getEarlierContent(maxId=" + maxId + ")");
 
                 axios.get('/api/chat_lines?serverCode=' + TQGlobals.serverCode + "&maxId=" + (maxId == null ? "" : maxId.toString()) + "&maxResults=" + TQGlobals.settings.maxChatLines.toString())
                     .then(response => {

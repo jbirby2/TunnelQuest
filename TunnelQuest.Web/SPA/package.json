@@ -5,12 +5,14 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --dest ../wwwroot",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "host": "iisexpress-proxy 59892 to 59893"
   },
   "dependencies": {
     "@aspnet/signalr": "^1.1.0",
     "@types/lodash": "^4.14.120",
     "axios": "^0.18.0",
+    "iisexpress-proxy": "^1.4.4",
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
     "vue": "^2.5.21",

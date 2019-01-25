@@ -96,12 +96,11 @@ namespace TunnelQuest.Data.Models
         [Column("cold_resist")]
         public int? ColdResist { get; set; }
 
-
-        // hidden stats
-
         [Column("haste")]
         public float? Haste { get; set; }
-        
+
+        // bard instruments
+
         [Column("singing_modifier")]
         public int? SingingModifier { get; set; }
 
@@ -168,7 +167,7 @@ namespace TunnelQuest.Data.Models
         // consumables
 
         [Column("is_expendable")]
-        public bool IsExpendable { get; set; }
+        public bool? IsExpendable { get; set; }
 
         [Column("max_charges")]
         public int? MaxCharges { get; set; }

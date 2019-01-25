@@ -19,11 +19,11 @@ class SlidingList<T extends Idable> {
     // ordered array of entries
     array: Array<T>;
 
-    sortFunction: ((a: T, b: T) => number) | null;
+    sortFunction: (a: T, b: T) => number;
 
     // constructor
 
-    constructor(sortFn: ((a: T, b: T) => number) | null) {
+    constructor(sortFn: (a: T, b: T) => number) {
         this.maxSize = 100; // set a reasonable default until we get the real setting from the server
         this.dict = new Array<T>();
         this.array = new Array<T>();
@@ -54,8 +54,7 @@ class SlidingList<T extends Idable> {
 
         // sort before enforcing maxSize to make sure we're always removing the entries from the start of the list
         // according to the provided sorting function
-        if (this.sortFunction != null)
-            this.array.sort(this.sortFunction);
+        this.array.sort(this.sortFunction);
 
         // enforce maxSize
         if (enforceMaxSize) {

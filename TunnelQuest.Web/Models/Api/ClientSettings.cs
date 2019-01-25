@@ -18,9 +18,7 @@ namespace TunnelQuest.Web.Models.Api
 
         public string AuctionToken { get; set; }
         public int MaxChatLines { get; set; }
-        public int ChatLineBackScrollFetchSize { get; set; }
         public int MaxAuctions { get; set; }
-        public int AuctionBackScrollFetchSize { get; set; }
 
         private ClientSettings()
         {

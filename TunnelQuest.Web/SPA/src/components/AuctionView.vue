@@ -12,60 +12,55 @@
 
 
     .tqAuctionView {
-        opacity: 0.65;
-        background-color: #000000;
+        
     }
 
     @media screen and (min-width: 992px) {
         /* start of desktop styles */
         .tqAuctionView {
-            margin-bottom: 12px;
         }
     }
 
     @media screen and (max-width: 991px) {
         /* start of large tablet styles */
         .tqAuctionView {
-            margin-bottom: 9px;
         }
     }
 
     @media screen and (max-width: 767px) {
         /* start of medium tablet styles */
         .tqAuctionView {
-            margin-bottom: 6px;
         }
     }
 
     @media screen and (max-width: 479px) {
         /* start of phone styles */
         .tqAuctionView {
-            margin-bottom: 3px;
         }
     }
 
 </style>
 
 <template>
-    <div class="tqAuctionView">
-        <span>
+    <tr class="tqAuctionView">
+        <td>
             <if-debug>
                 <span class="tqAuctionId">
                     [A{{auction.id}}]
                 </span>
             </if-debug>
             <time-stamp :timeString="auction.updatedAtString"></time-stamp>
-        </span>
-        <span>
-            <div>
-                {{ auction.isBuying ? "WTB" : "WTS" }} {{ auction.itemName }} - {{ auction.price }}
-            </div>
+        </td>
+        <td>
+            {{ auction.isBuying ? "WTB" : "WTS" }}
+        </td>
+        <td>
+            <auction-item-view :item="auction.item"></auction-item-view>
             <div class="tqAuctionChatLine">
                 <chat-line-view :chatLine="auction.chatLine" :showTimestamp="false" :itemNameLinks="false" :auctionIdToHighlight="auction.id"></chat-line-view>
             </div>
-        </span>
-        
-    </div>
+        </td>        
+    </tr>
 </template>
 
 <script lang="ts">
@@ -77,7 +72,9 @@
     import IfDebug from "./IfDebug.vue";
     import TimeStamp from "./TimeStamp.vue";
 
+    import AuctionItemView from "./AuctionItemView.vue";
     import ChatLineView from "./ChatLineView.vue";
+
 
 
     export default Vue.extend({
@@ -94,6 +91,7 @@
         components: {
             IfDebug,
             TimeStamp,
+            AuctionItemView,
             ChatLineView
         }
     });

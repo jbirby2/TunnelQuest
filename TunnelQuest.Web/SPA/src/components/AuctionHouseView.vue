@@ -1,20 +1,24 @@
 ﻿
 <style>
+    .tqAuctionViewList {
+        opacity: 0.65;
+        background-color: #000000;
+    }
 </style>
 
 <template>
     <div>
         <div>Recent auctions:</div>
         <div>
-            <transition-group :name="transitionName">
+            <table is="transition-group" :name="transitionName" class="tqAuctionViewList">
                 <auction-view v-for="auction in recentlyUpdatedAuctions" :key="auction.id" :auction="auction"></auction-view>
-            </transition-group>
+            </table>
         </div>
         <div>Older auctions:</div>
         <div>
-            <transition-group :name="transitionName">
+            <table is="transition-group" :name="transitionName" class="tqAuctionViewList">
                 <auction-view v-for="auction in notRecentlyUpdatedAuctions" :key="auction.id" :auction="auction"></auction-view>
-            </transition-group>
+            </table>
         </div>
     </div>
 </template>
@@ -40,7 +44,22 @@
 
         data: function () {
             return {
-                auctions: new SlidingList<Auction>(null)
+                auctions: new SlidingList<Auction>(function (a: Auction, b: Auction) {
+                    // sort ascending updatedAtString
+                    if (a.updatedAtString < b.updatedAtString)
+                        return -1;
+                    else if (a.updatedAtString > b.updatedAtString)
+                        return 1;
+                    else {
+                        // sort ascending id
+                        if (a.id < b.id)
+                            return -1;
+                        else if (a.id > b.id)
+                            return 1;
+                        else
+                            return 0;
+                    }
+                })
             };
         },
 
@@ -150,10 +169,12 @@
                 console.log(newContent);
 
                 // manually set some properties on the auction objects
+
                 for (let auctionId in newContent.auctions) {
                     let auction = newContent.auctions[auctionId];
                     auction.chatLine = newContent.lines[auction.chatLineId];
                     auction.updatedAtMoment = moment.utc(auction.updatedAtString).local();
+                    auction.item = TQGlobals.items.get(auction.itemName, false); // false to prevent it from immediately making an ajax call to fetch this one item
 
                     // transfer the firstSeenMoment from the previously existing entry, if it exists
                     let existingEntry = this.auctions.dict[auction.id];
@@ -162,6 +183,9 @@
                     else
                         auction.firstSeenDate = new Date();
                 }
+
+                // call this after the loop to fetch all items simultaneously (because it's far more efficient than making an ajax call for every individual item)
+                TQGlobals.items.fetchPendingItems();
 
                 this.auctions.add(newContent.auctions, enforceMaxSize);
             },

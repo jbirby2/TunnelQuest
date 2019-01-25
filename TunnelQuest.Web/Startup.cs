@@ -34,7 +34,12 @@ namespace TunnelQuest.Web
             Configuration.Bind("TunnelQuest", settings);
             services.AddSingleton(settings);
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                 .AddJsonOptions(options => {
+                     options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                 });
+
             services.AddCors();
             services.AddDbContext<TunnelQuestContext>(/*options => 
                 options.UseMySQL(Configuration.GetConnectionString("TunnelQuest"))

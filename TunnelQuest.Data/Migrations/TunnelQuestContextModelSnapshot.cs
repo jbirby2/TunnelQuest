@@ -253,7 +253,7 @@ namespace TunnelQuest.Data.Migrations
                     b.Property<bool>("IsArtifact")
                         .HasColumnName("is_artifact");
 
-                    b.Property<bool>("IsExpendable")
+                    b.Property<bool?>("IsExpendable")
                         .HasColumnName("is_expendable");
 
                     b.Property<bool>("IsLore")

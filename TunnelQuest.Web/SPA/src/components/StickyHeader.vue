@@ -1,35 +1,43 @@
 ﻿
 <style>
     .tqheader {
-        background-color: #f9ae00;
+        background-color: #ce9000;
         z-index: 999;
     }
 
+    .tqheader a {
+        color: #ffffff;
+        font-weight: bold;
+        text-decoration: none;
+        margin-right: 15px;
+    }
     .tqstickyheader {
         position: fixed;
         top: 0;
-        width: 100%
     }
 
     .tqroutelinks {
     }
 
     .tqheaderdisco {
-        background-color: #ffc644;
-        color: #000000;
+        font-style: italic;
     }
+
 </style>
 
 <template>
     <div class="tqheader">
         <div class="tqroutelinks">
-            <router-link to="/">Auction House View</router-link> |
+            <router-link to="/">Auction House View</router-link>
             <router-link to="/chat">Chat View</router-link>
-        </div>
 
-        <transition name="fade">
-            <div v-if="isDisconnected" class="tqheaderdisco">Disconnected - scroll up to reconnect</div>
-        </transition>
+            <transition name="fade">
+                <span class="tqheaderdisco">
+                    <span v-if="isDisconnected">Disconnected</span>
+                    <span v-if="!isScrolledToTop"> - scroll up to reconnect</span>
+                </span>
+            </transition>
+        </div>
     </div>
 </template>
 
@@ -43,6 +51,7 @@
         data: function () {
             return {
                 isDisconnected: true,
+                isScrolledToTop: true,
 
                 // "private"
                 htmlElement_: {} as HTMLElement
@@ -59,10 +68,18 @@
         methods: {
 
             onScroll: function () {
-                if (window.pageYOffset > this.htmlElement_.offsetTop)
+                if (window.pageYOffset > this.htmlElement_.offsetTop) {
+                    this.htmlElement_.style.width = this.htmlElement_.clientWidth.toString() + "px";
                     this.htmlElement_.classList.add("tqstickyheader");
-                else
+                }
+                else {
                     this.htmlElement_.classList.remove("tqstickyheader");
+                    this.htmlElement_.style.width = null;
+                }
+
+                if (document != null && document.documentElement != null) {
+                    this.isScrolledToTop = (document.documentElement.scrollTop == 0);
+                }
             },
 
             onInit: function () {

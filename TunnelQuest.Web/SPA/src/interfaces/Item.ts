@@ -1,7 +1,7 @@
 ﻿
 import ChatLineAuctionInfo from "../interfaces/ChatLineAuctionInfo";
 
-interface ChatLine {
+interface Item {
     itemName: string,
     iconFileName: string | null,
     isMagic: boolean,
@@ -76,4 +76,4 @@ interface ChatLine {
     info: Array<string>
 }
 
-export default ChatLine;
+export default Item;

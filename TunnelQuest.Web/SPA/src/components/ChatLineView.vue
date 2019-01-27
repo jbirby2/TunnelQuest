@@ -61,7 +61,7 @@
 </style>
 
 <template>
-    <div class="tqChatLineView">
+    <span class="tqChatLineView">
         <if-debug>
             <span class="tqChatLineId">[C{{chatLine.id}}]</span>
         </if-debug>
@@ -69,7 +69,7 @@
         <span class="tqChatLineView_PlayerName">{{chatLine.playerName}}</span>
         <span class="tqChatLineView_auctions"> auctions, </span>
         <span class="tqChatLineView_PlayerText"></span>
-    </div>
+    </span>
 </template>
 
 <script lang="ts">

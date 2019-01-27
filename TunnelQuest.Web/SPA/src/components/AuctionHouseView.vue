@@ -1,24 +1,38 @@
 ﻿
 <style>
-    .tqAuctionViewList {
-        opacity: 0.65;
-        background-color: #000000;
+    .tqAuctionHouseListDivider {
+        background-color: #55a2c6;
+        color: #ffffff;
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-align: center;
+        font-size: 1.2em;
     }
+
+    .tqAuctionHouseViewList > span {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
 </style>
 
 <template>
     <div>
-        <div>Recent auctions:</div>
-        <div>
-            <table is="transition-group" :name="transitionName" class="tqAuctionViewList">
+        <div class="tqAuctionHouseListDivider">Recent auctions:</div>
+        <div class="tqAuctionHouseViewList">
+            <transition-group :name="transitionName">
                 <auction-view v-for="auction in recentlyUpdatedAuctions" :key="auction.id" :auction="auction"></auction-view>
-            </table>
+            </transition-group>
         </div>
-        <div>Older auctions:</div>
-        <div>
-            <table is="transition-group" :name="transitionName" class="tqAuctionViewList">
+        <div class="tqAuctionHouseListDivider">Older auctions:</div>
+        <div class="tqAuctionHouseViewList">
+            <transition-group :name="transitionName">
                 <auction-view v-for="auction in notRecentlyUpdatedAuctions" :key="auction.id" :auction="auction"></auction-view>
-            </table>
+            </transition-group>
         </div>
     </div>
 </template>
@@ -67,7 +81,7 @@
             recentlyUpdatedAuctions: function () {
                 return this.auctions.array
                     .filter(function (auction: Auction, index: number) {
-                        return moment.duration(moment.default().diff(auction.updatedAtMoment)).asMinutes() <= 5;
+                        return moment.duration(moment.default().diff(auction.updatedAtMoment)).asMinutes() <= 15;
                     })
                     .sort(function (a: Auction, b: Auction) {
                         // sort descending firstSeenDate
@@ -90,7 +104,7 @@
             notRecentlyUpdatedAuctions: function () {
                 return this.auctions.array
                     .filter(function (auction: Auction, index: number) {
-                        return moment.duration(moment.default().diff(auction.updatedAtMoment)).asMinutes() > 5;
+                        return moment.duration(moment.default().diff(auction.updatedAtMoment)).asMinutes() > 15;
                     })
                     .sort(function (a: Auction, b: Auction) {
                         // sort descending updatedAtString

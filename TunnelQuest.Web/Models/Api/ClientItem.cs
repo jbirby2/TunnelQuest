@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TunnelQuest.Data;
 using TunnelQuest.Data.Models;
 
 namespace TunnelQuest.Web.Models.Api
@@ -176,24 +177,34 @@ namespace TunnelQuest.Web.Models.Api
 
             if (item.Races.Count > 0)
             {
-                i = 0;
-                this.Races = new string[item.Races.Count];
-                foreach (var race in item.Races)
+                if (item.Races.Count == RaceCodes.All.Count())
+                    this.Races = new string[1] { "ALL" };
+                else
                 {
-                    this.Races[i] = race.RaceCode;
-                    i++;
+                    i = 0;
+                    this.Races = new string[item.Races.Count];
+                    foreach (var race in item.Races)
+                    {
+                        this.Races[i] = race.RaceCode;
+                        i++;
+                    }
                 }
             }
 
 
             if (item.Classes.Count > 0)
             {
-                i = 0;
-                this.Classes = new string[item.Classes.Count];
-                foreach (var classs in item.Classes)
+                if (item.Classes.Count == ClassCodes.All.Count())
+                    this.Classes = new string[1] { "ALL" };
+                else
                 {
-                    this.Classes[i] = classs.ClassCode;
-                    i++;
+                    i = 0;
+                    this.Classes = new string[item.Classes.Count];
+                    foreach (var classs in item.Classes)
+                    {
+                        this.Classes[i] = classs.ClassCode;
+                        i++;
+                    }
                 }
             }
 

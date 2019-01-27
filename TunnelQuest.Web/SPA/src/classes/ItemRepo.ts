@@ -19,7 +19,7 @@ class ItemRepo {
         if (item)
             return item;
         else {
-            // it's important to actually declare every single value explicitly now, so that the properties exist
+            // it's important to actually declare every single property explicitly now, so that the properties exist
             // when Vue wires into them, before we get the item data back from the server
             let blankItem = {} as Item;
 

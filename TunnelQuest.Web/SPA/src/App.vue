@@ -7,7 +7,7 @@
 
     body {
         padding: 0;
-        margin: 0;
+        margin: auto auto;
         background-image: url("/assets/background.png");
         background-size: cover;
         background-attachment: fixed;

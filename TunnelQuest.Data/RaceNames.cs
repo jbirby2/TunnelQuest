@@ -7,7 +7,7 @@ namespace TunnelQuest.Data
     public static class RaceNames
     {
         public const string Barbarian = "Barbarian";
-        public const string DarkElf = "DarkElf";
+        public const string DarkElf = "Dark Elf";
         public const string Dwarf = "Dwarf";
         public const string Erudite = "Erudite";
         public const string Gnome = "Gnome";

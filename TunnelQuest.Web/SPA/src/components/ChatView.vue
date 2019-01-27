@@ -3,6 +3,11 @@
         opacity: 0.7;
         background-color: #000000;
     }
+
+    .tqChatView .tqChatLineView {
+        display: block;
+    }
+
 </style>
 
 <template>

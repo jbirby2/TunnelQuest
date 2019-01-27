@@ -1,5 +1,7 @@
 ﻿<template>
-    <span :class="cssClass">{{text}}</span>
+    <span :class="cssClass">
+        <span style="vertical-align:middle;">{{text}}</span>
+    </span>
 </template>
 
 <script lang="ts">

@@ -1,10 +1,13 @@
 ﻿
 import * as signalR from "@aspnet/signalr";
 
+// ConnectionWrapper is a simple wrapper for a signalR connection that provides additional 
+// functionality and safety checks.
+
 class ConnectionWrapper {
 
-    private isConnecting: boolean = false;
     private connection: signalR.HubConnection;
+    private isConnecting: boolean = false;
     private onConnectedCallbacks: Array<Function>;
     private onDisconnectedCallbacks: Array<Function>;
 
@@ -17,9 +20,12 @@ class ConnectionWrapper {
             .build();
     }
 
+
     public isConnected() {
         return (this.isConnecting || this.connection.state == signalR.HubConnectionState.Connected);
     }
+
+
 
     public on(serverMessage: string, callback: (...args: any[]) => void) {
         this.connection.on(serverMessage, callback);
@@ -28,6 +34,8 @@ class ConnectionWrapper {
     public off(serverMessage: string, callback: (...args: any[]) => void) {
         this.connection.off(serverMessage, callback);
     }
+
+
 
     public onConnected(callback: Function) {
         if (this.onConnectedCallbacks.indexOf(callback) < 0)
@@ -40,6 +48,8 @@ class ConnectionWrapper {
             this.onConnectedCallbacks.splice(index, 1);
     }
 
+
+
     public onDisconnected(callback: Function) {
         if (this.onDisconnectedCallbacks.indexOf(callback) < 0)
             this.onDisconnectedCallbacks.push(callback);
@@ -50,6 +60,8 @@ class ConnectionWrapper {
         if (index >= 0)
             this.onDisconnectedCallbacks.splice(index, 1);
     }
+
+
 
     public connect() {
         if (this.isConnected())

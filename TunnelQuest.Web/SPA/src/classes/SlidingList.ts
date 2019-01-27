@@ -3,11 +3,12 @@ import Vue from "vue";
 import Idable from "../interfaces/Idable";
 
 
-// Simple helper class to represent a fixed-size list of items with ids that automatically trims
-// its own entries from the beginning or end as appropriate to maintain maxSize.  Also maintains
-// a separate dictionary to reference entries directly by their id, and a .contains() method.
+// Simple helper class to represent a fixed-size list of objects with ids that automatically trims
+// its earliest entries to maintain maxSize.  
 //
-// (This is really only meant to be used for the master lists of ChatLines and Auctions in TunnelQuestApp.vue)
+// Also maintains a separate dictionary to reference entries directly by their id.
+//
+// (This is really only meant to be used for the master lists of ChatLines and Auctions)
 
 class SlidingList<T extends Idable> {
 
@@ -69,7 +70,7 @@ class SlidingList<T extends Idable> {
 
     clear() {
         while (this.array.length > 0) {
-            let removedEntry = this.array.shift();
+            let removedEntry = this.array.pop();
             if (removedEntry)
                 delete this.dict[removedEntry.id];
         }

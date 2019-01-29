@@ -1,5 +1,5 @@
 ﻿
-import ChatLineAuctionInfo from "../interfaces/ChatLineAuctionInfo";
+import Spell from "../interfaces/Spell";
 
 interface Item {
     itemName: string,
@@ -73,7 +73,11 @@ interface Item {
     classes: Array<string>,
     slots: Array<string>,
     deities: Array<string>,
-    info: Array<string>
+    info: Array<string>,
+
+
+    // not actually passed in from server, but set in client code
+    effectSpell: Spell | null
 }
 
 export default Item;

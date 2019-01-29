@@ -98,7 +98,6 @@
                 <span v-if="auction.price != null">
                     for {{ formattedPrice }}
                 </span>
-
             </span>
 
             <time-stamp :timeString="auction.updatedAtString" cssClass="tqAuctionTimeStamp"></time-stamp>

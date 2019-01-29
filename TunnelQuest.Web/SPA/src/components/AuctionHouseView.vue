@@ -198,7 +198,7 @@
                         auction.firstSeenDate = new Date();
                 }
 
-                // call this after the loop to fetch all items simultaneously (because it's far more efficient than making an ajax call for every individual item)
+                // call this after the loop to fetch all items and simultaneously (because it's far more efficient than making an ajax call for every individual item)
                 TQGlobals.items.fetchPendingItems();
 
                 this.auctions.add(newContent.auctions, enforceMaxSize);

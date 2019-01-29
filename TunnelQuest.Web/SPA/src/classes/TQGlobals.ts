@@ -5,7 +5,7 @@ import Settings from "../interfaces/Settings";
 
 import ConnectionWrapper from "../classes/ConnectionWrapper";
 import ItemRepo from "../classes/ItemRepo";
-
+import SpellRepo from "../classes/SpellRepo";
 
 class TQGlobals {
 
@@ -16,6 +16,7 @@ class TQGlobals {
     static settings: Settings;
     static connection: ConnectionWrapper;
     static items: ItemRepo;
+    static spells: SpellRepo;
 
     static init() {
         if (this.isInitialized)
@@ -27,7 +28,8 @@ class TQGlobals {
         let hubUrl = "/blue_hub"; // STUB hard-coded
 
         this.connection = new ConnectionWrapper(hubUrl);
-        this.items = new ItemRepo();
+        this.spells = new SpellRepo();
+        this.items = new ItemRepo(this.spells);
 
         axios.get('/api/settings')
             .then(response => {
@@ -50,6 +52,7 @@ class TQGlobals {
         if (this.isInitialized)
             callback();
     }
+
 }
 
 export default TQGlobals;

@@ -3,13 +3,18 @@ import axios from "axios";
 
 import Item from "../interfaces/Item";
 
+import SpellRepo from "./SpellRepo";
+
+
 class ItemRepo {
 
     private pendingItemNames: Array<string> = new Array<string>();
     private fetchTimer: number = -1;
     private items: { [itemName: string]: Item } = {};
+    private spellRepo: SpellRepo;
 
-    constructor() {
+    constructor(spells: SpellRepo) {
+        this.spellRepo = spells;
         this.fetchTimer = setInterval(() => this.fetchPendingItems, 5000);
     }
 
@@ -97,6 +102,10 @@ class ItemRepo {
             blankItem.deities = [];
             blankItem.info = [];
 
+            // will be manually set later by code
+            blankItem.effectSpell = null;
+
+
             this.items[itemName] = blankItem;
             this.pendingItemNames.push(itemName);
 
@@ -125,7 +134,8 @@ class ItemRepo {
                 for (var item of result) {
 
                     // remove the itemName from pendingItemNames
-                    this.pendingItemNames.splice(this.pendingItemNames.indexOf(item.itemName), 1);
+                    if (this.pendingItemNames.indexOf(item.itemName) >= 0)
+                        this.pendingItemNames.splice(this.pendingItemNames.indexOf(item.itemName), 1);
 
                     // update the blank .items[] object with the actual data
                     let blankItem = this.items[item.itemName];
@@ -201,7 +211,14 @@ class ItemRepo {
                     blankItem.slots = item.slots;
                     blankItem.deities = item.deities;
                     blankItem.info = item.info;
-                }
+
+                    // if the item is a spell scroll, then also go ahead and pull its spell
+                    if (blankItem.effectSpellName != null && blankItem.effectTypeCode == "LearnSpell")
+                        blankItem.effectSpell = this.spellRepo.get(blankItem.effectSpellName, false);
+
+                } // end foreach (item)
+
+                this.spellRepo.fetchPendingSpells();
             })
             .catch(err => {
                 // stub

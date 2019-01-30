@@ -1,25 +1,27 @@
 ﻿
 <style>
 
-    .tqAuctionItem {
+    .tqItem {
+        opacity: 0.65;
+        background-color: #000000;
         color: #e0e0e0;
         position: relative;
-        display: inline-block;
+        display: block;
         padding: 0 5px 5px 5px;
     }
 
-    .tqAuctionItemLine {
+    .tqItemLine {
         display: block;
         margin-top: 3px;
     }
 
-    .tqAuctionItemIcon {
+    .tqItemIcon {
         position: absolute;
         top: 10px;
         right: 10px;
     }
 
-    .tqAuctionItemName {
+    .tqItemName {
         margin-top: 5px;
         font-size: 1.2em;
         color: #e049ff;
@@ -27,26 +29,26 @@
         white-space: nowrap;
     }
 
-    .tqAuctionItemStat {
+    .tqItemStat {
         margin-right: 7px;
     }
 
-    .tqAuctionItemStat span:nth-child(1) {
+    .tqItemStat span:nth-child(1) {
         /* make sure stat names with spaces in them are never split up across two lines ("SV MAGIC", "SV FIRE", etc) */
         white-space: nowrap;
     }
 
-    .tqAuctionItemStatValuePositive {
+    .tqItemStatValuePositive {
         color: #ffffff;
         font-weight: bold;
     }
 
-    .tqAuctionItemStatValueNegative {
+    .tqItemStatValueNegative {
         color: #ff0000;
         font-weight: bold;
     }
 
-    .tqAuctionItemInfo {
+    .tqItemInfo {
         display: block;
         color: #efef00;
     }
@@ -54,7 +56,7 @@
 
     @media screen and (min-width: 952px) {
         /* start of desktop styles */
-        .tqAuctionItem {
+        .tqItem {
             width: 400px;
             min-height: 120px;
         }
@@ -62,7 +64,7 @@
 
     @media screen and (max-width: 951px) {
         /* start of large tablet styles */
-        .tqAuctionItem {
+        .tqItem {
             width: 350px;
             min-height: 100px;
         }
@@ -70,24 +72,24 @@
 
     @media screen and (max-width: 767px) {
         /* start of medium tablet styles */
-        .tqAuctionItem {
+        .tqItem {
             width: 280px;
             min-height: 80px;
         }
     }
 
     @media screen and (max-width: 609px) {
-        .tqAuctionItem {
+        .tqItem {
             width: 225px;
         }
     }
 
     @media screen and (max-width: 479px) {
         /* start of phone styles */
-        .tqAuctionItem {
+        .tqItem {
             width: 100%;
         }
-        .tqAuctionItemIcon {
+        .tqItemIcon {
             right: 20px;
         }
     }
@@ -95,9 +97,9 @@
 </style>
 
 <template>
-    <span class="tqAuctionItem">
+    <span class="tqItem">
 
-        <span class="tqAuctionItemLine tqAuctionItemName">
+        <span class="tqItemLine tqItemName">
             {{ item.itemName }}
         </span>
 
@@ -105,94 +107,94 @@
             <spell-view :spell="item.effectSpell" :showSpellName="false"></spell-view>
         </span>
         <span v-else>
-            <img v-if="item.iconFileName != null" :src="iconUrl" class="tqAuctionItemIcon" />
+            <img v-if="item.iconFileName != null" :src="iconUrl" class="tqItemIcon" />
 
-            <span class="tqAuctionItemLine">
-                <span v-for="(flag, index) in flags" class="tqAuctionItemStat">
+            <span class="tqItemLine">
+                <span v-for="(flag, index) in flags" class="tqItemStat">
                     {{flag}}
                 </span>
             </span>
 
-            <span v-if="item.slots && item.slots.length > 0" class="tqAuctionItemLine">
+            <span v-if="item.slots && item.slots.length > 0" class="tqItemLine">
                 <span>Slots: </span>
-                <span v-for="(slotCode, index) in item.slots" class="tqAuctionItemStat">
+                <span v-for="(slotCode, index) in item.slots" class="tqItemStat">
                     {{slotCode}}
                 </span>
             </span>
 
-            <span v-if="item.maxCharges != null" class="tqAuctionItemLine">
+            <span v-if="item.maxCharges != null" class="tqItemLine">
                 <span v-if="item.isExpendable">
-                    <span class="tqAuctionItemStat">EXPENDABLE</span>
+                    <span class="tqItemStat">EXPENDABLE</span>
                 </span>
-                <span class="tqAuctionItemStat">
+                <span class="tqItemStat">
                     <span>Charges: </span>
-                    <span class="tqAuctionItemStatValuePositive">{{item.maxCharges}}</span>
+                    <span class="tqItemStatValuePositive">{{item.maxCharges}}</span>
                 </span>
             </span>
 
-            <span v-if="item.weaponSkillCode != null" class="tqAuctionItemLine">
-                <span class="tqAuctionItemStat">
+            <span v-if="item.weaponSkillCode != null" class="tqItemLine">
+                <span class="tqItemStat">
                     <span>Skill: </span>
-                    <span class="tqAuctionItemStatValuePositive">{{item.weaponSkillCode}}</span>
+                    <span class="tqItemStatValuePositive">{{item.weaponSkillCode}}</span>
                 </span>
-                <span class="tqAuctionItemStat">
+                <span class="tqItemStat">
                     <span>Attack Delay: </span>
-                    <span class="tqAuctionItemStatValuePositive">{{item.attackDelay}}</span>
+                    <span class="tqItemStatValuePositive">{{item.attackDelay}}</span>
                 </span>
             </span>
 
-            <span v-if="item.attackDamage != null" class="tqAuctionItemLine">
-                <span class="tqAuctionItemStat">
+            <span v-if="item.attackDamage != null" class="tqItemLine">
+                <span class="tqItemStat">
                     <span>Damage: </span>
-                    <span class="tqAuctionItemStatValuePositive">{{item.attackDamage}}</span>
+                    <span class="tqItemStatValuePositive">{{item.attackDamage}}</span>
                 </span>
             </span>
 
-            <span v-if="item.armorClass != null" class="tqAuctionItemLine">
-                <span class="tqAuctionItemStat">
+            <span v-if="item.armorClass != null" class="tqItemLine">
+                <span class="tqItemStat">
                     <span>AC: </span>
                     <span :class="getStatValueCssClass(item.armorClass)">{{item.armorClass}}</span>
                 </span>
             </span>
 
-            <span class="tqAuctionItemLine">
-                <span v-for="(stat, index) in stats" class="tqAuctionItemStat">
+            <span class="tqItemLine">
+                <span v-for="(stat, index) in stats" class="tqItemStat">
                     <span>{{stat.code}}:&nbsp;</span><span :class="getStatValueCssClass(stat.value)">{{stat.value}} </span>
                 </span>
             </span>
 
-            <span v-if="item.singingModifier != null" class="tqAuctionItemLine">
+            <span v-if="item.singingModifier != null" class="tqItemLine">
                 <span>Singing Instrument: </span>
                 <span :class="getStatValueCssClass(item.singingModifier)">{{ item.singingModifier }}</span>
             </span>
-            <span v-if="item.percussionModifier != null" class="tqAuctionItemLine">
+            <span v-if="item.percussionModifier != null" class="tqItemLine">
                 <span>Percussion Instrument: </span>
                 <span :class="getStatValueCssClass(item.percussionModifier)">{{ item.percussionModifier }}</span>
             </span>
-            <span v-if="item.stringedModifier != null" class="tqAuctionItemLine">
+            <span v-if="item.stringedModifier != null" class="tqItemLine">
                 <span>Stringed Instrument: </span>
                 <span :class="getStatValueCssClass(item.stringedModifier)">{{ item.stringedModifier }}</span>
             </span>
-            <span v-if="item.brassModifier != null" class="tqAuctionItemLine">
+            <span v-if="item.brassModifier != null" class="tqItemLine">
                 <span>Brass Instrument: </span>
                 <span :class="getStatValueCssClass(item.brassModifier)">{{ item.brassModifier }}</span>
             </span>
-            <span v-if="item.windModifier != null" class="tqAuctionItemLine">
+            <span v-if="item.windModifier != null" class="tqItemLine">
                 <span>Wind Instrument: </span>
                 <span :class="getStatValueCssClass(item.windModifier)">{{ item.windModifier }}</span>
             </span>
 
-            <span v-if="item.requiredLevel != null" class="tqAuctionItemLine">
+            <span v-if="item.requiredLevel != null" class="tqItemLine">
                 <span>Required level of </span>
-                <span class="tqAuctionItemStatValuePositive">{{ item.requiredLevel }}</span>
+                <span class="tqItemStatValuePositive">{{ item.requiredLevel }}</span>
             </span>
 
-            <span v-if="item.effectSpellName != null" class="tqAuctionItemLine">
+            <span v-if="item.effectSpellName != null" class="tqItemLine">
                 <span>Effect: </span>
-                <span class="tqAuctionItemStatValuePositive">{{item.effectSpellName}}</span>
+                <span class="tqItemStatValuePositive">{{item.effectSpellName}}</span>
                 <span v-if="effectTypeDesc != null">
                     <!-- the next line is a nightmare but don't break it up into multiple lines; otherwise spaces will appear in ugly spots in the rendered UI -->
-                    <span> ({{effectTypeDesc}}</span><span v-if="item.effectCastingTime != null && item.effectTypeCode != 'Combat'"><span>, Casting Time: </span><span class="tqAuctionItemStatValuePositive">{{castingTimeString}}</span></span><span>)</span>
+                    <span> ({{effectTypeDesc}}</span><span v-if="item.effectCastingTime != null && item.effectTypeCode != 'Combat'"><span>, Casting Time: </span><span class="tqItemStatValuePositive">{{castingTimeString}}</span></span><span>)</span>
                     <span v-if="item.effectMinimumLevel != null">
                         <span> at Level </span>
                         <span :class="getStatValueCssClass(item.effectMinimumLevel)">{{item.effectMinimumLevel}}</span>
@@ -200,59 +202,59 @@
                 </span>
             </span>
 
-            <span v-if="item.haste != null" class="tqAuctionItemLine">
+            <span v-if="item.haste != null" class="tqItemLine">
                 <span>Haste: </span>
                 <span :class="getStatValueCssClass(item.haste)">{{ item.haste * 100 }}%</span>
             </span>
 
-            <span class="tqAuctionItemLine">
-                <span class="tqAuctionItemStat">
+            <span class="tqItemLine">
+                <span class="tqItemStat">
                     <span>Weight: </span>
                     <span>{{ item.weight.toFixed(1) }}</span>
                 </span>
-                <span v-if="item.range != null" class="tqAuctionItemStat">
+                <span v-if="item.range != null" class="tqItemStat">
                     <span>Range: </span>
-                    <span class="tqAuctionItemStatValuePositive">{{ item.range }}</span>
+                    <span class="tqItemStatValuePositive">{{ item.range }}</span>
                 </span>
-                <span v-if="item.sizeCode != null" class="tqAuctionItemStat">
+                <span v-if="item.sizeCode != null" class="tqItemStat">
                     <span>Size: </span>
                     <span>{{ item.sizeCode }}</span>
                 </span>
-                <span v-if="item.weightReduction != null" class="tqAuctionItemStat">
+                <span v-if="item.weightReduction != null" class="tqItemStat">
                     <span>Weight Reduction: </span>
                     <span :class="getStatValueCssClass(item.weightReduction)">{{ item.weightReduction * 100 }}%</span>
                 </span>
             </span>
 
-            <span v-if="item.capacity != null" class="tqAuctionItemLine">
-                <span class="tqAuctionItemStat">
+            <span v-if="item.capacity != null" class="tqItemLine">
+                <span class="tqItemStat">
                     <span>Capacity: </span>
-                    <span class="tqAuctionItemStatValuePositive">{{ item.capacity }}</span>
+                    <span class="tqItemStatValuePositive">{{ item.capacity }}</span>
                 </span>
-                <span class="tqAuctionItemStat">
+                <span class="tqItemStat">
                     <span>Size Capacity: </span>
-                    <span class="tqAuctionItemStatValuePositive">{{ item.capacitySizeCode }}</span>
+                    <span class="tqItemStatValuePositive">{{ item.capacitySizeCode }}</span>
                 </span>
             </span>
 
-            <span v-if="item.classes && item.classes.length > 0" class="tqAuctionItemLine">
+            <span v-if="item.classes && item.classes.length > 0" class="tqItemLine">
                 Classes: {{ buildClassesString() }}
             </span>
 
-            <span v-if="item.races && item.races.length > 0" class="tqAuctionItemLine">
+            <span v-if="item.races && item.races.length > 0" class="tqItemLine">
                 Races: {{ buildRacesString() }}
             </span>
 
-            <span v-if="item.deities && item.deities.length > 0" class="tqAuctionItemLine">
+            <span v-if="item.deities && item.deities.length > 0" class="tqItemLine">
                 Deities: {{ buildDeitiesString() }}
             </span>
 
-            <span v-if="item.info && item.info.length > 0" class="tqAuctionItemLine">
-                <span v-for="(info, index) in item.info" class="tqAuctionItemInfo">{{info}}</span>
+            <span v-if="item.info && item.info.length > 0" class="tqItemLine">
+                <span v-for="(info, index) in item.info" class="tqItemInfo">{{info}}</span>
             </span>
         </span>
 
-        <span class="tqAuctionItemLine">
+        <span class="tqItemLine">
             <slot name="footer"></slot>
         </span>
     </span>
@@ -374,9 +376,9 @@
 
             getStatValueCssClass(statValue: number) {
                 if (statValue < 0)
-                    return "tqAuctionItemStatValueNegative";
+                    return "tqItemStatValueNegative";
                 else
-                    return "tqAuctionItemStatValuePositive";
+                    return "tqItemStatValuePositive";
             },
 
             buildClassesString() {

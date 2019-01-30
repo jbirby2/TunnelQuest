@@ -6,6 +6,7 @@
     }
 
     .tqChatLineView {
+        display: block;
     }
 
     .tqChatLineView_PlayerName {

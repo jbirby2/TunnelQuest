@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import ChatView from './components/ChatView.vue';
-import AuctionHouseView from './components/AuctionHouseView.vue';
+import ChatPage from './components/ChatPage.vue';
+import NewspaperPage from './components/NewspaperPage.vue';
+import ItemPage from './components/ItemPage.vue';
 
 Vue.use(Router);
 
@@ -10,13 +11,18 @@ export default new Router({
     routes: [
         {
             path: '/',
-            name: 'Auction House View',
-            component: AuctionHouseView,
+            name: 'NewspaperPage',
+            component: NewspaperPage,
         },
         {
             path: '/chat',
-            name: 'Chat View',
-            component: ChatView,
+            name: 'ChatPage',
+            component: ChatPage,
+        },
+        {
+            path: '/item/:itemName',
+            name: 'ItemPage',
+            component: ItemPage,
         },
     ],
 });

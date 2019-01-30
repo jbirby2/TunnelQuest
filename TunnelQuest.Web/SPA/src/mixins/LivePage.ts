@@ -7,7 +7,7 @@ import LinesAndAuctions from "../interfaces/LinesAndAuctions";
 import TQGlobals from "../classes/TQGlobals";
 
 
-// LiveView provides functionality for components that need to display an overall snapshot of the recent live data feed in real-time (i.e. ChatView and AuctionHouseView)
+// LivePage provides functionality for page components that need to display an overall snapshot of the recent live data feed in real-time (i.e. ChatView and AuctionHouseView)
 
 export default Vue.extend({
 

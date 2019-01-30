@@ -1,18 +1,14 @@
 ﻿<style>
-    .tqChatView {
+    .tqChatPage {
         opacity: 0.7;
         background-color: #000000;
-    }
-
-    .tqChatView .tqChatLineView {
-        display: block;
     }
 
 </style>
 
 <template>
     <div>
-        <div class="tqChatView">
+        <div class="tqChatPage">
             <transition-group :name="transitionName">
                 <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :chatLine="chatLine" :showTimestamp="true" :itemNameLinks="true"></chat-line-view>
             </transition-group>
@@ -29,14 +25,16 @@
     import Auction from "../interfaces/Auction";
     import LinesAndAuctions from "../interfaces/LinesAndAuctions";
 
-    import LiveView from "../mixins/LiveView";
+    import LivePage from "../mixins/LivePage";
 
     import ChatLineView from "./ChatLineView.vue";
 
     import TQGlobals from "../classes/TQGlobals";
     import SlidingList from "../classes/SlidingList";
 
-    export default mixins(LiveView).extend({
+    export default mixins(LivePage).extend({
+
+        name: "ChatPage",
 
         data: function () {
             return {
@@ -60,14 +58,14 @@
 
         methods: {
 
-            // inherited from LiveView
+            // inherited from LivePage
             onInitialized: function () {
-                console.log("stub ChatView.onInitialized");
+                console.log("stub ChatPage.onInitialized");
 
                 this.chatLines.maxSize = TQGlobals.settings.maxChatLines;
             },
 
-            // inherited from LiveView
+            // inherited from LivePage
             getLatestContent: function () {
                 let minId: number | null = null;
                 if (this.chatLines.array.length > 0)
@@ -84,13 +82,13 @@
                     }); // end axios.get(chat_lines)
             },
 
-            // inherited from LiveView
+            // inherited from LivePage
             getEarlierContent: function () {
                 let maxId: number | null = null;
                 if (this.chatLines.array.length > 0)
                     maxId = this.chatLines.array[0].id - 1;
 
-                console.log("stub ChatView.getEarlierContent(maxId=" + maxId + ")");
+                console.log("stub ChatPage.getEarlierContent(maxId=" + maxId + ")");
 
                 axios.get('/api/chat_lines?serverCode=' + TQGlobals.serverCode + "&maxId=" + (maxId == null ? "" : maxId.toString()) + "&maxResults=" + TQGlobals.settings.maxChatLines.toString())
                     .then(response => {
@@ -103,16 +101,16 @@
                     }); // end axios.get(chat_lines)
             },
 
-            // inherited from LiveView
+            // inherited from LivePage
             onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
                 // stub
-                console.log("ChatView.onNewContent():");
+                console.log("ChatPage.onNewContent():");
                 console.log(newContent);
 
                 this.chatLines.add(newContent.lines, enforceMaxSize);
             },
 
-            // inherited from LiveView
+            // inherited from LivePage
             onDestroying: function () {
                 this.chatLines.clear();
             },

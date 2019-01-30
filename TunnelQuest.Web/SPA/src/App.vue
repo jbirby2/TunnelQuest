@@ -143,7 +143,7 @@
         <sticky-header></sticky-header>
 
         <transition name="none">
-            <keep-alive>
+            <keep-alive exclude="ItemPage">
                 <router-view />
             </keep-alive>
         </transition>

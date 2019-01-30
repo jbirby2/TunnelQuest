@@ -1,7 +1,6 @@
 ﻿
 <style>
     .tqSpell {
-        position: relative;
         display: block;
     }
 

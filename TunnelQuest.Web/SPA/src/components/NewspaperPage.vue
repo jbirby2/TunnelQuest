@@ -1,6 +1,6 @@
 ﻿
 <style>
-    .tqAuctionHouseListDivider {
+    .tqNewspaperPageListDivider {
         background-color: #55a2c6;
         color: #ffffff;
         font-weight: bold;
@@ -9,7 +9,7 @@
         font-size: 1.2em;
     }
 
-    .tqAuctionHouseViewList > span {
+    .tqNewspaperPageList > span {
         width: 100%;
         height: 100%;
         display: flex;
@@ -22,16 +22,16 @@
 
 <template>
     <div>
-        <div class="tqAuctionHouseListDivider">Recent auctions:</div>
-        <div class="tqAuctionHouseViewList">
+        <div class="tqNewspaperPageListDivider">Recent auctions:</div>
+        <div class="tqNewspaperPageList">
             <transition-group :name="transitionName">
-                <auction-view v-for="auction in recentlyUpdatedAuctions" :key="auction.id" :auction="auction"></auction-view>
+                <newspaper-auction-view v-for="auction in recentlyUpdatedAuctions" :key="auction.id" :auction="auction"></newspaper-auction-view>
             </transition-group>
         </div>
-        <div class="tqAuctionHouseListDivider">Older auctions:</div>
-        <div class="tqAuctionHouseViewList">
+        <div class="tqNewspaperPageListDivider">Older auctions:</div>
+        <div class="tqNewspaperPageList">
             <transition-group :name="transitionName">
-                <auction-view v-for="auction in notRecentlyUpdatedAuctions" :key="auction.id" :auction="auction"></auction-view>
+                <newspaper-auction-view v-for="auction in notRecentlyUpdatedAuctions" :key="auction.id" :auction="auction"></newspaper-auction-view>
             </transition-group>
         </div>
     </div>
@@ -46,15 +46,17 @@
     import Auction from "../interfaces/Auction";
     import LinesAndAuctions from "../interfaces/LinesAndAuctions";
 
-    import LiveView from "../mixins/LiveView";
+    import LivePage from "../mixins/LivePage";
 
     import TQGlobals from "../classes/TQGlobals";
     import SlidingList from "../classes/SlidingList";
 
-    import AuctionView from "./AuctionView.vue";
+    import NewspaperAuctionView from "./NewspaperAuctionView.vue";
 
 
-    export default mixins(LiveView).extend({
+    export default mixins(LivePage).extend({
+
+        name: "NewspaperPage",
 
         data: function () {
             return {
@@ -126,14 +128,14 @@
         },
         methods: {
 
-            // inherited from LiveView
+            // inherited from LivePage
             onInitialized: function () {
-                console.log("stub AuctionHouseView.onInitialized");
+                console.log("stub NewspaperPage.onInitialized");
 
                 this.auctions.maxSize = TQGlobals.settings.maxAuctions;
             },
 
-            // inherited from LiveView
+            // inherited from LivePage
             getLatestContent: function () {
                 let minUpdatedAt: Date | null = null;
                 if (this.auctions.array.length > 0) {
@@ -154,7 +156,7 @@
                     }); // end axios.get(chat_lines)
             },
 
-            // inherited from LiveView
+            // inherited from LivePage
             getEarlierContent: function () {
 
                 let maxUpdatedAt: Date | null = null;
@@ -176,10 +178,10 @@
                     }); // end axios.get(chat_lines)
             },
 
-            // inherited from LiveView
+            // inherited from LivePage
             onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
                 // stub
-                console.log("AuctionHouseView.onNewContent():");
+                console.log("NewspaperPage.onNewContent():");
                 console.log(newContent);
 
                 // manually set some properties on the auction objects
@@ -204,13 +206,13 @@
                 this.auctions.add(newContent.auctions, enforceMaxSize);
             },
 
-            // inherited from LiveView
+            // inherited from LivePage
             onDestroying: function () {
                 this.auctions.clear();
             }
         },
         components: {
-            AuctionView
+            NewspaperAuctionView
         },
     });
 </script>

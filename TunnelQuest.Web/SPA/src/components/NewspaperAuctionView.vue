@@ -1,6 +1,6 @@
 ﻿
 <style>
-    .tqAuctionView {
+    .tqNewspaperAuctionView {
         opacity: 0.65;
         background-color: #000000;
         margin: 5px 5px 5px 5px;
@@ -8,30 +8,37 @@
         vertical-align: top;
     }
 
-    .tqAuctionView > span {
+    /* override some of the item css to make it look better on this page */
+    .tqNewspaperAuctionView .tqItem {
+        /* unset these in .tqItem since we're setting them above (trust me it looks a lot better) */
+        opacity: unset;
+        background-color: unset;
+    }
+
+    .tqNewspaperAuctionView > span {
         display: block;
     }
 
-    .tqAuctionId {
+    .tqNewspaperAuctionId {
         white-space: nowrap;
         color: #ffdc87;
     }
 
-    .tqAuctionWtb {
+    .tqNewspaperAuctionWtb {
         background-color: #007a18;
         font-style: italic;
     }
 
-    .tqAuctionWts {
+    .tqNewspaperAuctionWts {
         background-color: #001977;
         font-style: italic;
     }
 
-    .tqAuctionPriceHeader {
+    .tqNewspaperAuctionPriceHeader {
         margin-left: 5px;
     }
 
-    .tqAuctionTimeStamp {
+    .tqNewspaperAuctionTimeStamp {
         float: right;
         font-style: italic;
         text-align: right;
@@ -39,7 +46,7 @@
         margin-right: 5px;
     }
 
-    .tqAuctionChatLine {
+    .tqNewspaperAuctionChatLine {
         margin-top: 8px;
         font-size: 0.8em;
         font-style: italic;
@@ -49,30 +56,30 @@
 
     @media screen and (min-width: 952px) {
         /* start of desktop styles */
-        .tqAuctionView {
+        .tqNewspaperAuctionView {
         }
     }
 
     @media screen and (max-width: 951px) {
         /* start of large tablet styles */
-        .tqAuctionView {
+        .tqNewspaperAuctionView {
         }
     }
 
     @media screen and (max-width: 767px) {
         /* start of medium tablet styles */
-        .tqAuctionView {
+        .tqNewspaperAuctionView {
         }
     }
 
     @media screen and (max-width: 609px) {
-        .tqAuctionView {
+        .tqNewspaperAuctionView {
         }
     }
 
     @media screen and (max-width: 479px) {
         /* start of phone styles */
-        .tqAuctionView {
+        .tqNewspaperAuctionView {
             width: 100%;
         }
     }
@@ -80,15 +87,15 @@
 </style>
 
 <template>
-    <span class="tqAuctionView">
+    <span class="tqNewspaperAuctionView">
         <span :class="headerCssClass">
             <if-debug>
-                <span class="tqAuctionId">
+                <span class="tqNewspaperAuctionId">
                     [A{{auction.id}}]
                 </span>
             </if-debug>
 
-            <span class="tqAuctionPriceHeader">
+            <span class="tqNewspaperAuctionPriceHeader">
                 <span>
                     {{ auction.chatLine.playerName }}   
                 </span>
@@ -100,17 +107,16 @@
                 </span>
             </span>
 
-            <time-stamp :timeString="auction.updatedAtString" cssClass="tqAuctionTimeStamp"></time-stamp>
+            <time-stamp :timeString="auction.updatedAtString" cssClass="tqNewspaperAuctionTimeStamp"></time-stamp>
         </span>
 
-        <auction-item-view :item="auction.item">
+        <item-view :item="auction.item">
             <template slot="footer">
-                <span class="tqAuctionChatLine">
+                <span class="tqNewspaperAuctionChatLine">
                     <chat-line-view :chatLine="auction.chatLine" :auctionIdToHighlight="auction.id" :showTimestamp="false" :itemNameLinks="false"></chat-line-view>
                 </span>
             </template>
-        </auction-item-view>
-
+        </item-view>
         
     </span>
 </template>
@@ -124,7 +130,7 @@
     import IfDebug from "./IfDebug.vue";
     import TimeStamp from "./TimeStamp.vue";
 
-    import AuctionItemView from "./AuctionItemView.vue";
+    import ItemView from "./ItemView.vue";
     import ChatLineView from "./ChatLineView.vue";
 
 
@@ -144,7 +150,7 @@
 
         computed: {
             headerCssClass: function () {
-                return this.auction.isBuying ? "tqAuctionWtb" : "tqAuctionWts";
+                return this.auction.isBuying ? "tqNewspaperAuctionWtb" : "tqNewspaperAuctionWts";
             },
 
             formattedPrice: function () {
@@ -183,7 +189,7 @@
         components: {
             IfDebug,
             TimeStamp,
-            AuctionItemView,
+            ItemView,
             ChatLineView
         }
     });

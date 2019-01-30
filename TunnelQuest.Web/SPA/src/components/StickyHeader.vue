@@ -28,8 +28,8 @@
 <template>
     <div class="tqheader">
         <div class="tqroutelinks">
-            <router-link to="/">Auction House View</router-link>
-            <router-link to="/chat">Chat View</router-link>
+            <router-link to="/">Newspaper Mode</router-link>
+            <router-link to="/chat">Chat Mode</router-link>
 
             <transition name="fade">
                 <span class="tqheaderdisco">

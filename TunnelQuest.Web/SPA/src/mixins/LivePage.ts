@@ -13,33 +13,33 @@ export default Vue.extend({
 
     data: function () {
         return {
+            isActive: false,
             transitionName: "slidedown"
         };
     },
 
     mounted: function () {
+        this.isActive = true; // for ItemPage, since it isn't keep-alive and therefore doesn't trigger activated/deactivated
         TQGlobals.onInit(this.onInit);
     },
 
     activated: function () {
-        console.log("stub activated");
-        window.addEventListener("scroll", this.onScroll);
-        
-        // force scroll to top, if not already scrolled to top
-        if (document != null && document.documentElement != null && document.documentElement.scrollTop != 0)
-            window.scrollTo(0, 0);
+        this.isActive = true;
     },
 
     deactivated: function () {
-        console.log("stub deactivated");
-        window.removeEventListener("scroll", this.onScroll);
+        this.isActive = false;
     },
 
     beforeDestroy: function () {
+        //stub
+        console.log("LivePage.beforeDestroy()");
+
         // unwire event handlers
         TQGlobals.connection.off("NewChatLines", this.onNewChatLines);
         TQGlobals.connection.offConnected(this.onConnected);
         TQGlobals.connection.offDisconnected(this.onDisconnected);
+        window.removeEventListener("scroll", this.onScroll);
 
         this.onDestroying();
     },
@@ -58,15 +58,19 @@ export default Vue.extend({
             else
                 TQGlobals.connection.connect();
 
+            window.addEventListener("scroll", this.onScroll);
+
             this.onInitialized();
         },
 
         onNewChatLines: function (newContent: LinesAndAuctions) {
-            this.onNewContent(newContent, true);
+            if (this.isActive)
+                this.onNewContent(newContent, true);
         },
 
         onConnected: function () {
-            this.getLatestContent();
+            if (this.isActive)
+                this.getLatestContent();
         },
 
         onDisconnected: function () {
@@ -75,7 +79,7 @@ export default Vue.extend({
         onScroll: function () {
             //console.log("stub onScroll");
 
-            if (document == null || document.documentElement == null)
+            if (this.isActive == false || document == null || document.documentElement == null)
                 return;
 
             let isScrolledToTop = (document.documentElement.scrollTop == 0);
@@ -98,6 +102,7 @@ export default Vue.extend({
                 if (isScrolledToBottom)
                     this.getEarlierContent();
             }
+
         },
         
         onInitialized: function () {

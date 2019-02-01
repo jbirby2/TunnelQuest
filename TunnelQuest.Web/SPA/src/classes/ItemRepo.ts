@@ -27,7 +27,7 @@ class ItemRepo {
             // it's important to actually declare every single property explicitly now, so that the properties exist
             // when Vue wires into them, before we get the item data back from the server
             let blankItem = {} as Item;
-
+            
             blankItem.itemName = itemName;
 
             blankItem.iconFileName = null;
@@ -103,6 +103,7 @@ class ItemRepo {
             blankItem.info = [];
 
             // will be manually set later by code
+            blankItem.isFetched = false;
             blankItem.effectSpell = null;
 
 
@@ -215,6 +216,8 @@ class ItemRepo {
                     // if the item is a spell scroll, then also go ahead and pull its spell
                     if (blankItem.effectSpellName != null && blankItem.effectTypeCode == "LearnSpell")
                         blankItem.effectSpell = this.spellRepo.get(blankItem.effectSpellName, false);
+
+                    blankItem.isFetched = true;
 
                 } // end foreach (item)
 

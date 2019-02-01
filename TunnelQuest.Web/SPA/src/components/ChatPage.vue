@@ -4,6 +4,11 @@
         background-color: #000000;
     }
 
+    /* override .tqChatLineView */
+    .tqChatLineView {
+        display: block;
+    }
+
 </style>
 
 <template>
@@ -22,7 +27,6 @@
     import * as _ from "lodash";
 
     import ChatLine from "../interfaces/ChatLine";
-    import Auction from "../interfaces/Auction";
     import LinesAndAuctions from "../interfaces/LinesAndAuctions";
 
     import LivePage from "../mixins/LivePage";

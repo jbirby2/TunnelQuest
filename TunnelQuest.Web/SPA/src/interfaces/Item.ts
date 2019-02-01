@@ -77,6 +77,7 @@ interface Item {
 
 
     // not actually passed in from server, but set in client code
+    isFetched: boolean,
     effectSpell: Spell | null
 }
 

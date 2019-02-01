@@ -6,7 +6,7 @@ interface ChatLine {
     playerName: string,
     text: string,
     sentAtString: string,
-    auctions: Array<ChatLineAuctionInfo>
+    auctions: { [auctionId: number]: ChatLineAuctionInfo }
 }
 
 export default ChatLine;

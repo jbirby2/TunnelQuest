@@ -3,6 +3,7 @@
     .tqheader {
         background-color: #ce9000;
         z-index: 999;
+        width: 100%;
     }
 
     .tqheader a {
@@ -11,6 +12,7 @@
         text-decoration: none;
         margin-right: 15px;
     }
+
     .tqstickyheader {
         position: fixed;
         top: 0;
@@ -22,14 +24,14 @@
     .tqheaderdisco {
         font-style: italic;
     }
-
 </style>
 
 <template>
     <div class="tqheader">
         <div class="tqroutelinks">
-            <router-link to="/">Newspaper Mode</router-link>
-            <router-link to="/chat">Chat Mode</router-link>
+            <router-link to="/">Auction House</router-link>
+            <router-link to="/newspaper">Newspaper</router-link>
+            <router-link to="/chat">Chat</router-link>
 
             <transition name="fade">
                 <span class="tqheaderdisco">
@@ -69,12 +71,10 @@
 
             onScroll: function () {
                 if (window.pageYOffset > this.htmlElement_.offsetTop) {
-                    this.htmlElement_.style.width = this.htmlElement_.clientWidth.toString() + "px";
                     this.htmlElement_.classList.add("tqstickyheader");
                 }
                 else {
                     this.htmlElement_.classList.remove("tqstickyheader");
-                    this.htmlElement_.style.width = null;
                 }
 
                 if (document != null && document.documentElement != null) {

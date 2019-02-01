@@ -14,6 +14,9 @@
         color: #ffffff;
     }
 
+    .tqMainPanel {
+    }
+
     @media screen and (min-width: 992px) {
         /* start of desktop styles */
         body {
@@ -140,14 +143,13 @@
 
 <template>
     <div id="app">
-        <sticky-header></sticky-header>
+        <site-header></site-header>
 
-        <transition name="none">
-            <keep-alive exclude="ItemPage">
-                <router-view />
-            </keep-alive>
-        </transition>
-
+        <div class="tqMainPanel">
+                <keep-alive exclude="ItemPage">
+                    <router-view />
+                </keep-alive>
+        </div>
     </div>
 </template>
 
@@ -156,18 +158,21 @@
     
     import TQGlobals from "./classes/TQGlobals";
 
-    import StickyHeader from "./components/StickyHeader.vue";
-
+    import SiteHeader from "./components/SiteHeader.vue";
+    
 
     export default Vue.extend({
+
         mounted: function () {
             TQGlobals.init();
         },
+
         beforeDestroy: function () {
             TQGlobals.connection.disconnect();
         },
+
         components: {
-            StickyHeader
+            SiteHeader
         }
     });
 </script>

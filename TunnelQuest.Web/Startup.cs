@@ -67,15 +67,30 @@ namespace TunnelQuest.Web
                 app.UseHsts();
             }
             
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-            app.UseMvc();
+            // remember: the order of the blocks below is very important
 
-            app.UseSignalR(route => 
+            app.UseDefaultFiles();
+
+            app.UseStaticFiles();
+
+            app.UseSignalR(route =>
             {
                 route.MapHub<BlueHub>("/blue_hub");
                 route.MapHub<RedHub>("/red_hub");
             });
+
+            app.UseMvc(configureRoutes => 
+            {
+                configureRoutes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}");
+
+                configureRoutes.MapSpaFallbackRoute(
+                    name: "spa-fallback",
+                    defaults: new { controller = "Home", action = "Index" });
+            });
+
+            
         }
     }
 }

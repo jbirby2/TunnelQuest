@@ -5,10 +5,6 @@
         color: #08ff68;
     }
 
-    .tqChatLineView {
-        display: block;
-    }
-
     .tqChatLineView_PlayerName {
         font-style: italic;
     }
@@ -111,6 +107,7 @@
             this.rebuildText();
         },
         methods: {
+
             rebuildText: function () {
                 let textSpan = this.$el.querySelector(".tqChatLineView_PlayerText") as HTMLSpanElement;
 
@@ -140,7 +137,15 @@
                         if (this.itemNameLinks && auctionInfo.isKnownItem) {
                             let linkElem = document.createElement("a") as HTMLAnchorElement;
                             linkElem.classList.add("tqItemLink");
-                            linkElem.href = "#/item/" + auctionInfo.itemName;
+
+                            linkElem.href = "/item/" + auctionInfo.itemName;
+                            linkElem.setAttribute("tqItemLink", auctionInfo.itemName);
+                            let thisComponent = this;
+                            linkElem.addEventListener("click", function (e) {
+                                e.preventDefault();
+                                thisComponent.$router.push("/item/" + auctionInfo.itemName);
+                            });
+
                             linkElem.text = auctionInfo.itemName;
                             textSpan.appendChild(linkElem);
                         }

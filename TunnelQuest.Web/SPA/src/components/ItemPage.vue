@@ -6,11 +6,11 @@
         width: 100%;
     }
 
-        /* override some of the item css to make it look better on this page */
-        .tqItemPage .tqItem {
-            /* center the item block on the page */
-            margin: auto auto;
-        }
+    /* override some of the item css to make it look better on this page */
+    .tqItemPage .tqItem {
+        /* center the item block on the page */
+        margin: auto auto;
+    }
 </style>
 
 
@@ -21,19 +21,16 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
+    import Vue from "vue";
 
-    import LinesAndAuctions from "../interfaces/LinesAndAuctions";
     import Item from '../interfaces/Item';
-
-    import LivePage from "../mixins/LivePage";
-    
+        
     import ItemView from "./ItemView.vue";
 
     import TQGlobals from "../classes/TQGlobals";
 
 
-    export default mixins(LivePage).extend({
+    export default Vue.extend({
 
         name: "ItemPage",
 
@@ -43,29 +40,15 @@
             };
         },
 
-        methods: {
-
-            // inherited from LivePage
-            onInitialized: function () {
+        mounted: function () {
+            TQGlobals.init(() => {
                 this.item = TQGlobals.items.get(this.$route.params.itemName);
-            },
-
-            // inherited from LivePage
-            getLatestContent: function () {
-            },
-
-            // inherited from LivePage
-            getEarlierContent: function () {
-            },
-
-            // inherited from LivePage
-            onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
-            },
-
-            // inherited from LivePage
-            onDestroying: function () {
-            },
+            });
         },
+
+        methods: {
+        },
+
         components: {
             ItemView
         },

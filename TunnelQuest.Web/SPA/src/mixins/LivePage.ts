@@ -1,11 +1,12 @@
 ﻿
 import Vue from "vue";
 
-import Auction from "../interfaces/Auction";
+
+import Settings from "../interfaces/Settings";
 import LinesAndAuctions from "../interfaces/LinesAndAuctions";
 
 import TQGlobals from "../classes/TQGlobals";
-
+import ConnectionWrapper from "../classes/ConnectionWrapper";
 
 // LivePage provides functionality for page components that need to display an overall snapshot of the recent live data feed in real-time (i.e. ChatView and AuctionHouseView)
 
@@ -13,22 +14,46 @@ export default Vue.extend({
 
     data: function () {
         return {
-            isActive: false,
-            transitionName: "slidedown"
+            isInitialized: false,
+            transitionName: "slidedown",
+            serverCode: "BLUE", // STUB hard-coded
+            hubUrl: "/blue_hub",// STUB hard-coded
+            connection: {} as ConnectionWrapper
         };
     },
 
     mounted: function () {
-        this.isActive = true; // for ItemPage, since it isn't keep-alive and therefore doesn't trigger activated/deactivated
-        TQGlobals.onInit(this.onInit);
+        TQGlobals.init(() => {
+            // create connection
+            this.connection = new ConnectionWrapper(this.hubUrl);
+            this.connection.on("NewChatLines", this.onNewChatLines);
+            this.connection.onConnected(this.onConnected);
+            this.connection.onDisconnected(this.onDisconnected);
+            this.connection.connect();
+
+            this.isInitialized = true;
+            this.onInitialized();
+        });
     },
 
     activated: function () {
-        this.isActive = true;
+        window.addEventListener("scroll", this.onScroll);
+
+        // I don't think VueRouter provides an event hook for after it restores the saved scroll position,
+        // so a hacky workaround seems to be adding a tiny delay after activated.  Otherwise, if we run
+        // the below code directly inside activated, it will always reconnect because it will always be
+        // scrolled to the top at this moment (before VueRouter restores the saved state)
+        setTimeout(() => {
+            if (this.isInitialized && this.isScrolledToTop() && !this.connection.isConnected())
+                this.connection.connect();
+        }, 10);
     },
 
     deactivated: function () {
-        this.isActive = false;
+        window.removeEventListener("scroll", this.onScroll);
+
+        if (this.isInitialized && this.connection.isConnected())
+            this.connection.disconnect();
     },
 
     beforeDestroy: function () {
@@ -36,41 +61,25 @@ export default Vue.extend({
         console.log("LivePage.beforeDestroy()");
 
         // unwire event handlers
-        TQGlobals.connection.off("NewChatLines", this.onNewChatLines);
-        TQGlobals.connection.offConnected(this.onConnected);
-        TQGlobals.connection.offDisconnected(this.onDisconnected);
-        window.removeEventListener("scroll", this.onScroll);
+        if (this.isInitialized) {
+            this.connection.off("NewChatLines", this.onNewChatLines);
+            this.connection.offConnected(this.onConnected);
+            this.connection.offDisconnected(this.onDisconnected);
+            if (this.connection.isConnected())
+                this.connection.disconnect();
 
-        this.onDestroying();
+            this.onDestroying();
+        }
     },
 
     methods: {
 
-        onInit: function () {
-            // wire event handlers
-            TQGlobals.connection.on("NewChatLines", this.onNewChatLines);
-            TQGlobals.connection.onConnected(this.onConnected);
-            TQGlobals.connection.onDisconnected(this.onDisconnected);
-
-            // pull the initial data
-            if (TQGlobals.connection.isConnected())
-                this.getLatestContent();
-            else
-                TQGlobals.connection.connect();
-
-            window.addEventListener("scroll", this.onScroll);
-
-            this.onInitialized();
-        },
-
         onNewChatLines: function (newContent: LinesAndAuctions) {
-            if (this.isActive)
-                this.onNewContent(newContent, true);
+            this.onNewContent(newContent, true);
         },
 
         onConnected: function () {
-            if (this.isActive)
-                this.getLatestContent();
+            this.getLatestContent();
         },
 
         onDisconnected: function () {
@@ -79,31 +88,36 @@ export default Vue.extend({
         onScroll: function () {
             //console.log("stub onScroll");
 
-            if (this.isActive == false || document == null || document.documentElement == null)
+            if (this.isInitialized == false || document == null || document.documentElement == null)
                 return;
-
-            let isScrolledToTop = (document.documentElement.scrollTop == 0);
-            let isScrolledToBottom = (Math.ceil(document.documentElement.scrollTop) + window.innerHeight >= document.documentElement.scrollHeight);
 
             //console.log("scrollTop " + document.documentElement.scrollTop.toString() + " innerHeight " + window.innerHeight.toString() + " scrollheight " + document.documentElement.scrollHeight.toString());
 
-            if (isScrolledToTop) {
+            if (this.isScrolledToTop()) {
                 this.transitionName = "slidedown";
 
-                if (!TQGlobals.connection.isConnected())
-                    TQGlobals.connection.connect();
+                if (!this.connection.isConnected())
+                    this.connection.connect();
             }
             else {
                 this.transitionName = "none";
 
-                if (TQGlobals.connection.isConnected())
-                    TQGlobals.connection.disconnect();
+                if (this.connection.isConnected())
+                    this.connection.disconnect();
 
-                if (isScrolledToBottom)
+                if (this.isScrolledToBottom())
                     this.getEarlierContent();
             }
-
         },
+
+        isScrolledToTop: function () {
+            return (document != null && document.documentElement != null && document.documentElement.scrollTop == 0);
+        },
+
+        isScrolledToBottom: function () {
+            return (document != null && document.documentElement != null && Math.ceil(document.documentElement.scrollTop) + window.innerHeight >= document.documentElement.scrollHeight);
+        },
+
         
         onInitialized: function () {
             // overridden by extending components

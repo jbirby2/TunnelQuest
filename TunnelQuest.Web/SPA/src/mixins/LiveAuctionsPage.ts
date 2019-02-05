@@ -102,7 +102,7 @@ export default mixins(LivePage).extend({
                 minUpdatedAt = new Date(minUpdatedAt.getTime() + 1);
             }
 
-            axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&minUpdatedAt=" + (minUpdatedAt == null ? "" : minUpdatedAt.toISOString()))
+            axios.get('/api/auctions?serverCode=' + this.serverCode + "&minUpdatedAt=" + (minUpdatedAt == null ? "" : minUpdatedAt.toISOString()))
                 .then(response => {
                     let result = response.data as LinesAndAuctions;
                     this.onNewContent(result, true);
@@ -124,7 +124,7 @@ export default mixins(LivePage).extend({
                 maxUpdatedAt = new Date(maxUpdatedAt.getTime() - 1);
             }
 
-            axios.get('/api/auctions?serverCode=' + TQGlobals.serverCode + "&maxUpdatedAt=" + (maxUpdatedAt == null ? "" : maxUpdatedAt.toISOString()) + "&maxResults=" + TQGlobals.settings.maxAuctions.toString())
+            axios.get('/api/auctions?serverCode=' + this.serverCode + "&maxUpdatedAt=" + (maxUpdatedAt == null ? "" : maxUpdatedAt.toISOString()) + "&maxResults=" + TQGlobals.settings.maxAuctions.toString())
                 .then(response => {
                     let result = response.data as LinesAndAuctions;
                     this.onNewContent(result, false);

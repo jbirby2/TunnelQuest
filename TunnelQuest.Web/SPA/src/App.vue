@@ -156,19 +156,15 @@
 <script lang="ts">
     import Vue from "vue";
     
-    import TQGlobals from "./classes/TQGlobals";
-
     import SiteHeader from "./components/SiteHeader.vue";
     
 
     export default Vue.extend({
 
         mounted: function () {
-            TQGlobals.init();
         },
 
         beforeDestroy: function () {
-            TQGlobals.connection.disconnect();
         },
 
         components: {

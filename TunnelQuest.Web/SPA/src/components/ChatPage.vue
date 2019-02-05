@@ -75,7 +75,7 @@
                 if (this.chatLines.array.length > 0)
                     minId = this.chatLines.array[this.chatLines.array.length - 1].id + 1;
 
-                axios.get('/api/chat_lines?serverCode=' + TQGlobals.serverCode + "&minId=" + (minId == null ? "" : minId.toString()))
+                axios.get('/api/chat_lines?serverCode=' + this.serverCode + "&minId=" + (minId == null ? "" : minId.toString()))
                     .then(response => {
                         let result = response.data as LinesAndAuctions;
                         this.onNewContent(result, true);
@@ -94,7 +94,7 @@
 
                 console.log("stub ChatPage.getEarlierContent(maxId=" + maxId + ")");
 
-                axios.get('/api/chat_lines?serverCode=' + TQGlobals.serverCode + "&maxId=" + (maxId == null ? "" : maxId.toString()) + "&maxResults=" + TQGlobals.settings.maxChatLines.toString())
+                axios.get('/api/chat_lines?serverCode=' + this.serverCode + "&maxId=" + (maxId == null ? "" : maxId.toString()) + "&maxResults=" + TQGlobals.settings.maxChatLines.toString())
                     .then(response => {
                         let result = response.data as LinesAndAuctions;
                         this.onNewContent(result, false);

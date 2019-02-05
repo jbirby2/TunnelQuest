@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
+import MainMenuPage from './components/MainMenuPage.vue';
 import ChatPage from './components/ChatPage.vue';
 import AuctionHousePage from './components/AuctionHousePage.vue';
 import NewspaperPage from './components/NewspaperPage.vue';
@@ -15,19 +16,33 @@ export default new VueRouter({
     routes: [
         {
             path: '/',
+            name: 'MainMenuPage',
+            component: MainMenuPage,
+        },
+
+        {
+            path: '/auctions',
             name: 'AuctionHousePage',
             component: AuctionHousePage,
         },
+        {
+            path: '/auctionhouse',
+            name: 'AuctionHousePage',
+            component: AuctionHousePage,
+        },
+
         {
             path: '/newspaper',
             name: 'NewspaperPage',
             component: NewspaperPage,
         },
+
         {
             path: '/chat',
             name: 'ChatPage',
             component: ChatPage,
         },
+
         {
             path: '/item/:itemName',
             name: 'ItemPage',

@@ -93,8 +93,8 @@
                 type: Boolean,
                 required: true
             },
-            auctionIdToHighlight: {
-                type: Number,
+            itemNameToHighlight: {
+                type: String,
                 required: false
             }
         },
@@ -126,37 +126,36 @@
                     else
                         wordsSoFar += " ";
 
-                    if (word.substring(0, TQGlobals.settings.auctionToken.length) === TQGlobals.settings.auctionToken) {
+                    if (word.substring(0, TQGlobals.settings.itemNameToken.length) === TQGlobals.settings.itemNameToken) {
                         // createTextNode() html encodes the player-typed text to protect against html injection attacks
                         textSpan.appendChild(document.createTextNode(wordsSoFar));
-                        wordsSoFar = "";
+                        wordsSoFar = ""; // reset wordsSoFar
 
-                        let auctionId = parseInt(word.substring(TQGlobals.settings.auctionToken.length));
-                        let auctionInfo = this.chatLine.auctions[auctionId];
+                        let itemName = word.substring(TQGlobals.settings.itemNameToken.length, word.length - TQGlobals.settings.itemNameToken.length).replace(/_/g, " ");
 
-                        if (this.itemNameLinks && auctionInfo.isKnownItem) {
+                        if (this.itemNameLinks) {
                             let linkElem = document.createElement("a") as HTMLAnchorElement;
                             linkElem.classList.add("tqItemLink");
 
-                            linkElem.href = "/item/" + auctionInfo.itemName;
-                            linkElem.setAttribute("tqItemLink", auctionInfo.itemName);
+                            linkElem.href = "/item/" + itemName;
+                            linkElem.setAttribute("tqItemLink", itemName);
                             let thisComponent = this;
                             linkElem.addEventListener("click", function (e) {
                                 e.preventDefault();
-                                thisComponent.$router.push("/item/" + auctionInfo.itemName);
+                                thisComponent.$router.push("/item/" + itemName);
                             });
 
-                            linkElem.text = auctionInfo.itemName;
+                            linkElem.text = itemName;
                             textSpan.appendChild(linkElem);
                         }
-                        else if (this.auctionIdToHighlight == auctionId) {
+                        else if (this.itemNameToHighlight == itemName) {
                             let spanElem = document.createElement("span") as HTMLSpanElement;
                             spanElem.classList.add("tqItemLink");
-                            spanElem.innerText = auctionInfo.itemName;
+                            spanElem.innerText = itemName;
                             textSpan.appendChild(spanElem);
                         }
                         else {
-                            wordsSoFar += auctionInfo.itemName;
+                            wordsSoFar += itemName;
                         }
                     }
                     else {

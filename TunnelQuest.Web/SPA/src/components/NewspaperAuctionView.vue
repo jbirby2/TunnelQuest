@@ -113,7 +113,7 @@
         <item-view :item="auction.item">
             <template slot="footer">
                 <span class="tqNewspaperAuctionChatLine">
-                    <chat-line-view :chatLine="auction.chatLine" :auctionIdToHighlight="auction.id" :showTimestamp="false" :itemNameLinks="false"></chat-line-view>
+                    <chat-line-view :chatLine="auction.chatLine" :itemNameToHighlight="auction.itemName" :showTimestamp="false" :itemNameLinks="false"></chat-line-view>
                 </span>
             </template>
         </item-view>

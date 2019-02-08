@@ -81,12 +81,12 @@ namespace TunnelQuest.AppLogic
             return auctions;
         }
 
-        public Dictionary<string, Auction> GetNormalizedAuctions(string serverCode, string playerName, DateTime timestamp, IEnumerable<Auction> pendingAuctions)
+        public Dictionary<string, Auction> GetNormalizedAuctions(string serverCode, string playerName, DateTime timestamp, Dictionary<string, Auction> pendingAuctions)
         {
             // It's possible that, for whatever reason, the same item will be listed in a chat line more than once.  When that happens,
             // we'll apply some logic to decide which auction is more "correct", and make all the AuctionSegments point at that same Auction object.
             var normalizedAuctions = new Dictionary<string, Auction>();
-            foreach (var pendingAuction in pendingAuctions)
+            foreach (var pendingAuction in pendingAuctions.Values)
             {
                 if (normalizedAuctions.ContainsKey(pendingAuction.ItemName))
                     normalizedAuctions[pendingAuction.ItemName] = whichAuctionIsMoreComplete(pendingAuction, normalizedAuctions[pendingAuction.ItemName]);

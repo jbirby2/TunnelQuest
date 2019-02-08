@@ -12,7 +12,7 @@ namespace TunnelQuest.AppLogic
 {
     public class ChatLogic
     {
-        public const string AUCTION_TOKEN = "#TQAUC_";
+        public const string ITEM_NAME_TOKEN = "#TQITEM#";
         public const int MAX_CHAT_LINES = 100;
 
         // static stuff
@@ -127,33 +127,17 @@ namespace TunnelQuest.AppLogic
 
                     // create new Auction objects instead of reusing the Auction objects that were previously saved to database,
                     // just to be sure there's no unexpected entity framework behavior
-                    var recreatedAuctions = new Dictionary<string, Auction>();
-                    foreach (var segment in parsedLine.Segments)
+                    foreach (string itemName in parsedLine.Auctions.Keys.ToArray())
                     {
-                        if (segment is AuctionLinkSegment)
-                        {
-                            var auctionSegment = (AuctionLinkSegment)segment;
-                            if (!recreatedAuctions.ContainsKey(auctionSegment.Auction.ItemName))
-                                recreatedAuctions.Add(auctionSegment.Auction.ItemName, new Auction(auctionSegment.Auction, newChatLine.SentAt));
-                            auctionSegment.Auction = recreatedAuctions[auctionSegment.Auction.ItemName];
-                        }
+                        parsedLine.Auctions[itemName] = new Auction(parsedLine.Auctions[itemName], newChatLine.SentAt);
                     }
                 }
 
                 // apply AuctionLogic
                 var auctionLogic = new AuctionLogic(context);
-                var normalizedAuctions = auctionLogic.GetNormalizedAuctions(serverCode, playerName, newChatLine.SentAt, parsedLine.GetAuctions());
+                var normalizedAuctions = auctionLogic.GetNormalizedAuctions(serverCode, playerName, newChatLine.SentAt, parsedLine.Auctions);
 
-                // go back through the chat segments and make them all point at the correct Auction objects
-                foreach (var chatSegment in parsedLine.Segments)
-                {
-                    if (chatSegment is AuctionLinkSegment)
-                    {
-                        var auctionSegment = (AuctionLinkSegment)chatSegment;
-                        auctionSegment.Auction = normalizedAuctions[auctionSegment.Auction.ItemName];
-                    }
-                }
-
+                // attach the Auction objects to the ChatLine object
                 foreach (var auction in normalizedAuctions.Values)
                 {
                     newChatLine.Auctions.Add(new ChatLineAuction()

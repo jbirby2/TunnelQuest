@@ -17,7 +17,7 @@ namespace TunnelQuest.Web.Models.Api
 
         // non-static stuff
 
-        public string AuctionToken { get; set; }
+        public string ItemNameToken { get; set; }
         public int MaxChatLines { get; set; }
         public int MaxAuctions { get; set; }
         public Dictionary<string, string> Classes { get; set; }
@@ -25,7 +25,7 @@ namespace TunnelQuest.Web.Models.Api
 
         private ClientSettings()
         {
-            this.AuctionToken = ChatLogic.AUCTION_TOKEN;
+            this.ItemNameToken = ChatLogic.ITEM_NAME_TOKEN;
             this.MaxChatLines = ChatLogic.MAX_CHAT_LINES;
             this.MaxAuctions = AuctionLogic.MAX_AUCTIONS;
 

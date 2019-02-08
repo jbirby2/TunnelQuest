@@ -43,22 +43,23 @@ namespace TunnelQuest.AppLogic
 
         public string PlayerTypedText { get; private set; }
         public List<TextSegment> Segments { get; private set; }
+        public Dictionary<string, Auction> Auctions { get; private set; }
 
         public ParsedChatLine(string playerTypedText, TunnelQuestContext context, DateTime timestamp)
         {
             this.Segments = new List<TextSegment>();
+            this.Auctions = new Dictionary<string, Auction>();
 
             this.PlayerTypedText = playerTypedText;
 
             ParsedChatLine.ensureStaticItemNamesTree(context);
 
             // At this point, Segments is an empty list.  The next function will parse PlayerTypedText
-            // and fill Segments with a combination of TextSegments and AuctionLinkSegments.  The AuctionLinkSegments'
-            // Auctions will be empty except for the ItemNames - the rest of the Auction properties will be filled in by the code below.
+            // and fill Segments with a combination of TextSegments and ItemNameSegments.
 
             parseItemNames(timestamp);
 
-            // At this point, the only types of segments in Segments are TextSegments and AuctionLinkSegments.  We want
+            // At this point, the only types of segments in Segments are TextSegments and ItemNameSegments.  We want
             // to loop through and attempt to replace each of the generic TextSegments (which represent unrecognized text)
             // with more specific Segments which represent recognized data elements.
 
@@ -67,9 +68,9 @@ namespace TunnelQuest.AppLogic
                 var segment = this.Segments[i];
                 if (segment.GetType() == typeof(TextSegment))
                 {
-                    if (segment.Text.StartsWith(ChatLogic.AUCTION_TOKEN, StringComparison.InvariantCultureIgnoreCase))
+                    if (segment.Text.StartsWith(ChatLogic.ITEM_NAME_TOKEN, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        // in case anybody tries to be mischevious and actually type the AUCTION_TOKEN string into chat
+                        // in case anybody tries to be mischevious and actually type the token string into chat
                         this.Segments[i] = new TextSegment(this, "clever girl");
                     }
                     else
@@ -94,7 +95,7 @@ namespace TunnelQuest.AppLogic
             // Now that we've parsed all the segments we can recognize, go back through  and see if we 
             // can intuit any non-linked auctions (e.g. "WTS jboots mq 5k")
 
-            var nonLinkedAuctions = new List<AuctionLinkSegment>();
+            var nonLinkedAuctions = new List<ItemNameSegment>();
             for (int i = 0; i < Segments.Count; i++)
             {
                 if (Segments[i].GetType() == typeof(TextSegment))
@@ -125,9 +126,9 @@ namespace TunnelQuest.AppLogic
 
                     // Assume that any unrecognized text which comes *immediately* before or after after an item link is a 
                     // description of the item, and *not* something we should create an auction for.
-                    if (i > 0 && Segments[i - 1] is AuctionLinkSegment)
+                    if (i > 0 && Segments[i - 1] is ItemNameSegment)
                         createAuction = false;
-                    else if (i < Segments.Count && Segments[i] is AuctionLinkSegment)
+                    else if (i < Segments.Count && Segments[i] is ItemNameSegment)
                         createAuction = false;
                     else if (mergedText.StartsWith("PST", StringComparison.InvariantCultureIgnoreCase))
                         createAuction = false;
@@ -138,81 +139,71 @@ namespace TunnelQuest.AppLogic
                     // real world auction logs
 
                     if (createAuction)
-                    {
-                        Segments.Insert(i, new AuctionLinkSegment(this, new Auction()
-                        {
-                            ItemName = mergedText,
-                            IsKnownItem = false,
-                            CreatedAt = timestamp,
-                            UpdatedAt = timestamp
-                        }));
-                    }
+                        Segments.Insert(i, new ItemNameSegment(this, mergedText, false));
                     else
                         Segments.Insert(i, new TextSegment(this, mergedText));
                 }
             }
 
-            // Now that we've created all of the AuctionLinkSegments, loop through all the segments one last time and
-            // use their values to update the Auction objects' properties.
+            // Now that we've created all of the ItemNameSegments, loop through all the segments one last time and
+            // use their values to build the Auction objects.  If the same item name is found more than once, only create
+            // one single auction for the item.
 
             BuySellTradeSegment lastFoundBuySellTrade = null;
-            var auctionsSinceLastSeparator = new List<AuctionLinkSegment>();
+            var itemsSinceLastSeparator = new List<ItemNameSegment>();
             for (int i = 0; i < Segments.Count; i++)
             {
                 var segment = Segments[i];
 
-                if (segment is BuySellTradeSegment)
-                    lastFoundBuySellTrade = ((BuySellTradeSegment)segment);
-                else if (segment is PriceSegment)
+                if (segment is ItemNameSegment)
                 {
-                    int price = ((PriceSegment)segment).Price;
-                    foreach (var auctionSegment in auctionsSinceLastSeparator)
+                    var itemNameSegment = (ItemNameSegment)segment;
+
+                    itemsSinceLastSeparator.Add(itemNameSegment);
+
+                    if (!this.Auctions.ContainsKey(itemNameSegment.Text))
                     {
-                        if (auctionSegment.Auction.Price == null)
-                            auctionSegment.Auction.Price = price;
+                        this.Auctions.Add(itemNameSegment.Text, new Auction()
+                        {
+                            ItemName = itemNameSegment.ItemName,
+                            IsKnownItem = itemNameSegment.IsKnownItem
+                        });
                     }
-                }
-                else if (segment is OrBestOfferSegment)
-                {
-                    foreach (var auctionSegment in auctionsSinceLastSeparator)
-                    {
-                        if (auctionSegment.Auction.Price != null)
-                            auctionSegment.Auction.IsOrBestOffer = true;
-                    }
-                }
-                else if (segment is AuctionLinkSegment)
-                {
-                    var auction = (AuctionLinkSegment)segment;
-                    auctionsSinceLastSeparator.Add(auction);
 
                     if (lastFoundBuySellTrade != null)
                     {
                         if (lastFoundBuySellTrade.IsBuying != null)
-                            auction.Auction.IsBuying = lastFoundBuySellTrade.IsBuying.Value;
+                            this.Auctions[itemNameSegment.Text].IsBuying = lastFoundBuySellTrade.IsBuying.Value;
                         if (lastFoundBuySellTrade.IsAcceptingTrades != null)
-                            auction.Auction.IsAcceptingTrades = lastFoundBuySellTrade.IsAcceptingTrades.Value;
+                            this.Auctions[itemNameSegment.Text].IsAcceptingTrades = lastFoundBuySellTrade.IsAcceptingTrades.Value;
+                    }
+                }
+                else if (segment is BuySellTradeSegment)
+                {
+                    lastFoundBuySellTrade = ((BuySellTradeSegment)segment);
+                }
+                else if (segment is PriceSegment)
+                {
+                    int price = ((PriceSegment)segment).Price;
+                    foreach (var itemNameSegment in itemsSinceLastSeparator)
+                    {
+                        if (this.Auctions[itemNameSegment.Text].Price == null)
+                            this.Auctions[itemNameSegment.Text].Price = price;
+                    }
+                }
+                else if (segment is OrBestOfferSegment)
+                {
+                    foreach (var itemNameSegment in itemsSinceLastSeparator)
+                    {
+                        if (this.Auctions[itemNameSegment.Text].Price != null)
+                            this.Auctions[itemNameSegment.Text].IsOrBestOffer = true;
                     }
                 }
                 else if (segment is SeparatorSegment)
                 {
-                    auctionsSinceLastSeparator.Clear();
+                    itemsSinceLastSeparator.Clear();
                 }
             }
-        }
-
-        public IEnumerable<Auction> GetAuctions()
-        {
-            var auctions = new List<Auction>();
-            foreach (TextSegment segment in this.Segments)
-            {
-                if (segment is AuctionLinkSegment)
-                {
-                    var auction = ((AuctionLinkSegment)segment).Auction;
-                    if (!auctions.Contains(auction))
-                        auctions.Add(auction);
-                }
-            }
-            return auctions;
         }
 
         public override string ToString()
@@ -283,22 +274,21 @@ namespace TunnelQuest.AppLogic
                     var lastNode = nodesTraversed.Pop();
                     if (lastNode.ItemName != null)
                     {
-                        Segments.Add(new AuctionLinkSegment(this, new Auction()
-                        {
-                            ItemName = lastNode.ItemName,
-                            IsKnownItem = true,
-                            CreatedAt = timestamp,
-                            UpdatedAt = timestamp
-                        }));
-
+                        Segments.Add(new ItemNameSegment(this, lastNode.ItemName, true));
                         break;
                     }
                 }
 
+                // left off here - figuring out how to prevent the code below from adding unwanted spaces after item names
+                //STUB();
+
                 if (nodesTraversed.Count == 0)
                 {
+                    // no item was found
+
                     if (PlayerTypedText[searchStartIndex] == ' ')
                     {
+                        // break on spaces and create a new segment
                         Segments.Add(new TextSegment(this, currentSegmentText));
                         currentSegmentText = "";
                     }
@@ -307,6 +297,16 @@ namespace TunnelQuest.AppLogic
                 }
 
                 searchStartIndex += nodesTraversed.Count + 1;
+
+                if (nodesTraversed.Count > 0)
+                {
+                    // an item was found
+
+                    // if there's a space immediately after an item name, skip it; otherwise the next pass through the loop
+                    // will break on it and create an empty TextSegment, resulting in a double space after the item name in the final ChatLine
+                    if (searchStartIndex < PlayerTypedText.Length && PlayerTypedText[searchStartIndex] == ' ')
+                        searchStartIndex++;
+                }
             }
 
             if (currentSegmentText != "")

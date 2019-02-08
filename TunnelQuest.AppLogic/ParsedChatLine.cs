@@ -166,7 +166,9 @@ namespace TunnelQuest.AppLogic
                         this.Auctions.Add(itemNameSegment.Text, new Auction()
                         {
                             ItemName = itemNameSegment.ItemName,
-                            IsKnownItem = itemNameSegment.IsKnownItem
+                            IsKnownItem = itemNameSegment.IsKnownItem,
+                            CreatedAt = timestamp,
+                            UpdatedAt = timestamp
                         });
                     }
 

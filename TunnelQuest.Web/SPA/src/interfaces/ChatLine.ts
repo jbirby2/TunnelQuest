@@ -1,12 +1,9 @@
 ﻿
-import ChatLineAuctionInfo from "../interfaces/ChatLineAuctionInfo";
-
 interface ChatLine {
     id: number,
     playerName: string,
     text: string,
-    sentAtString: string,
-    auctions: { [auctionId: number]: ChatLineAuctionInfo }
+    sentAtString: string
 }
 
 export default ChatLine;

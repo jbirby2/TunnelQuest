@@ -26,8 +26,8 @@ namespace TunnelQuest.AppLogic.ChatSegments
             }
         }
 
-        public ItemNameSegment(ParsedChatLine parentLine, string itemName, bool isKnownItem)
-            : base(parentLine, itemName)
+        public ItemNameSegment(ParsedChatLine parentLine, string itemName, bool isKnownItem, bool hasPrecedingSpace)
+            : base(parentLine, itemName, hasPrecedingSpace)
         {
             this.IsKnownItem = isKnownItem;
         }

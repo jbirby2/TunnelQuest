@@ -25,7 +25,7 @@ namespace TunnelQuest.AppLogic.ChatSegments
             }
 
             if (specialCount >= normalCount)
-                return new SeparatorSegment(parentLine, textSegment.Text);
+                return new SeparatorSegment(parentLine, textSegment.Text, textSegment.HasPrecedingSpace);
             else
                 return null;
         }
@@ -35,8 +35,8 @@ namespace TunnelQuest.AppLogic.ChatSegments
 
 
         // protected constructor so that these segments can only be created by calling TryParse()
-        protected SeparatorSegment(ParsedChatLine parentLine, string text)
-            : base(parentLine, text)
+        protected SeparatorSegment(ParsedChatLine parentLine, string text, bool hasPrecedingSpace)
+            : base(parentLine, text, hasPrecedingSpace)
         {
         }
     }

@@ -69,7 +69,7 @@ namespace TunnelQuest.AppLogic
             if (String.IsNullOrWhiteSpace(serverCode))
                 throw new Exception("serverCode cannot be empty");
 
-            string[] lineWords = logLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            string[] lineWords = logLine.Split(' ', StringSplitOptions.None);
 
             try
             {

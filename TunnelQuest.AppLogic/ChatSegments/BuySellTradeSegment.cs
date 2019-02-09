@@ -15,7 +15,7 @@ namespace TunnelQuest.AppLogic.ChatSegments
             var upperText = textSegment.Text.ToUpper();
 
             if (upperText == "BUYING")
-                return new BuySellTradeSegment(parentLine, textSegment.Text, true, null);
+                return new BuySellTradeSegment(parentLine, textSegment.Text, true, null, textSegment.HasPrecedingSpace);
 
             // the "< 7" condition is just a sanity check to reduce the likelihood of trying to parse some weird player word that starts with "wt"
             else if (upperText.Length > 2 && upperText.Length < 7 && upperText[0] == 'W' && upperText[1] == 'T')
@@ -36,7 +36,7 @@ namespace TunnelQuest.AppLogic.ChatSegments
                         isAcceptingTrades = true;
                 }
 
-                return new BuySellTradeSegment(parentLine, textSegment.Text, isBuying, isAcceptingTrades);
+                return new BuySellTradeSegment(parentLine, textSegment.Text, isBuying, isAcceptingTrades, textSegment.HasPrecedingSpace);
             }
             else
                 return null;
@@ -50,8 +50,8 @@ namespace TunnelQuest.AppLogic.ChatSegments
 
 
         // protected constructor so that these segments can only be created by calling TryParse()
-        protected BuySellTradeSegment(ParsedChatLine parentLine, string text, bool? isBuying, bool? isAcceptingTrades)
-            : base(parentLine, text)
+        protected BuySellTradeSegment(ParsedChatLine parentLine, string text, bool? isBuying, bool? isAcceptingTrades, bool hasPrecedingSpace)
+            : base(parentLine, text, hasPrecedingSpace)
         {
             this.IsBuying = isBuying;
             this.IsAcceptingTrades = isAcceptingTrades;

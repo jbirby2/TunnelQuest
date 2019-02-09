@@ -11,7 +11,7 @@ namespace TunnelQuest.AppLogic.ChatSegments
         public static OrBestOfferSegment TryParse(ParsedChatLine parentLine, TextSegment textSegment)
         {
             if (textSegment.Text.Equals("obo", StringComparison.InvariantCultureIgnoreCase))
-                return new OrBestOfferSegment(parentLine, textSegment.Text);
+                return new OrBestOfferSegment(parentLine, textSegment.Text, textSegment.HasPrecedingSpace);
             else if (textSegment.Text.Equals("or", StringComparison.InvariantCultureIgnoreCase))
             {
                 var nextSegment = parentLine.NextSegment(textSegment);
@@ -22,7 +22,7 @@ namespace TunnelQuest.AppLogic.ChatSegments
                     {
                         parentLine.Segments.Remove(nextNextSegment);
                         parentLine.Segments.Remove(nextSegment);
-                        return new OrBestOfferSegment(parentLine, textSegment.Text + ' ' + nextSegment.Text + ' ' + nextNextSegment.Text);
+                        return new OrBestOfferSegment(parentLine, textSegment.Text + ' ' + nextSegment.Text + ' ' + nextNextSegment.Text, textSegment.HasPrecedingSpace);
                     }
                 }
             }
@@ -35,8 +35,8 @@ namespace TunnelQuest.AppLogic.ChatSegments
 
 
         // protected constructor so that these segments can only be created by calling TryParse()
-        protected OrBestOfferSegment(ParsedChatLine parentLine, string text)
-            : base(parentLine, text)
+        protected OrBestOfferSegment(ParsedChatLine parentLine, string text, bool hasPrecedingSpace)
+            : base(parentLine, text, hasPrecedingSpace)
         {
         }
     }

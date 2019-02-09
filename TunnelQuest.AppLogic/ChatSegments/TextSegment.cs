@@ -6,16 +6,18 @@ namespace TunnelQuest.AppLogic.ChatSegments
 {
     internal class TextSegment
     {
+        public bool HasPrecedingSpace { get; private set; }
         public ParsedChatLine ParentLine { get; private set; }
         public virtual string Text { get; protected set; }
 
-        public TextSegment (ParsedChatLine parentLine, string text)
+        public TextSegment (ParsedChatLine parentLine, string text, bool hasPrecedingSpace)
         {
             if (parentLine == null)
                 throw new Exception("parentLine cannot be null");
-            
+
+            this.HasPrecedingSpace = hasPrecedingSpace;
             this.ParentLine = parentLine;
-            this.Text = text;
+            this.Text = text ?? "";
         }
 
         public TextSegment NextSegment()

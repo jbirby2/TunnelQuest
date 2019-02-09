@@ -118,22 +118,21 @@
 
                 textSpan.appendChild(document.createTextNode("'"));
 
-                let wordsSoFar: string | null = null;
-                let textWords = this.chatLine.text.split(" ");
-                for (let word of textWords) {
-                    if (wordsSoFar == null)
-                        wordsSoFar = "";
-                    else
-                        wordsSoFar += " ";
+                let unparsedText = this.chatLine.text;
+                let textSoFar = ""
+                while (unparsedText.length > 0) {
 
-                    if (word.substring(0, TQGlobals.settings.itemNameToken.length) === TQGlobals.settings.itemNameToken) {
-                        // createTextNode() html encodes the player-typed text to protect against html injection attacks
-                        textSpan.appendChild(document.createTextNode(wordsSoFar));
-                        wordsSoFar = ""; // reset wordsSoFar
+                    if (unparsedText.substring(0, TQGlobals.settings.itemNameToken.length) === TQGlobals.settings.itemNameToken) {
+                        let playerTextSpan = document.createElement("span") as HTMLSpanElement;
+                        playerTextSpan.innerHTML = this.htmlEncode(textSoFar);
+                        textSpan.appendChild(playerTextSpan);
+                        textSoFar = ""; // reset textSoFar
 
-                        let itemName = word.substring(TQGlobals.settings.itemNameToken.length, word.length - TQGlobals.settings.itemNameToken.length).replace(/_/g, " ");
+                        let endTokenIndex = unparsedText.indexOf(TQGlobals.settings.itemNameToken, TQGlobals.settings.itemNameToken.length);
+                        let itemName = unparsedText.substring(TQGlobals.settings.itemNameToken.length, endTokenIndex).replace(/_/g, " ");
 
                         if (this.itemNameLinks) {
+                            // make the item name a clickable link
                             let linkElem = document.createElement("a") as HTMLAnchorElement;
                             linkElem.classList.add("tqItemLink");
 
@@ -149,24 +148,42 @@
                             textSpan.appendChild(linkElem);
                         }
                         else if (this.itemNameToHighlight == itemName) {
+                            // highlight the item name without making it a clickable link
                             let spanElem = document.createElement("span") as HTMLSpanElement;
                             spanElem.classList.add("tqItemLink");
                             spanElem.innerText = itemName;
                             textSpan.appendChild(spanElem);
                         }
                         else {
-                            wordsSoFar += itemName;
+                            textSoFar += itemName;
                         }
+
+                        // update unparsedText
+                        let nextIndex = endTokenIndex + TQGlobals.settings.itemNameToken.length;
+                        if (nextIndex < unparsedText.length)
+                            unparsedText = unparsedText.substring(nextIndex);
+                        else
+                            unparsedText = "";
                     }
                     else {
-                        wordsSoFar += word;
+                        textSoFar += unparsedText[0];
+                        // updated unparsedText
+                        unparsedText = unparsedText.substring(1);
                     }
+                    
                 }
 
-                if (wordsSoFar != null && wordsSoFar != "")
-                    textSpan.appendChild(document.createTextNode(wordsSoFar));
+                if (textSoFar != "") {
+                    let playerTextSpan = document.createElement("span") as HTMLSpanElement;
+                    playerTextSpan.innerHTML = this.htmlEncode(textSoFar);
+                    textSpan.appendChild(playerTextSpan);
+                }
 
                 textSpan.appendChild(document.createTextNode("'"));
+            },
+
+            htmlEncode: function (str: string) {
+                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/ /g, '&nbsp;');
             }
         },
         components: {

@@ -71,7 +71,7 @@ namespace TunnelQuest.AppLogic
                     if (segment.Text.StartsWith(ChatLogic.ITEM_NAME_TOKEN, StringComparison.InvariantCultureIgnoreCase))
                     {
                         // in case anybody tries to be mischevious and actually type the token string into chat
-                        this.Segments[i] = new TextSegment(this, "clever girl");
+                        this.Segments[i] = new TextSegment(this, "clever girl", segment.HasPrecedingSpace);
                     }
                     else
                     {
@@ -104,12 +104,16 @@ namespace TunnelQuest.AppLogic
                     var indexesToMerge = new List<int>();
                     indexesToMerge.Add(i);
                     string mergedText = Segments[i].Text;
+                    bool mergedTextHasPrecedingSpace = Segments[i].HasPrecedingSpace;
                     for (int j = i + 1; j < Segments.Count; j++)
                     {
                         if (Segments[j].GetType() == typeof(TextSegment))
                         {
                             indexesToMerge.Add(j);
-                            mergedText += ' ' + Segments[j].Text;
+
+                            if (Segments[j].HasPrecedingSpace)
+                                mergedText += ' ';
+                            mergedText += Segments[j].Text;
                         }
                         else
                             break;
@@ -139,9 +143,9 @@ namespace TunnelQuest.AppLogic
                     // real world auction logs
 
                     if (createAuction)
-                        Segments.Insert(i, new ItemNameSegment(this, mergedText, false));
+                        Segments.Insert(i, new ItemNameSegment(this, mergedText, false, mergedTextHasPrecedingSpace));
                     else
-                        Segments.Insert(i, new TextSegment(this, mergedText));
+                        Segments.Insert(i, new TextSegment(this, mergedText, mergedTextHasPrecedingSpace));
                 }
             }
 
@@ -211,11 +215,12 @@ namespace TunnelQuest.AppLogic
         public override string ToString()
         {
             string str = "";
-            for (int i = 0; i < this.Segments.Count; i++)
+
+            foreach (var segment in this.Segments)
             {
-                if (i > 0)
-                    str += " ";
-                str += this.Segments[i].Text;
+                if (segment.HasPrecedingSpace)
+                    str += ' ';
+                str += segment.Text;
             }
             return str;
         }
@@ -251,6 +256,7 @@ namespace TunnelQuest.AppLogic
         {
             int searchStartIndex = 0;
             string currentSegmentText = "";
+            bool wasPrecedingSpace = false;
             while (searchStartIndex < PlayerTypedText.Length)
             {
                 Node prevNode = rootNode;
@@ -276,7 +282,7 @@ namespace TunnelQuest.AppLogic
                     var lastNode = nodesTraversed.Pop();
                     if (lastNode.ItemName != null)
                     {
-                        Segments.Add(new ItemNameSegment(this, lastNode.ItemName, true));
+                        Segments.Add(new ItemNameSegment(this, lastNode.ItemName, true, wasPrecedingSpace));
                         break;
                     }
                 }
@@ -288,28 +294,25 @@ namespace TunnelQuest.AppLogic
                     if (PlayerTypedText[searchStartIndex] == ' ')
                     {
                         // break on spaces and create a new segment
-                        Segments.Add(new TextSegment(this, currentSegmentText));
+                        Segments.Add(new TextSegment(this, currentSegmentText, wasPrecedingSpace));
                         currentSegmentText = "";
+                        wasPrecedingSpace = true;
                     }
                     else
                         currentSegmentText += PlayerTypedText[searchStartIndex];
                 }
+                else
+                {
+                    // item was found
+
+                    wasPrecedingSpace = false;
+                }
 
                 searchStartIndex += nodesTraversed.Count + 1;
-
-                if (nodesTraversed.Count > 0)
-                {
-                    // an item was found
-
-                    // if there's a space immediately after an item name, skip it; otherwise the next pass through the loop
-                    // will break on it and create an empty TextSegment, resulting in a double space after the item name in the final ChatLine
-                    if (searchStartIndex < PlayerTypedText.Length && PlayerTypedText[searchStartIndex] == ' ')
-                        searchStartIndex++;
-                }
             }
 
-            if (currentSegmentText != "")
-                Segments.Add(new TextSegment(this, currentSegmentText));
+            //if (currentSegmentText != "")
+                Segments.Add(new TextSegment(this, currentSegmentText, wasPrecedingSpace));
         }
 
 

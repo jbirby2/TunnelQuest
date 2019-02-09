@@ -55,7 +55,7 @@ namespace TunnelQuest.AppLogic.ChatSegments
                 if (price <= 0)
                     return null;
                 else
-                    return new PriceSegment(parentLine, textSegment.Text, Convert.ToInt32(price));
+                    return new PriceSegment(parentLine, textSegment.Text, Convert.ToInt32(price), textSegment.HasPrecedingSpace);
             }
             else
                 return null;
@@ -66,8 +66,8 @@ namespace TunnelQuest.AppLogic.ChatSegments
         public int Price { get; private set; }
 
         // protected constructor so that these segments can only be created by calling TryParse()
-        protected PriceSegment(ParsedChatLine parentLine, string text, int price)
-            : base(parentLine, text)
+        protected PriceSegment(ParsedChatLine parentLine, string text, int price, bool hasPrecedingSpace)
+            : base(parentLine, text, hasPrecedingSpace)
         {
             this.Price = price;
         }

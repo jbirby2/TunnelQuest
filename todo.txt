@@ -81,6 +81,8 @@
 
 - build in client-side check to remember the last downward scroll params, and not to repeat the same downward scroll query twice in a row
 
+** fix errors / infinite loop when posting "Viga auctions, '    <a href="">asdf</a> WTB Short Sword52 and some stuff Long Sword   triple   53 pst"
+
 
 
 

@@ -17,6 +17,9 @@ export default mixins(LivePage).extend({
 
     data: function () {
         return {
+            // STUB hard-coded
+            serverCode: "BLUE",
+
             auctions: new SlidingList<Auction>(function (a: Auction, b: Auction) {
                 // sort ascending updatedAtString
                 if (a.updatedAtString < b.updatedAtString)
@@ -84,6 +87,12 @@ export default mixins(LivePage).extend({
         }
     },
     methods: {
+
+        // inherited from LivePage
+        getHubUrl: function () {
+            // STUB hard-coded
+            return "/blue_auction_hub";
+        },
 
         // inherited from LivePage
         onInitialized: function () {

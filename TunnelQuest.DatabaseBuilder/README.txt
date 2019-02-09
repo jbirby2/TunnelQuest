@@ -13,8 +13,8 @@ I use TunnelQuest.DatabaseBuilder for two different purposes:
 
 2.	I also used TunnelQuest.DatabaseBuilder to scrape all the item data and icons from wiki.project1999.com.  
 	The scraped data is in TunnelQuest.Data\Migrations\Data\WikiScrapes, and the scraped icons are 
-	in TunnelQuest.Web\wwwroot\images\wiki.project1999.com_scrape.  They were scraped from the wiki by running the following command:
-			
+	in TunnelQuest.Web\SPA\public\game_assets.  They were scraped from the wiki by running the following command:
+
 		dotnet TunnelQuest.DatabaseBuilder.dll Scrape "..\..\..\..\TunnelQuest.Data\Migrations\Data\WikiScrapes" "..\..\..\..\TunnelQuest.Web\wwwroot\images" false
 
 			-	This command can be stopped and re-run as many times as necessary.  It will

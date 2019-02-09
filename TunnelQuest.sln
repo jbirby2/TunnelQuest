@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A7A3A23F-1623-467E-8074-B2ADD3256359}"
 	ProjectSection(SolutionItems) = preProject
 		README.txt = README.txt
+		todo.txt = todo.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TunnelQuest.DatabaseBuilder", "TunnelQuest.DatabaseBuilder\TunnelQuest.DatabaseBuilder.csproj", "{1E4959DF-CCE9-4E3D-B321-14512220EA48}"

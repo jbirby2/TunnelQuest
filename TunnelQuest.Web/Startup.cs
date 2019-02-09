@@ -75,8 +75,10 @@ namespace TunnelQuest.Web
 
             app.UseSignalR(route =>
             {
-                route.MapHub<BlueHub>("/blue_hub");
-                route.MapHub<RedHub>("/red_hub");
+                route.MapHub<BlueAuctionHub>("/blue_auction_hub");
+                route.MapHub<BlueChatHub>("/blue_chat_hub");
+                route.MapHub<RedChatHub>("/red_chat_hub");
+                route.MapHub<RedAuctionHub>("/red_auction_hub");
             });
 
             app.UseMvc(configureRoutes => 

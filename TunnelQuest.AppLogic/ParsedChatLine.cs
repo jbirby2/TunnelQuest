@@ -281,9 +281,6 @@ namespace TunnelQuest.AppLogic
                     }
                 }
 
-                // left off here - figuring out how to prevent the code below from adding unwanted spaces after item names
-                //STUB();
-
                 if (nodesTraversed.Count == 0)
                 {
                     // no item was found

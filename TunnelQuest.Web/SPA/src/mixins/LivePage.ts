@@ -1,8 +1,6 @@
 ﻿
 import Vue from "vue";
 
-
-import Settings from "../interfaces/Settings";
 import LinesAndAuctions from "../interfaces/LinesAndAuctions";
 
 import TQGlobals from "../classes/TQGlobals";
@@ -16,8 +14,6 @@ export default Vue.extend({
         return {
             isInitialized: false,
             transitionName: "slidedown",
-            serverCode: "BLUE", // STUB hard-coded
-            hubUrl: "/blue_hub",// STUB hard-coded
             connection: {} as ConnectionWrapper
         };
     },
@@ -25,8 +21,8 @@ export default Vue.extend({
     mounted: function () {
         TQGlobals.init(() => {
             // create connection
-            this.connection = new ConnectionWrapper(this.hubUrl);
-            this.connection.on("NewChatLines", this.onNewChatLines);
+            this.connection = new ConnectionWrapper(this.getHubUrl());
+            this.connection.on("NewContent", this.onNewLiveContent);
             this.connection.onConnected(this.onConnected);
             this.connection.onDisconnected(this.onDisconnected);
             this.connection.connect();
@@ -62,7 +58,7 @@ export default Vue.extend({
 
         // unwire event handlers
         if (this.isInitialized) {
-            this.connection.off("NewChatLines", this.onNewChatLines);
+            this.connection.off("NewContent", this.onNewLiveContent);
             this.connection.offConnected(this.onConnected);
             this.connection.offDisconnected(this.onDisconnected);
             if (this.connection.isConnected())
@@ -74,7 +70,7 @@ export default Vue.extend({
 
     methods: {
 
-        onNewChatLines: function (newContent: LinesAndAuctions) {
+        onNewLiveContent: function (newContent: LinesAndAuctions) {
             this.onNewContent(newContent, true);
         },
 
@@ -118,7 +114,11 @@ export default Vue.extend({
             return (document != null && document.documentElement != null && Math.ceil(document.documentElement.scrollTop) + window.innerHeight >= document.documentElement.scrollHeight);
         },
 
-        
+        getHubUrl: function () {
+            // overridden by extending components
+            return "";
+        },
+
         onInitialized: function () {
             // overridden by extending components
         },

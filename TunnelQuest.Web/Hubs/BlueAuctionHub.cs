@@ -7,7 +7,7 @@ using TunnelQuest.Data.Models;
 
 namespace TunnelQuest.Web.Hubs
 {
-    public class RedHub : AuctionHubBase
+    public class BlueAuctionHub : Hub
     {
     }
 }

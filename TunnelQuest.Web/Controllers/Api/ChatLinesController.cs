@@ -16,15 +16,23 @@ namespace TunnelQuest.Web.Controllers.Api
     [ApiController]
     public class ChatLinesController : ControllerBase
     {
-        private IHubContext<BlueHub> blueHub;
-        private IHubContext<RedHub> redHub;
+        private IHubContext<BlueChatHub> blueChatHub;
+        private IHubContext<BlueAuctionHub> blueAuctionHub;
+        private IHubContext<RedChatHub> redChatHub;
+        private IHubContext<RedAuctionHub> redAuctionHub;
         private TunnelQuestContext context;
 
-        public ChatLinesController(TunnelQuestContext _context, IHubContext<BlueHub> _blueHub, IHubContext<RedHub> _redHub)
+        public ChatLinesController(TunnelQuestContext _context, 
+            IHubContext<BlueChatHub> _blueChatHub,
+            IHubContext<BlueAuctionHub> _blueAuctionHub,
+            IHubContext<RedChatHub> _redChatHub,
+            IHubContext<RedAuctionHub> _redAuctionHub)
         {
             this.context = _context;
-            this.blueHub = _blueHub;
-            this.redHub = _redHub;
+            this.blueChatHub = _blueChatHub;
+            this.blueAuctionHub = _blueAuctionHub;
+            this.redChatHub = _redChatHub;
+            this.redAuctionHub = _redAuctionHub;
         }
 
         // GET api/chat_lines
@@ -79,15 +87,19 @@ namespace TunnelQuest.Web.Controllers.Api
                 // send the new lines to every connected signalr client
                 if (addedLines.Count > 0)
                 {
-                    var newClientLines = new LinesAndAuctions(addedLines.ToArray());
+                    var newContent = new LinesAndAuctions(addedLines.ToArray());
                     switch (payload.ServerCode)
                     {
                         case ServerCodes.Blue:
-                            await blueHub.Clients.All.SendAsync("NewChatLines", newClientLines);
+                            await blueAuctionHub.Clients.All.SendAsync("NewContent", newContent);
+                            newContent.Auctions = null;
+                            await blueChatHub.Clients.All.SendAsync("NewContent", newContent);
                             break;
 
                         case ServerCodes.Red:
-                            await redHub.Clients.All.SendAsync("NewChatLines", newClientLines);
+                            await redAuctionHub.Clients.All.SendAsync("NewContent", newContent);
+                            newContent.Auctions = null;
+                            await redChatHub.Clients.All.SendAsync("NewContent", newContent);
                             break;
 
                         default:

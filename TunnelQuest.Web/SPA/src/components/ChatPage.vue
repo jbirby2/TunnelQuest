@@ -42,6 +42,9 @@
 
         data: function () {
             return {
+                // STUB hard-coded
+                serverCode: "BLUE",
+
                 chatLines: new SlidingList<ChatLine>(function (a: ChatLine, b: ChatLine) {
                     // sort ascending
                     if (a.id < b.id)
@@ -61,6 +64,12 @@
         },
 
         methods: {
+
+            // inherited from LivePage
+            getHubUrl: function () {
+                // STUB hard-coded
+                return "/blue_chat_hub";
+            },
 
             // inherited from LivePage
             onInitialized: function () {

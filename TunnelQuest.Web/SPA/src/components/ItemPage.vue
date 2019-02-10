@@ -2,7 +2,6 @@
 
 <style>
     .tqItemPage {
-        background-color: red;
         width: 100%;
     }
 

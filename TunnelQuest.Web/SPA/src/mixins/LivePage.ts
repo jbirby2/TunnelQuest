@@ -14,14 +14,14 @@ export default Vue.extend({
         return {
             isInitialized: false,
             transitionName: "slidedown",
-            connection: {} as ConnectionWrapper
+            connection: new ConnectionWrapper()
         };
     },
 
     mounted: function () {
         TQGlobals.init(() => {
             // create connection
-            this.connection = new ConnectionWrapper(this.getHubUrl());
+            this.connection.setHubUrl(this.getHubUrl());
             this.connection.on("NewContent", this.onNewLiveContent);
             this.connection.onConnected(this.onConnected);
             this.connection.onDisconnected(this.onDisconnected);

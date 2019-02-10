@@ -5,33 +5,41 @@ import * as signalR from "@aspnet/signalr";
 // functionality and safety checks.
 
 class ConnectionWrapper {
-
-    private connection: signalR.HubConnection;
+    
+    private connection: signalR.HubConnection | null;
     private isConnecting: boolean = false;
     private onConnectedCallbacks: Array<Function>;
     private onDisconnectedCallbacks: Array<Function>;
 
-    constructor(hubUrl:string) {
+    constructor() {
+        this.connection = null;
         this.onConnectedCallbacks = new Array<Function>();
         this.onDisconnectedCallbacks = new Array<Function>();
+    }
 
+    public setHubUrl(hubUrl: string) {
         this.connection = new signalR.HubConnectionBuilder()
             .withUrl(hubUrl)
             .build();
     }
 
-
     public isConnected() {
-        return (this.isConnecting || this.connection.state == signalR.HubConnectionState.Connected);
+        return (this.isConnecting || this.connection == null || this.connection.state == signalR.HubConnectionState.Connected);
     }
 
 
 
     public on(serverMessage: string, callback: (...args: any[]) => void) {
+        if (this.connection == null)
+            throw new Error("must call ConnectionWrapper.setHubUrl() first");
+
         this.connection.on(serverMessage, callback);
     }
 
     public off(serverMessage: string, callback: (...args: any[]) => void) {
+        if (this.connection == null)
+            throw new Error("must call ConnectionWrapper.setHubUrl() first");
+
         this.connection.off(serverMessage, callback);
     }
 
@@ -64,6 +72,9 @@ class ConnectionWrapper {
 
 
     public connect() {
+        if (this.connection == null)
+            throw new Error("must call ConnectionWrapper.setHubUrl() first");
+
         if (this.isConnected())
             return; // already connected
 
@@ -92,6 +103,9 @@ class ConnectionWrapper {
     }
 
     public disconnect() {
+        if (this.connection == null)
+            throw new Error("must call ConnectionWrapper.setHubUrl() first");
+
         if (!this.isConnected())
             return; // already disconnected
 

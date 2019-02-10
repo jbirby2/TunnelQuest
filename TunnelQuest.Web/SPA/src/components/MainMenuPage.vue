@@ -17,7 +17,9 @@
 
 <template>
     <div class="tqMainMenuPage">
+        <!--
         <router-link to="/auctions">Auctions</router-link>
+        -->
         <router-link to="/newspaper">Newspaper</router-link>
         <router-link to="/chat">Chat</router-link>
     </div>

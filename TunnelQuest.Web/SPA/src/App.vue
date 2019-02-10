@@ -143,12 +143,10 @@
 
 <template>
     <div id="app">
-        <site-header></site-header>
-
         <div class="tqMainPanel">
-                <keep-alive exclude="ItemPage">
-                    <router-view />
-                </keep-alive>
+            <keep-alive exclude="ItemPage">
+                <router-view />
+            </keep-alive>
         </div>
     </div>
 </template>
@@ -156,9 +154,6 @@
 <script lang="ts">
     import Vue from "vue";
     
-    import SiteHeader from "./components/SiteHeader.vue";
-    
-
     export default Vue.extend({
 
         mounted: function () {
@@ -168,7 +163,6 @@
         },
 
         components: {
-            SiteHeader
         }
     });
 </script>

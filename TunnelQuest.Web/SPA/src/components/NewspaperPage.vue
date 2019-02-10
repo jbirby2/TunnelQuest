@@ -23,6 +23,13 @@
 
 <template>
     <div>
+        <site-header>
+            <span>
+                <router-link to="/">&lt;&lt; to Main Menu</router-link>
+            </span>
+            <connection-status-view :connection="connection"></connection-status-view>
+        </site-header>
+
         <div class="tqNewspaperPageListDivider">Recent auctions:</div>
         <div class="tqNewspaperPageList">
             <transition-group :name="transitionName">
@@ -45,6 +52,8 @@
 
     import LiveAuctionsPage from "../mixins/LiveAuctionsPage";
 
+    import SiteHeader from "./SiteHeader.vue";
+    import ConnectionStatusView from "./ConnectionStatusView.vue";
     import NewspaperAuctionView from "./NewspaperAuctionView.vue";
 
     import TQGlobals from "../classes/TQGlobals";
@@ -54,10 +63,6 @@
 
         name: "NewspaperPage",
 
-        components: {
-            NewspaperAuctionView
-        },
-
         methods: {
             // inherited from LiveAuctionsPage
             onNewAuction: function (auction: Auction) {
@@ -65,6 +70,12 @@
                 auction.item = TQGlobals.items.get(auction.itemName, false);
 
             },
+        },
+
+        components: {
+            SiteHeader,
+            ConnectionStatusView,
+            NewspaperAuctionView
         }
     });
 </script>

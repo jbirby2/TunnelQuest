@@ -13,6 +13,13 @@
 
 <template>
     <div>
+        <site-header>
+            <span>
+                <router-link to="/">&lt;&lt; to Main Menu</router-link>
+            </span>
+            <connection-status-view :connection="connection"></connection-status-view>
+        </site-header>
+
         <div class="tqChatPage">
             <transition-group :name="transitionName">
                 <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :chatLine="chatLine" :showTimestamp="true" :itemNameLinks="true"></chat-line-view>
@@ -31,6 +38,8 @@
 
     import LivePage from "../mixins/LivePage";
 
+    import SiteHeader from "./SiteHeader.vue";
+    import ConnectionStatusView from "./ConnectionStatusView.vue";
     import ChatLineView from "./ChatLineView.vue";
 
     import TQGlobals from "../classes/TQGlobals";
@@ -128,7 +137,10 @@
                 this.chatLines.clear();
             },
         },
+
         components: {
+            SiteHeader,
+            ConnectionStatusView,
             ChatLineView
         },
     });

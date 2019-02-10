@@ -68,21 +68,20 @@
 	- no global SiteHeader; every Page has its own custom SiteHeader in its code
 	- add a slot to SiteHeader for each page to pass in custom links / controls / etc, as well as LivePage to pass in its disconnected message
 
-- create separate hubs for chat_feed and auction_feed
-	- WHY? because it's a waste of data for ppl who only want to watch chat, and don't need all the extra auction overhead
-
-	- continue using ChatLinesAndAuctions structure
-		* set Auctions = null in the chat feed and chat queries
-
-
 - remember which view they went to last time in client storage, and automatically go back there again on default load
 	- they can still navigate back to main menu with breadcrumb
 
+- search filter component for AuctionPages
+	- on filter changed (debounced), pull whole new set of lines
+	- on scroll down / reconnect, use current filter in query
+	- on new hub lines, only save them if they match the filter; otherwise discard them completely
+
+- add dynamic SiteHeader to ItemPage
+	- if it's the first page loaded, "<< to Main Menu"
+	- else, "<< to <name of page they came from>"
+	* can maybe use vue router reverse lookup; else just set a global var every time a LivePage is mounted or something
 
 - build in client-side check to remember the last downward scroll params, and not to repeat the same downward scroll query twice in a row
-
-** fix errors / infinite loop when posting "Viga auctions, '    <a href="">asdf</a> WTB Short Sword52 and some stuff Long Sword   triple   53 pst"
-
 
 
 

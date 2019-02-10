@@ -22,11 +22,7 @@
 
 <template>
     <div class="tqheader">
-        <div>
-            <router-link to="/">Auction House</router-link>
-            <router-link to="/newspaper">Newspaper</router-link>
-            <router-link to="/chat">Chat</router-link>
-        </div>
+        <slot></slot>
     </div>
 </template>
 
@@ -37,26 +33,26 @@
 
         data: function () {
             return {
-                // "private"
-                htmlElement_: {} as HTMLElement
+                htmlElement: {} as HTMLElement
             };
         },
 
         mounted: function () {
-            this.htmlElement_ = this.$el as HTMLElement;
+            this.htmlElement = this.$el as HTMLElement;
             window.addEventListener("scroll", this.onScroll);
         },
 
         methods: {
 
             onScroll: function () {
-                if (window.pageYOffset > this.htmlElement_.offsetTop) {
-                    this.htmlElement_.classList.add("tqstickyheader");
+                if (window.pageYOffset > this.htmlElement.offsetTop) {
+                    this.htmlElement.classList.add("tqstickyheader");
                 }
                 else {
-                    this.htmlElement_.classList.remove("tqstickyheader");
+                    this.htmlElement.classList.remove("tqstickyheader");
                 }
             }
         }
+
     });
 </script>

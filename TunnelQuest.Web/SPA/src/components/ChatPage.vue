@@ -14,9 +14,6 @@
 <template>
     <div>
         <site-header>
-            <span>
-                <router-link to="/">&lt;&lt; to Main Menu</router-link>
-            </span>
             <connection-status-view :connection="connection"></connection-status-view>
         </site-header>
 

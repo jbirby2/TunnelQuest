@@ -6,11 +6,9 @@ import Spell from "../interfaces/Spell";
 class SpellRepo {
 
     private pendingSpellNames: Array<string> = new Array<string>();
-    private fetchTimer: number = -1;
     private spells: { [spellName: string]: Spell } = {};
 
     constructor() {
-        this.fetchTimer = setInterval(() => this.fetchPendingSpells, 5000);
     }
 
     public get(spellName: string, fetchImmediately: boolean = true) {

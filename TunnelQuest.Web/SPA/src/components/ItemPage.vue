@@ -15,21 +15,25 @@
 
 <template>
     <div class="tqItemPage">
+        <site-header></site-header>
         <item-view v-if="item != null && item.isFetched" :item="item"></item-view>
     </div>
 </template>
 
 <script lang="ts">
-    import Vue from "vue";
+    import mixins from 'vue-typed-mixins';
 
     import Item from '../interfaces/Item';
-        
+
+    import SiteHeader from "./SiteHeader.vue";
     import ItemView from "./ItemView.vue";
 
     import TQGlobals from "../classes/TQGlobals";
 
+    import TqPage from "../mixins/TqPage";
 
-    export default Vue.extend({
+
+    export default mixins(TqPage).extend({
 
         name: "ItemPage",
 
@@ -49,6 +53,7 @@
         },
 
         components: {
+            SiteHeader,
             ItemView
         },
     });

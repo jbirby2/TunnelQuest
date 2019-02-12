@@ -7,6 +7,9 @@ import SpellRepo from "../classes/SpellRepo";
 
 class TQGlobals {
 
+    private static isInitializing: boolean = false;
+    private static initCallbacks: Array<Function> = new Array<Function>();
+
     static settings: Settings;
     static items: ItemRepo;
     static spells: SpellRepo;
@@ -14,21 +17,35 @@ class TQGlobals {
     static init(callback: Function) {
 
         if (this.settings)
-            callback();
+            callback(); // already initialized; callback immediately
         else {
-            console.log("stub TQGlobals initializing");
+            this.initCallbacks.push(callback);
 
-            axios.get('/api/settings')
-                .then(response => {
-                    this.settings = response.data as Settings;
-                    this.spells = new SpellRepo();
-                    this.items = new ItemRepo(this.spells);
-                    callback();
-                })
-                .catch(err => {
-                    // stub
-                    console.log(err);
-                }); // end axios.get(settings)
+            if (!this.isInitializing) {
+                this.isInitializing = true;
+
+                //stub
+                console.log("TQGlobals initializing, making ajax call to api/settings");
+
+                axios.get('/api/settings')
+                    .then(response => {
+                        this.settings = response.data as Settings;
+                        this.spells = new SpellRepo();
+                        this.items = new ItemRepo(this.spells);
+
+                        this.isInitializing = false;
+
+                        for (let callback of this.initCallbacks) {
+                            callback();
+                        }
+                    })
+                    .catch(err => {
+                        this.isInitializing = false;
+
+                        // stub
+                        console.log(err);
+                    }); // end axios.get(settings)
+            }
         }
     }
 

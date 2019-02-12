@@ -1,14 +1,17 @@
 ﻿
-import Vue from "vue";
+import mixins from 'vue-typed-mixins';
 
 import LinesAndAuctions from "../interfaces/LinesAndAuctions";
 
 import TQGlobals from "../classes/TQGlobals";
 import ConnectionWrapper from "../classes/ConnectionWrapper";
 
+import TqPage from "../mixins/TqPage";
+
+
 // LivePage provides functionality for page components that need to display an overall snapshot of the recent live data feed in real-time (i.e. ChatView and AuctionHouseView)
 
-export default Vue.extend({
+export default mixins(TqPage).extend({
 
     data: function () {
         return {
@@ -18,7 +21,24 @@ export default Vue.extend({
         };
     },
 
+    beforeRouteEnter: function (to: any, from: any, next: any) {
+        //stub
+        //console.log("LivePage.beforeRouteEnter");
+        //console.log(to);
+        //console.log(from);
+
+        localStorage.setItem("LastLivePage", JSON.stringify({
+            fullPath: to.fullPath,
+            name: to.name
+        }));
+
+        next();
+    },
+
     mounted: function () {
+        //stub
+        //console.log("LivePage.mounted");
+
         TQGlobals.init(() => {
             // create connection
             this.connection.setHubUrl(this.getHubUrl());

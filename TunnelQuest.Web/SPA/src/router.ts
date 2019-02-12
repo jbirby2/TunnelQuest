@@ -16,36 +16,36 @@ export default new VueRouter({
     routes: [
         {
             path: '/',
-            name: 'MainMenuPage',
+            name: 'Main Menu',
             component: MainMenuPage,
         },
 
         {
             path: '/auctions',
-            name: 'AuctionHousePage',
+            name: 'Auction House Mode',
             component: AuctionHousePage,
         },
         {
             path: '/auctionhouse',
-            name: 'AuctionHousePage',
+            name: 'Auction House Mode',
             component: AuctionHousePage,
         },
 
         {
             path: '/newspaper',
-            name: 'NewspaperPage',
+            name: 'Newspaper Mode',
             component: NewspaperPage,
         },
 
         {
             path: '/chat',
-            name: 'ChatPage',
+            name: 'Chat Mode',
             component: ChatPage,
         },
 
         {
             path: '/item/:itemName',
-            name: 'ItemPage',
+            name: 'Item Information',
             component: ItemPage,
         },
     ],

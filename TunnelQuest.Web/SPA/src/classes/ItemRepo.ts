@@ -9,13 +9,11 @@ import SpellRepo from "./SpellRepo";
 class ItemRepo {
 
     private pendingItemNames: Array<string> = new Array<string>();
-    private fetchTimer: number = -1;
     private items: { [itemName: string]: Item } = {};
     private spellRepo: SpellRepo;
 
     constructor(spells: SpellRepo) {
         this.spellRepo = spells;
-        this.fetchTimer = setInterval(() => this.fetchPendingItems, 5000);
     }
 
     public get(itemName: string, fetchImmediately: boolean = true) {

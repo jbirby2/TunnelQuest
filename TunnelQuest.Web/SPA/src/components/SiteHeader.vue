@@ -22,12 +22,16 @@
 
 <template>
     <div class="tqheader">
+        <back-link></back-link>
         <slot></slot>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from "vue";
+
+    import BackLink from "./BackLink.vue";
+
 
     export default Vue.extend({
 
@@ -52,7 +56,10 @@
                     this.htmlElement.classList.remove("tqstickyheader");
                 }
             }
-        }
+        },
 
+        components: {
+            BackLink
+        }
     });
 </script>

@@ -1,22 +1,23 @@
 ﻿
 <style>
     .tqNewspaperAuctionView {
-        opacity: 0.65;
-        background-color: #000000;
         margin: 5px 5px 5px 5px;
         display: inline-block;
         vertical-align: top;
     }
 
-    /* override some of the item css to make it look better on this page */
-    .tqNewspaperAuctionView .tqItem {
-        /* unset these in .tqItem since we're setting them above (trust me it looks a lot better) */
-        opacity: unset;
-        background-color: unset;
+    .tqNewspaperAuctionViewWtb {
+        background-color: rgba(7,0,99,0.7);
     }
 
-    .tqNewspaperAuctionView > span {
-        display: block;
+    .tqNewspaperAuctionViewWts {
+        background-color: rgba(0,0,0,0.7);
+    }
+
+    /* override some of the item css to make it look better on this page */
+    .tqNewspaperAuctionView .tqItem {
+        /* unset this in .tqItem since we're setting it above (trust me it looks a lot better) */
+        background-color: unset;
     }
 
     .tqNewspaperAuctionId {
@@ -24,26 +25,19 @@
         color: #ffdc87;
     }
 
-    .tqNewspaperAuctionWtb {
-        background-color: #007a18;
-        font-style: italic;
-    }
-
-    .tqNewspaperAuctionWts {
-        background-color: #001977;
+    .tqNewspaperAuctionHeader {
+        padding: 0 5px 0 5px;
+        display: flex;
+        justify-content: space-between;
         font-style: italic;
     }
 
     .tqNewspaperAuctionPriceHeader {
-        margin-left: 5px;
     }
 
     .tqNewspaperAuctionTimeStamp {
-        float: right;
         font-style: italic;
-        text-align: right;
         white-space: nowrap;
-        margin-right: 5px;
     }
 
     .tqNewspaperAuctionChatLine {
@@ -87,8 +81,8 @@
 </style>
 
 <template>
-    <span class="tqNewspaperAuctionView">
-        <span :class="headerCssClass">
+    <span :class="cssClasses">
+        <span class="tqNewspaperAuctionHeader">
             <if-debug>
                 <span class="tqNewspaperAuctionId">
                     [A{{auction.id}}]
@@ -110,14 +104,15 @@
             <time-stamp :timeString="auction.updatedAtString" cssClass="tqNewspaperAuctionTimeStamp"></time-stamp>
         </span>
 
-        <item-view :item="auction.item">
-            <template slot="footer">
-                <span class="tqNewspaperAuctionChatLine">
-                    <chat-line-view :chatLine="auction.chatLine" :itemNameToHighlight="auction.itemName" :showTimestamp="false" :itemNameLinks="false"></chat-line-view>
-                </span>
-            </template>
-        </item-view>
-        
+        <div>
+            <item-view :item="auction.item">
+                <template slot="footer">
+                    <span class="tqNewspaperAuctionChatLine">
+                        <chat-line-view :chatLine="auction.chatLine" :itemNameToHighlight="auction.itemName" :showTimestamp="false" :itemNameLinks="false"></chat-line-view>
+                    </span>
+                </template>
+            </item-view>
+        </div>        
     </span>
 </template>
 
@@ -149,8 +144,8 @@
         },
 
         computed: {
-            headerCssClass: function () {
-                return this.auction.isBuying ? "tqNewspaperAuctionWtb" : "tqNewspaperAuctionWts";
+            cssClasses: function () {
+                return "tqNewspaperAuctionView " + (this.auction.isBuying ? "tqNewspaperAuctionViewWtb" : "tqNewspaperAuctionViewWts");
             },
 
             formattedPrice: function () {

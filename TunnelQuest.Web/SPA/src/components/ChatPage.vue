@@ -1,7 +1,6 @@
 ﻿<style>
     .tqChatPage {
-        opacity: 0.7;
-        background-color: #000000;
+        background-color: rgba(0,0,0,0.7);
     }
 
     /* override .tqChatLineView */

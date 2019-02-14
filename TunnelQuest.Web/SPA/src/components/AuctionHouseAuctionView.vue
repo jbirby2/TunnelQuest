@@ -1,11 +1,13 @@
 ﻿
 <style>
     .tqAuctionHouseAuctionView {
-        opacity: 0.65;
-        background-color: #000000;
-        margin: auto auto;
-        display: block;
-        max-width: 1000px;
+        display: table-row;
+    }
+
+    .tqAuctionHouseAuctionView > span {
+        display: table-cell;
+        text-align: left;
+        padding-left: 5px;
     }
 
     .tqAuctionHouseAuctionId {
@@ -14,22 +16,32 @@
     }
 
     .tqAuctionHouseAuctionTimeStamp {
+        display: table-cell;
         font-family: Courier New, Courier, monospace;
         color: #c9c9c9;
         font-size: 0.8em;
+        white-space: nowrap;
     }
 
     .tqAuctionHouseAuctionWtb {
-        background-color: #007a18;
+        background-color: rgba(7,0,99,0.7);
     }
 
     .tqAuctionHouseAuctionWts {
-        background-color: #001977;
+        background-color: rgba(0,0,0,0.7);
     }
 
     .tqAuctionHouseAuctionItemName {
+        width: 100%;
+    }
+
+    .tqAuctionHouseAuctionItemLink {
         color: #e049ff;
-        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .tqAuctionHouseAuctionPrice {
+        padding-right: 5px;
     }
 
 
@@ -71,12 +83,26 @@
                 [A{{auction.id}}]
             </span>
         </if-debug>
+
         <time-stamp :timeString="auction.updatedAtString" cssClass="tqAuctionHouseAuctionTimeStamp"></time-stamp>
+
         <span>{{ auction.chatLine.playerName }}</span>
-        <span v-if="auction.isBuying" class="tqAuctionHouseAuctionWtb">WTB</span>
-        <span v-if="!auction.isBuying" class="tqAuctionHouseAuctionWts">WTS</span>
-        <span class="tqAuctionHouseAuctionItemName">{{auction.chatLine.auctions[auction.id].itemName}}</span>
-        <span>{{ formattedPrice }}</span>
+
+        <span v-if="auction.isBuying">WTB</span>
+        <span v-else>WTS</span>
+
+        <span class="tqAuctionHouseAuctionItemName">
+            <span v-if="auction.isKnownItem">
+                <a class="tqAuctionHouseAuctionItemLink" :href="'/item/' + auction.itemName" @click="onItemNameClick">{{auction.itemName}}</a>
+            </span>
+            <span v-else>
+                {{auction.itemName}}
+            </span>
+        </span>
+
+        <span>
+            <span v-if="this.auction.price != null" class="tqAuctionHouseAuctionPrice">{{ formattedPrice }}pp</span>
+        </span>
     </span>
 </template>
 
@@ -119,6 +145,10 @@
         },
 
         methods: {
+            onItemNameClick: function (e: any) {
+                e.preventDefault();
+                this.$router.push("/item/" + this.auction.itemName);
+            }
         },
 
         components: {

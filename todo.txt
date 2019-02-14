@@ -62,12 +62,20 @@
 			- on widescreens where there's enough room, both spans will display side-by-side to form grids; set top and bottom margins to 0, etc
 			- if NOT enough space, it will break between the two divs and put one below the other (add a little margin between rows now)
 
-- search filter component for AuctionPages
-	- on filter changed (debounced), pull whole new set of lines
-	- on scroll down / reconnect, use current filter in query
-	- on new hub lines, only save them if they match the filter; otherwise discard them completely
+- SettingsPage
+	- "Auto load last viewed live page? yes/no"
+		* display the UI for this setting at the top of main page
+
+	- "Item Filters"
+		- applies to both auction pages AND chat page
+			* either way (except for newspaper mode), item filters (except for name) means they have to pull all item data.  it is what it is.
+
+		- on filter changed (debounced), pull whole new set of lines
+		- on scroll down / reconnect, use current filter in query
+		- on new hub lines, only save them if they match the filter; otherwise discard them completely
 
 - build in client-side check to remember the last downward scroll params, and not to repeat the same downward scroll query twice in a row
 
-
+- spaces in beginning of line get interpreted as auctions
+	- make sure no auction is ever created for whitespace
 

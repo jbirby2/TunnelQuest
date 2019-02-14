@@ -2,8 +2,7 @@
 <style>
 
     .tqItem {
-        opacity: 0.65;
-        background-color: #000000;
+        background-color: rgba(0,0,0,0.7);
         color: #e0e0e0;
         position: relative;
         display: block;

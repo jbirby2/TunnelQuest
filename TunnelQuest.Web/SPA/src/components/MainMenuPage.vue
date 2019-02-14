@@ -6,8 +6,7 @@
 
     .tqMainMenuPage > a {
         display: block;
-        opacity: 0.65;
-        background-color: #000000;
+        background-color: rgba(0,0,0,0.7);
         color: #ffffff;
         font-weight: bold;
         font-size: 1.5em;
@@ -28,9 +27,7 @@
     <div class="tqMainMenuPage">
         <site-header></site-header>
 
-        <!--
         <router-link to="/auctions">Auction House Mode</router-link>
-        -->
         <router-link to="/newspaper">Newspaper Mode</router-link>
         <router-link to="/chat">Chat Mode</router-link>
     </div>

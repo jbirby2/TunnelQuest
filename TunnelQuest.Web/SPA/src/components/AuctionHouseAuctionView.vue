@@ -35,8 +35,13 @@
         width: 100%;
     }
 
-    .tqAuctionHouseAuctionItemLink {
+    .tqAuctionHouseAuctionKnownItemLink {
         color: #e049ff;
+        text-decoration: none;
+    }
+
+    .tqAuctionHouseAuctionUnknownItemLink {
+        color: #f7d8ff;
         text-decoration: none;
     }
 
@@ -92,12 +97,7 @@
         <span v-else>WTS</span>
 
         <span class="tqAuctionHouseAuctionItemName">
-            <span v-if="auction.isKnownItem">
-                <a class="tqAuctionHouseAuctionItemLink" :href="'/item/' + auction.itemName" @click="onItemNameClick">{{auction.itemName}}</a>
-            </span>
-            <span v-else>
-                {{auction.itemName}}
-            </span>
+            <a :class="auction.isKnownItem ? 'tqAuctionHouseAuctionKnownItemLink' : 'tqAuctionHouseAuctionUnknownItemLink'" :href="'/item/' + this.urlEncodedItemName" @click="onItemNameClick">{{auction.itemName}}</a>
         </span>
 
         <span>
@@ -132,6 +132,10 @@
         },
 
         computed: {
+            urlEncodedItemName: function () {
+                return encodeURIComponent(this.auction.itemName);
+            },
+
             formattedPrice: function () {
                 if (this.auction.price == null)
                     return null;
@@ -147,7 +151,7 @@
         methods: {
             onItemNameClick: function (e: any) {
                 e.preventDefault();
-                this.$router.push("/item/" + this.auction.itemName);
+                this.$router.push("/item/" + this.urlEncodedItemName);
             }
         },
 

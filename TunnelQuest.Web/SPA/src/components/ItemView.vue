@@ -2,10 +2,10 @@
 <style>
 
     .tqItem {
+        display: block;
         background-color: rgba(0,0,0,0.7);
         color: #e0e0e0;
         position: relative;
-        display: block;
         padding: 0 5px 5px 5px;
     }
 

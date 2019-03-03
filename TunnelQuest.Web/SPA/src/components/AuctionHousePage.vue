@@ -62,7 +62,6 @@
         methods: {
             // inherited from LiveAuctionsPage
             onNewAuction: function (auction: Auction) {
-                
             },
         },
 

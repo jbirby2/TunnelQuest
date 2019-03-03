@@ -12,7 +12,8 @@ namespace TunnelQuest.AppLogic
 {
     public class ChatLogic
     {
-        public const string ITEM_NAME_TOKEN = "#TQITEM#";
+        public const string OUTER_CHAT_TOKEN = "#TQO#";
+        public const string INNER_CHAT_TOKEN = "#TQI#";
         public const int MAX_CHAT_LINES = 100;
 
         // static stuff
@@ -35,12 +36,7 @@ namespace TunnelQuest.AppLogic
 
         public ChatLine[] GetLines(string serverCode, long? minId = null, long? maxId = null, int? maxResults = null)
         {
-            if (maxResults == null)
-                maxResults = MAX_CHAT_LINES;
-
             var query = context.ChatLines
-                .Include(line => line.Auctions)
-                    .ThenInclude(chatLineAuctions => chatLineAuctions.Auction)
                 .Where(line => line.ServerCode == serverCode);
 
             if (minId != null)
@@ -49,15 +45,18 @@ namespace TunnelQuest.AppLogic
             if (maxId != null)
                 query = query.Where(line => line.ChatLineId <= maxId.Value);
 
-            return query
-                .OrderByDescending(line => line.ChatLineId) // order by descending in the sql query, to make sure we get the most recent lines if we hit the limit imposed by maxResults
-                .Take(maxResults.Value)
-                .ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
+            // order by descending in the sql query, to make sure we get the most recent lines if we hit the limit imposed by maxResults
+            query = query.OrderByDescending(line => line.ChatLineId);
+
+            if (maxResults != null)
+                query = query.Take(maxResults.Value);
+
+            return query.ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
                 .OrderBy(line => line.ChatLineId) // now that we've got the results from the database (possibly truncated by maxResults), re-order them correctly
                 .ToArray();
         }
 
-        public ChatLine ProcessLogLine(string authTokenValue, string serverCode, string logLine)
+        public ProcessLogLineResult ProcessLogLine(string authTokenValue, string serverCode, string logLine)
         {
             if (String.IsNullOrWhiteSpace(authTokenValue))
                 throw new Exception("authTokenValue cannot be empty");
@@ -137,28 +136,26 @@ namespace TunnelQuest.AppLogic
                 var auctionLogic = new AuctionLogic(context);
                 var normalizedAuctions = auctionLogic.GetNormalizedAuctions(serverCode, playerName, newChatLine.SentAt, parsedLine.Auctions);
 
-                // attach the Auction objects to the ChatLine object
+                // update MostRecentChatLineId
                 foreach (var auction in normalizedAuctions.Values)
                 {
-                    newChatLine.Auctions.Add(new ChatLineAuction()
-                    {
-                        ChatLine = newChatLine,
-                        Auction = auction
-                    });
+                    auction.MostRecentChatLine = newChatLine;
+                    auction.MostRecentChatLineId = newChatLine.ChatLineId;
                 }
-                
+
                 // save everything to database
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
                     {
-                        context.AddRange(normalizedAuctions.Values.Where(auction => auction.AuctionId <= 0));
-                        context.SaveChanges();
-
-                        // Now that we've saved the auctions to the database and populated the Auction objects
-                        // with their real auction_id's, we can finally set newChatLine.Text
                         newChatLine.Text = parsedLine.ToString();
                         context.Add(newChatLine);
+                        context.SaveChanges();
+
+                        // now that we've saved the new ChatLine and it has its permanent ChatLineId, we can save the auctions
+                        
+                        // insert any NEW auction records (not pre-existing auction records)
+                        context.AddRange(normalizedAuctions.Values.Where(auction => auction.AuctionId <= 0));
                         context.SaveChanges();
 
                         transaction.Commit();
@@ -179,7 +176,7 @@ namespace TunnelQuest.AppLogic
                     ParsedLine = parsedLine
                 }, DateTimeOffset.Now.AddMinutes(10));
 
-                return newChatLine;
+                return new ProcessLogLineResult(newChatLine, normalizedAuctions.Values.ToArray());
             }
             finally
             {
@@ -187,6 +184,20 @@ namespace TunnelQuest.AppLogic
             }
         }
 
+
+        // public helper class
+
+        public class ProcessLogLineResult
+        {
+            public ChatLine NewLine { get; set; }
+            public Auction[] NewAuctions { get; set; }
+
+            public ProcessLogLineResult(ChatLine newLine, Auction[] newAuctions)
+            {
+                this.NewLine = newLine;
+                this.NewAuctions = newAuctions;
+            }
+        }
 
         // private helper class
 

@@ -42,6 +42,12 @@ namespace TunnelQuest.Data.Migrations
                         .IsRequired()
                         .HasColumnName("item_name");
 
+                    b.Property<long>("MostRecentChatLineId")
+                        .HasColumnName("most_recent_chat_line_id");
+
+                    b.Property<long?>("PreviousAuctionId")
+                        .HasColumnName("previous_auction_id");
+
                     b.Property<int?>("Price")
                         .HasColumnName("price");
 
@@ -51,6 +57,10 @@ namespace TunnelQuest.Data.Migrations
                     b.HasKey("AuctionId");
 
                     b.HasIndex("ItemName");
+
+                    b.HasIndex("MostRecentChatLineId");
+
+                    b.HasIndex("PreviousAuctionId");
 
                     b.ToTable("auction");
                 });
@@ -128,23 +138,6 @@ namespace TunnelQuest.Data.Migrations
                     b.HasIndex("ServerCode", "PlayerName", "SentAt");
 
                     b.ToTable("chat_line");
-                });
-
-            modelBuilder.Entity("TunnelQuest.Data.Models.ChatLineAuction", b =>
-                {
-                    b.Property<long>("ChatLineId")
-                        .HasColumnName("chat_line_id");
-
-                    b.Property<long>("AuctionId")
-                        .HasColumnName("auction_id");
-
-                    b.HasKey("ChatLineId", "AuctionId");
-
-                    b.HasIndex("AuctionId");
-
-                    b.HasIndex("ChatLineId");
-
-                    b.ToTable("chat_line_auction");
                 });
 
             modelBuilder.Entity("TunnelQuest.Data.Models.Class", b =>
@@ -571,6 +564,18 @@ namespace TunnelQuest.Data.Migrations
                     b.ToTable("weapon_skill");
                 });
 
+            modelBuilder.Entity("TunnelQuest.Data.Models.Auction", b =>
+                {
+                    b.HasOne("TunnelQuest.Data.Models.ChatLine", "MostRecentChatLine")
+                        .WithMany()
+                        .HasForeignKey("MostRecentChatLineId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TunnelQuest.Data.Models.Auction", "PreviousAuction")
+                        .WithMany()
+                        .HasForeignKey("PreviousAuctionId");
+                });
+
             modelBuilder.Entity("TunnelQuest.Data.Models.AuthToken", b =>
                 {
                     b.HasOne("TunnelQuest.Data.Models.AuthTokenStatus", "AuthTokenStatus")
@@ -589,19 +594,6 @@ namespace TunnelQuest.Data.Migrations
                     b.HasOne("TunnelQuest.Data.Models.Server", "Server")
                         .WithMany()
                         .HasForeignKey("ServerCode")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("TunnelQuest.Data.Models.ChatLineAuction", b =>
-                {
-                    b.HasOne("TunnelQuest.Data.Models.Auction", "Auction")
-                        .WithMany("ChatLines")
-                        .HasForeignKey("AuctionId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("TunnelQuest.Data.Models.ChatLine", "ChatLine")
-                        .WithMany("Auctions")
-                        .HasForeignKey("ChatLineId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

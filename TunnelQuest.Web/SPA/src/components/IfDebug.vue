@@ -1,4 +1,7 @@
-﻿<template>
+﻿<style>
+</style>
+
+<template>
     <span v-if="isDebugMode">
         <slot></slot>
     </span>
@@ -18,6 +21,3 @@
         }
     });
 </script>
-
-<style>
-</style>

@@ -23,10 +23,6 @@ namespace TunnelQuest.Web.Models.Api
             foreach (var line in lines)
             {
                 this.Lines[line.ChatLineId] = new ClientChatLine(line);
-                foreach (var lineAuction in line.Auctions)
-                {
-                    this.Auctions[lineAuction.AuctionId] = new ClientAuction(lineAuction.Auction, line.ChatLineId);
-                }
             }
         }
 
@@ -37,11 +33,8 @@ namespace TunnelQuest.Web.Models.Api
 
             foreach (var auction in auctions)
             {
-                this.Auctions[auction.AuctionId] = new ClientAuction(auction, auction.ChatLines.First().ChatLineId);
-                foreach (var auctionLine in auction.ChatLines)
-                {
-                    this.Lines[auctionLine.ChatLineId] = new ClientChatLine(auctionLine.ChatLine);
-                }
+                this.Auctions[auction.AuctionId] = new ClientAuction(auction, auction.MostRecentChatLine.ChatLineId);
+                this.Lines[auction.MostRecentChatLine.ChatLineId] = new ClientChatLine(auction.MostRecentChatLine);
             }
         }
     }

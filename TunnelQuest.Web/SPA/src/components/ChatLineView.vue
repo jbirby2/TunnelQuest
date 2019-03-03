@@ -16,11 +16,15 @@
     .tqChatLineView_PlayerText {
     }
 
-    .tqItemLink {
+    .tqKnownItemLink {
         color: #e049ff;
         text-decoration: none;
     }
 
+    .tqUnknownItemLink {
+        color: #f7d8ff;
+        text-decoration: none;
+    }
 
     .tqChatLineTimeStamp {
         font-family: Courier New, Courier, monospace;
@@ -78,6 +82,7 @@
 
     import IfDebug from "./IfDebug.vue";
     import TimeStamp from "./TimeStamp.vue";
+    import PriceDeviationView from "./PriceDeviationView.vue";
 
     export default Vue.extend({
         props: {
@@ -118,48 +123,94 @@
 
                 textSpan.appendChild(document.createTextNode("'"));
 
+                let indexedItemNames = new Array<string>(); // used when adding PriceDeviationComponents
                 let unparsedText = this.chatLine.text;
                 let textSoFar = ""
                 while (unparsedText.length > 0) {
 
-                    if (unparsedText.substring(0, TQGlobals.settings.itemNameToken.length) === TQGlobals.settings.itemNameToken) {
+                    if (unparsedText.substring(0, TQGlobals.settings.outerChatToken.length) === TQGlobals.settings.outerChatToken) {
+                        // the next word is a special data token
+
+                        // create a text span for the player-typed words we've found up to this point in the loop
                         let playerTextSpan = document.createElement("span") as HTMLSpanElement;
                         playerTextSpan.innerHTML = this.htmlEncode(textSoFar);
                         textSpan.appendChild(playerTextSpan);
-                        textSoFar = ""; // reset textSoFar
+                        textSoFar = ""; // reset textSoFar for the next iteration after the token
 
-                        let endTokenIndex = unparsedText.indexOf(TQGlobals.settings.itemNameToken, TQGlobals.settings.itemNameToken.length);
-                        let itemName = unparsedText.substring(TQGlobals.settings.itemNameToken.length, endTokenIndex).replace(/_/g, " ");
+                        // parse the token
+                        let endTokenIndex = unparsedText.indexOf(TQGlobals.settings.outerChatToken, TQGlobals.settings.outerChatToken.length);
+                        let tokenString = unparsedText.substring(TQGlobals.settings.outerChatToken.length, endTokenIndex);
+                        let tokenParts = tokenString.split(TQGlobals.settings.innerChatToken);
 
-                        if (this.itemNameLinks) {
-                            // make the item name a clickable link
-                            let linkElem = document.createElement("a") as HTMLAnchorElement;
-                            linkElem.classList.add("tqItemLink");
+                        if (tokenParts[0] == "item") {
+                            // item name token
 
-                            linkElem.href = "/item/" + itemName;
-                            linkElem.setAttribute("tqItemLink", itemName);
-                            let thisComponent = this;
-                            linkElem.addEventListener("click", function (e) {
-                                e.preventDefault();
-                                thisComponent.$router.push("/item/" + itemName);
-                            });
+                            let isKnownItem = (tokenParts[1] == "1");
+                            let itemName = tokenParts[2].replace(/_/g, " ");
+                            let urlEncodedItemName = encodeURIComponent(itemName);
 
-                            linkElem.text = itemName;
-                            textSpan.appendChild(linkElem);
+                            indexedItemNames.push(itemName);
+
+                            if (this.itemNameLinks) {
+                                // make the item name a clickable link
+                                let linkElem = document.createElement("a") as HTMLAnchorElement;
+                                linkElem.classList.add(isKnownItem ? "tqKnownItemLink" : "tqUnknownItemLink");
+                                linkElem.href = "/item/" + urlEncodedItemName;
+                                let thisComponent = this;
+                                linkElem.addEventListener("click", function (e) {
+                                    e.preventDefault();
+                                    thisComponent.$router.push("/item/" + urlEncodedItemName);
+                                });
+
+                                linkElem.text = itemName;
+                                textSpan.appendChild(linkElem);
+                            }
+                            else if (this.itemNameToHighlight == itemName) {
+                                // highlight the item name without making it a clickable link
+                                let spanElem = document.createElement("span") as HTMLSpanElement;
+                                spanElem.classList.add(isKnownItem ? "tqKnownItemLink" : "tqUnknownItemLink");
+                                spanElem.innerHTML = this.htmlEncode(itemName);
+                                textSpan.appendChild(spanElem);
+                            }
+                            else {
+                                textSoFar += itemName;
+                            }
+
                         }
-                        else if (this.itemNameToHighlight == itemName) {
-                            // highlight the item name without making it a clickable link
-                            let spanElem = document.createElement("span") as HTMLSpanElement;
-                            spanElem.classList.add("tqItemLink");
-                            spanElem.innerText = itemName;
-                            textSpan.appendChild(spanElem);
+                        else if (tokenParts[0] == "price") {
+                            // price token
+
+                            let isBuying = (tokenParts[1] == "1");
+                            let price = parseInt(tokenParts[2]);
+                            let itemIndexes = tokenParts[3].split(',');
+                            let playerTypedPriceText = tokenParts[4];
+
+                            // render the text that the player actually typed in chat
+                            let priceElem = document.createElement("span") as HTMLSpanElement;
+                            priceElem.innerHTML = this.htmlEncode(playerTypedPriceText);
+                            textSpan.appendChild(priceElem);
+
+                            // now create a PriceDeviationView for each item associated with this price
+                            for (let itemNameIndexString of itemIndexes) {
+                                let priceDeviationElem = document.createElement("span") as HTMLSpanElement;
+                                textSpan.appendChild(priceDeviationElem);
+                                let priceDeviationView = new PriceDeviationView({
+                                    propsData: {
+                                        itemName: indexedItemNames[parseInt(itemNameIndexString)],
+                                        price: price,
+                                        isBuying: isBuying
+                                    }
+                                });
+                                priceDeviationView.$mount(priceDeviationElem);
+                            }
                         }
                         else {
-                            textSoFar += itemName;
+                            // unrecognized token
+                            throw new Error("Unrecognized chat token: " + tokenString);
                         }
 
                         // update unparsedText
-                        let nextIndex = endTokenIndex + TQGlobals.settings.itemNameToken.length;
+                        let nextIndex = endTokenIndex + TQGlobals.settings.outerChatToken.length;
                         if (nextIndex < unparsedText.length)
                             unparsedText = unparsedText.substring(nextIndex);
                         else

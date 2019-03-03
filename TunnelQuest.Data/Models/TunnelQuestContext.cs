@@ -26,7 +26,6 @@ namespace TunnelQuest.Data.Models
         public DbSet<Deity> Deities { get; set; }
         public DbSet<Server> Servers { get; set; }
         public DbSet<ChatLine> ChatLines { get; set; }
-        public DbSet<ChatLineAuction> ChatLineAuctions { get; set; }
         public DbSet<Auction> Auctions { get; set; }
         public DbSet<AuthToken> AuthTokens { get; set; }
         public DbSet<AuthTokenStatus> AuthTokenStatuses { get; set; }
@@ -99,11 +98,6 @@ namespace TunnelQuest.Data.Models
             modelBuilder.Entity<ChatLine>().HasIndex(line => new { line.ServerCode, line.SentAt });
             modelBuilder.Entity<ChatLine>().HasIndex(line => new { line.ServerCode, line.PlayerName });
             modelBuilder.Entity<ChatLine>().HasIndex(line => new { line.ServerCode, line.PlayerName, line.SentAt });
-
-            // chat_line_auction
-            modelBuilder.Entity<ChatLineAuction>().HasKey(acl => new { acl.ChatLineId, acl.AuctionId });
-            modelBuilder.Entity<ChatLineAuction>().HasIndex(acl => acl.ChatLineId);
-            modelBuilder.Entity<ChatLineAuction>().HasIndex(acl => acl.AuctionId);
 
             // auction
             modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ItemName });

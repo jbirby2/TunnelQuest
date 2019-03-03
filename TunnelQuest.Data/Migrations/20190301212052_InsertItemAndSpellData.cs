@@ -18,7 +18,7 @@ namespace TunnelQuest.Data.Migrations
         {
             try
             {
-                Console.WriteLine("This might take a few minutes... be patient and don't exit early!");
+                Console.WriteLine("Inserting item and spell data.  This might take a few minutes... be patient and don't exit early!");
             }
             catch { }
 
@@ -48,13 +48,20 @@ namespace TunnelQuest.Data.Migrations
                     }
                 } // end using (transaction)
             } // end using (context)
+
+            try
+            {
+                Console.WriteLine("Finished inserting item and spell data.");
+            }
+            catch { }
+
         } // end function
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             try
             {
-                Console.WriteLine("This might take a few minutes... be patient and don't exit early!");
+                Console.WriteLine("Deleting item and spell data.  This might take a few minutes... be patient and don't exit early!");
             }
             catch { }
 
@@ -95,6 +102,12 @@ namespace TunnelQuest.Data.Migrations
                     }
                 }
             }
+
+            try
+            {
+                Console.WriteLine("Finished deleting item and spell data.");
+            }
+            catch { }
         }
 
 

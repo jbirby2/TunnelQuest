@@ -43,6 +43,11 @@ export default mixins(LivePage).extend({
         recentlyUpdatedAuctions: function () {
             return this.auctions.array
                 .filter(function (auction: Auction, index: number) {
+                    // avoid temporarily showing "duplicate" auctions when a new auction is created to replace an older auction
+                    // by immediately hiding the older auction in the recentlyUpdatedAuctions panel
+                    return !auction.isPreviousAuction;
+                })
+                .filter(function (auction: Auction, index: number) {
                     return moment.duration(moment.default().diff(auction.updatedAtMoment)).asMinutes() <= 15;
                 })
                 .sort(function (a: Auction, b: Auction) {
@@ -156,21 +161,35 @@ export default mixins(LivePage).extend({
                 let auction = newContent.auctions[auctionId];
                 auction.chatLine = newContent.lines[auction.chatLineId];
                 auction.updatedAtMoment = moment.utc(auction.updatedAtString).local();
+
+                // if necessary, update the previous auction object
+                if (auction.previousAuctionId != null) {
+                    let prevAuction = this.auctions.dict.get(auction.previousAuctionId);
+                    if (prevAuction) {
+                        prevAuction.isPreviousAuction = true;
+                        // also copy over the firstSeenDate from the previous auction so that the new auction will 
+                        // take the previous auction's place in the sort order, instead of appearing at the top
+                        auction.firstSeenDate = prevAuction.firstSeenDate;
+                    }
+                }
                 
                 // transfer the firstSeenMoment from the previously existing entry, if it exists
-                let existingEntry = this.auctions.dict[auction.id];
+                let existingEntry = this.auctions.dict.get(auction.id);
                 if (existingEntry)
                     auction.firstSeenDate = existingEntry.firstSeenDate;
                 else
                     auction.firstSeenDate = new Date();
 
-                this.onNewAuction(auction);
+                this.onNewAuction(auction); // this has to happen FIRST so that auction.item is set BEFORE the auction is added to the SlidingList, or else Vue won't detect when auction.item's properties are filled in by ajax later
+                this.auctions.add(auction);
             }
 
-            // call this after the loop to fetch all items and simultaneously (because it's far more efficient than making an ajax call for every individual item)
-            TQGlobals.items.fetchPendingItems();
+            if (enforceMaxSize)
+                this.auctions.enforceMaxSize();
+            this.auctions.sort();
 
-            this.auctions.add(newContent.auctions, enforceMaxSize);
+            // call this last to fetch all items and simultaneously (because it's far more efficient than making an ajax call for every individual item)
+            TQGlobals.items.fetchPendingItems();
         },
 
         // inherited from LivePage

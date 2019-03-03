@@ -14,6 +14,16 @@ namespace TunnelQuest.Data.Models
         [Column("auction_id")]
         public long AuctionId { get; set; }
 
+        [ForeignKey("PreviousAuction")]
+        [Column("previous_auction_id")]
+        public long? PreviousAuctionId { get; set; }
+        public Auction PreviousAuction { get; set; }
+
+        [ForeignKey("MostRecentChatLine")]
+        [Column("most_recent_chat_line_id")]
+        public long MostRecentChatLineId { get; set; }
+        public ChatLine MostRecentChatLine { get; set; }
+
         // ItemName is intentionally NOT declared a ForeignKey here, because ItemName
         // might also be a text string that matches no known item (e.g. "jboots mq")
         [Required]
@@ -40,8 +50,6 @@ namespace TunnelQuest.Data.Models
 
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; }
-
-        public ICollection<ChatLineAuction> ChatLines { get; set; } = new List<ChatLineAuction>();
 
 
         public Auction()

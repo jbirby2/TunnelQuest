@@ -33,21 +33,6 @@
 		
 - figure out why "WTS aaa [link]" isn't interpreting aaa as descriptive text, and is creating an auction for it instead (ParsedChatLine.cs line 142)
 
-- create new table auction_history to contain "snapshot" data for reporting
-	- columns:
-		PK long auction_history_id (identity)
-		string server_code
-		string item_name (NOT FK)
-		string player_name
-		(ALL the same columns as auction table)
-		 
-	- in AuctionLogic, remove the code that creates a new auction after X hours.  instead, add code to create a new auction_history record
-	  (totally separate from the auctions table) every X hours.  this way, we don't have to worry about removing logical duplicate auctions
-	  in the UI every X hours.
-
-		** re-use the same existing logic that was used to determine when to create a new auction or update the existing auction,
-		   and do the EXACT same thing with the existing history record: either update it or create a new one.
-
 - make it auto-retry connect on failure (try all kinds of failure)
 
 - stickyheader disco message fade transition not working?
@@ -56,26 +41,101 @@
 
 - test to make sure people can't mess up the page by typing a really long string or something
 
-- new view called AuctionHouseView
-	- single column (even on widescreen) infinite scrolling list of auctions
-		- each list item will be two spans: one with timestamp/name/wtbwts, and one with itemName/price
-			- on widescreens where there's enough room, both spans will display side-by-side to form grids; set top and bottom margins to 0, etc
-			- if NOT enough space, it will break between the two divs and put one below the other (add a little margin between rows now)
-
 - SettingsPage
 	- "Auto load last viewed live page? yes/no"
 		* display the UI for this setting at the top of main page
 
 	- "Item Filters"
+		** we should be able to make the server do ALL the logic:
+			- signalr client uses its "Items" property on the server to make sure the server always knows its latest filter settings
+				- hub uses this to do the filtering of lines on the server for each individual connection
+			- api query endpoints will take the filter settings as parameters on every call
+				- ultimately the query builder will have to add additional lines to the actual sql query based on the current item filter
+
 		- applies to both auction pages AND chat page
 			* either way (except for newspaper mode), item filters (except for name) means they have to pull all item data.  it is what it is.
 
 		- on filter changed (debounced), pull whole new set of lines
 		- on scroll down / reconnect, use current filter in query
+			* see https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-2.2
 		- on new hub lines, only save them if they match the filter; otherwise discard them completely
 
 - build in client-side check to remember the last downward scroll params, and not to repeat the same downward scroll query twice in a row
 
+- alternating background colors on auction page, and color the text different for wtb maybe?  point is, alternating background colors
+
 - spaces in beginning of line get interpreted as auctions
 	- make sure no auction is ever created for whitespace
+	
+- spend the time to make the "<<" top menu buttons do a javascript:back() when appropriate
 
+- price_history table
+	- columns:
+		- string ItemName (PK)
+			* can also be hand-typed items not found it items table, so no FK
+		- int one_month_median (nullable)
+		- blob one_month_graph (nullable)
+		- int three_month_median (nullable)
+		- blob three_month_graph (nullable)
+		- int six_month_median (nullable)
+		- blob six_month_graph (nullable)
+		- int twelve_month_median (nullable)
+		- blob twelve_month_graph (nullable)
+		- int lifetime_median (NOT nullable)
+		- blob lifetime_graph (NOT nullable)
+		- datetime updated_at
+
+	- populated once-a-day per item by background worker
+		- make sure it filters isBuying = 0
+		- if it doesn't have data going far back enough for a particular column, set it null so the UI knows not to even display it,
+		  cuz it'll look janky to display all those rows with only a few weeks of actual data.
+			- but lifetime will ALWAYS get updated and displayed, at the very least
+		- worker builds image blobs at same time as values
+
+	- on ItemPage:
+		- list the median prices as tabs across the top of the image
+		- move the scroll behavior and callbacks into BasePage so that ItemPage can have infinite scrolling but NOT a live connection
+		- start by pulling small amount of recent auctions and let them scroll down from there
+			* need to add new optional date args to Auctions query
+
+- timestamp not positioned all the way to right in newspaper auctions
+
+- create new migration for initial eq log files
+	- actually use timestamp for these
+
+- special ChatPurge marker in the chat ui to make it clear to users at what point the spam got trimmed
+
+
+- how to do the median price icons embedded in the chat line?
+	- plan ?:
+		- In ParsedChatLine, when building the Auctions, give the PriceSegments references back to any Auctions that used them.
+		  Then, override PriceSegment.Text to return a tokenized string with all the item INDEXES, the wtb/wts, and the price (i.e. the bare minimum data elements to add the PriceDeviationComponents)
+			- the item indexes are the order in which the item appears WITHIN THE CHAT LINE.  this way no need to repeat all the item names; save a ton of data
+
+		* Remember, we can't just return the Auctions along with the ChatLines because the Auction will only contain the MOST RECENT values, not this historical values for each chat line.
+		  For example, if a price changes and updates the existing Auction, then the old chat line will not be able to pull its original price value from the Auction anymore. Same
+		  if it changes from WTB to WTS, etc.  THE MOST FEASIBLE SOLUTION IS TO TOKENIZE THE BARE-MINIMUM DATA AND KEEP THE CHAT LINES SELF-CONTAINED, JUST LIKE HOW I CHANGED
+		  AUCTION TOKENS INTO ITEM NAME TOKENS.	
+
+
+- i think Auction House view is getting the chat lines even though it doesn't use them
+	- refactor so that there's one hub per server, and each hub uses groups to determine which payload to send
+		- "ChatGroup", "AuctionGroup", "ChatAndAuctionGroup"
+		- https://docs.microsoft.com/en-us/aspnet/core/signalr/hubs?view=aspnetcore-2.2
+		- https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-2.2
+	- make client invoke a method on the hub to join one of the groups immediately after connect
+		* also after reconnect
+	** ALSO refactor so that the controller reuses the ClientChatLine and ClientAuction objects as much as possible
+
+
+- create item_alias table to manually associate common player-typed unknown item names with known item names (i.e. "jboots mq" might be an alias for "Journeyman's Boots" strong name)
+	*** MAKE IT SO THAT weak names can alias a parent weak name too, for commonly sold items with no decent item to link (i.e. ports maybe?  something, surely)
+	- links to an item's alias automatically load (location.replace()) the strongly typed name instead
+	- aliases are displayed on an item's page
+	- GetAuctions(by itemName) will also pulls auctions for any associated alias, including if for some reason you passed in the child alias instead of the parent alias
+	- item filters will be aware of aliases and let aliased rows through the filter
+	- PriceHistory endpoint will also automatically resolve to parent alias
+	
+	?? maybe other api endpoints that need to automatically return data for the parent alias??
+
+	** with the setup above, I don't **think** there's any reason for the javascript code to be aware of aliases at all

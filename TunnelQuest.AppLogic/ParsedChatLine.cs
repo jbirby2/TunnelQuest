@@ -45,6 +45,7 @@ namespace TunnelQuest.AppLogic
         public List<TextSegment> Segments { get; private set; }
         public Dictionary<string, Auction> Auctions { get; private set; }
 
+
         public ParsedChatLine(string playerTypedText, TunnelQuestContext context, DateTime timestamp)
         {
             this.Segments = new List<TextSegment>();
@@ -68,7 +69,7 @@ namespace TunnelQuest.AppLogic
                 var segment = this.Segments[i];
                 if (segment.GetType() == typeof(TextSegment))
                 {
-                    if (segment.Text.StartsWith(ChatLogic.ITEM_NAME_TOKEN, StringComparison.InvariantCultureIgnoreCase))
+                    if (segment.Text.Contains(ChatLogic.OUTER_CHAT_TOKEN) || segment.Text.Contains(ChatLogic.INNER_CHAT_TOKEN))
                     {
                         // in case anybody tries to be mischevious and actually type the token string into chat
                         this.Segments[i] = new TextSegment(this, "clever girl", segment.HasPrecedingSpace);
@@ -95,7 +96,6 @@ namespace TunnelQuest.AppLogic
             // Now that we've parsed all the segments we can recognize, go back through  and see if we 
             // can intuit any non-linked auctions (e.g. "WTS jboots mq 5k")
 
-            var nonLinkedAuctions = new List<ItemNameSegment>();
             for (int i = 0; i < Segments.Count; i++)
             {
                 if (Segments[i].GetType() == typeof(TextSegment))
@@ -155,6 +155,11 @@ namespace TunnelQuest.AppLogic
 
             BuySellTradeSegment lastFoundBuySellTrade = null;
             var itemsSinceLastSeparator = new List<ItemNameSegment>();
+
+            // used by PriceSegment to build its chat token
+            var itemSegmentIndexes = new Dictionary<ItemNameSegment, int>();
+            int lastItemNameIndex = -1;
+
             for (int i = 0; i < Segments.Count; i++)
             {
                 var segment = Segments[i];
@@ -163,25 +168,35 @@ namespace TunnelQuest.AppLogic
                 {
                     var itemNameSegment = (ItemNameSegment)segment;
 
+                    lastItemNameIndex++;
+                    itemSegmentIndexes.Add(itemNameSegment, lastItemNameIndex);
+
                     itemsSinceLastSeparator.Add(itemNameSegment);
 
+                    Auction auction;
                     if (!this.Auctions.ContainsKey(itemNameSegment.Text))
                     {
-                        this.Auctions.Add(itemNameSegment.Text, new Auction()
+                        auction = new Auction()
                         {
                             ItemName = itemNameSegment.ItemName,
                             IsKnownItem = itemNameSegment.IsKnownItem,
                             CreatedAt = timestamp,
                             UpdatedAt = timestamp
-                        });
+                        };
+
+                        this.Auctions.Add(itemNameSegment.Text, auction);
+                    }
+                    else
+                    {
+                        auction = this.Auctions[itemNameSegment.Text];
                     }
 
                     if (lastFoundBuySellTrade != null)
                     {
                         if (lastFoundBuySellTrade.IsBuying != null)
-                            this.Auctions[itemNameSegment.Text].IsBuying = lastFoundBuySellTrade.IsBuying.Value;
+                            auction.IsBuying = lastFoundBuySellTrade.IsBuying.Value;
                         if (lastFoundBuySellTrade.IsAcceptingTrades != null)
-                            this.Auctions[itemNameSegment.Text].IsAcceptingTrades = lastFoundBuySellTrade.IsAcceptingTrades.Value;
+                            auction.IsAcceptingTrades = lastFoundBuySellTrade.IsAcceptingTrades.Value;
                     }
                 }
                 else if (segment is BuySellTradeSegment)
@@ -190,19 +205,30 @@ namespace TunnelQuest.AppLogic
                 }
                 else if (segment is PriceSegment)
                 {
-                    int price = ((PriceSegment)segment).Price;
+                    var priceSegment = (PriceSegment)segment;
+
                     foreach (var itemNameSegment in itemsSinceLastSeparator)
                     {
-                        if (this.Auctions[itemNameSegment.Text].Price == null)
-                            this.Auctions[itemNameSegment.Text].Price = price;
+                        var auction = this.Auctions[itemNameSegment.Text];
+
+                        if (auction.Price == null)
+                        {
+                            auction.Price = priceSegment.Price;
+
+                            // update the priceSegment too, for later when it builds its chat token
+                            priceSegment.UsedByItemIndexes.Add(itemSegmentIndexes[itemNameSegment]);
+                            priceSegment.IsBuying = auction.IsBuying;
+                        }
                     }
                 }
                 else if (segment is OrBestOfferSegment)
                 {
                     foreach (var itemNameSegment in itemsSinceLastSeparator)
                     {
-                        if (this.Auctions[itemNameSegment.Text].Price != null)
-                            this.Auctions[itemNameSegment.Text].IsOrBestOffer = true;
+                        var auction = this.Auctions[itemNameSegment.Text];
+
+                        if (auction.Price != null)
+                            auction.IsOrBestOffer = true;
                     }
                 }
                 else if (segment is SeparatorSegment)

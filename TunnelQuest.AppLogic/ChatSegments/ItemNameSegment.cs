@@ -19,10 +19,7 @@ namespace TunnelQuest.AppLogic.ChatSegments
         {
             get
             {
-                if (this.IsKnownItem)
-                    return ChatLogic.ITEM_NAME_TOKEN + this.ItemName.Replace(' ', '_') + ChatLogic.ITEM_NAME_TOKEN;
-                else
-                    return this.ItemName;
+                return ChatLogic.OUTER_CHAT_TOKEN + "item" + ChatLogic.INNER_CHAT_TOKEN + (this.IsKnownItem ? '1' : '0') + ChatLogic.INNER_CHAT_TOKEN + this.ItemName.Replace(' ', '_') + ChatLogic.OUTER_CHAT_TOKEN;
             }
         }
 

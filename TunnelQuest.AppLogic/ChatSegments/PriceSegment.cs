@@ -65,11 +65,29 @@ namespace TunnelQuest.AppLogic.ChatSegments
 
         public int Price { get; private set; }
 
+        // These are set during the parsing process and used only to generate the Text.  Kinda ugly and janky but it's only touched in one spot.
+        public bool IsBuying { get; set; }
+        public List<int> UsedByItemIndexes { get; set; }
+
+        // override the default Text behavior
+        public override string Text
+        {
+            get
+            {
+                if (this.UsedByItemIndexes.Count > 0)
+                    return ChatLogic.OUTER_CHAT_TOKEN + "price" + ChatLogic.INNER_CHAT_TOKEN + (this.IsBuying ? '1' : '0') + ChatLogic.INNER_CHAT_TOKEN + this.Price.ToString() + ChatLogic.INNER_CHAT_TOKEN + String.Join(',', this.UsedByItemIndexes) + ChatLogic.INNER_CHAT_TOKEN + base.Text + ChatLogic.OUTER_CHAT_TOKEN;
+                else
+                    return base.Text;
+            }
+        }
+
         // protected constructor so that these segments can only be created by calling TryParse()
         protected PriceSegment(ParsedChatLine parentLine, string text, int price, bool hasPrecedingSpace)
             : base(parentLine, text, hasPrecedingSpace)
         {
             this.Price = price;
+            this.IsBuying = false;
+            this.UsedByItemIndexes = new List<int>();
         }
     }
 }

@@ -65,7 +65,6 @@
             onNewAuction: function (auction: Auction) {
                 // false to prevent it from immediately making an ajax call to fetch this one item
                 auction.item = TQGlobals.items.get(auction.itemName, false);
-
             },
         },
 

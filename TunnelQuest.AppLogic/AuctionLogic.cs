@@ -16,8 +16,8 @@ namespace TunnelQuest.AppLogic
 
         // static stuff
 
-        private static readonly TimeSpan MIN_AUCTION_HISTORY_THRESHOLD = TimeSpan.FromHours(1);
-        private static readonly TimeSpan MAX_AUCTION_HISTORY_THRESHOLD = TimeSpan.FromHours(24);
+        private static readonly TimeSpan MIN_NEW_AUCTION_THRESHOLD = TimeSpan.FromHours(1);
+        private static readonly TimeSpan MAX_NEW_AUCTION_THRESHOLD = TimeSpan.FromHours(24);
 
 
         // non-static stuff
@@ -32,53 +32,43 @@ namespace TunnelQuest.AppLogic
             this.context = _context;
         }
 
-        public Auction[] GetAuctions(string serverCode, DateTime? minUpdatedAt = null, DateTime? maxUpdatedAt = null, int? maxResults = null)
+        public string[] GetAllItemNames(string serverCode)
         {
-            if (maxResults == null)
-                maxResults = MAX_AUCTIONS;
+            return context.Auctions
+                .Include(auction => auction.MostRecentChatLine)
+                .Where(auction => auction.MostRecentChatLine.ServerCode == serverCode)
+                .Select(auction => auction.ItemName)
+                .Distinct()
+                .OrderBy(itemName => itemName)
+                .ToArray();
+        }
 
-            var auctionQuery = context.Auctions
-               .Include(auction => auction.ChatLines)
-                   .ThenInclude(auctionChatLine => auctionChatLine.ChatLine)
-                       .ThenInclude(chatLine => chatLine.Auctions)
-                           .ThenInclude(chatLineAuction => chatLineAuction.Auction)
-                .Where(auction => auction.ChatLines.Any(auctionChat => auctionChat.ChatLine.ServerCode == serverCode));
-            
+        public Auction[] GetAuctions(string serverCode, bool includeMostRecentChatLine, string itemName = null, DateTime? minUpdatedAt = null, DateTime? maxUpdatedAt = null, int? maxResults = null)
+        {
+            var auctionQuery = context.Auctions.Where(auction => auction.MostRecentChatLine.ServerCode == serverCode);
+
+            if (includeMostRecentChatLine)
+                auctionQuery = auctionQuery.Include(auction => auction.MostRecentChatLine);
+
+            if (!String.IsNullOrWhiteSpace(itemName))
+                auctionQuery = auctionQuery.Where(auction => auction.ItemName == itemName);
+
             if (minUpdatedAt != null)
                 auctionQuery = auctionQuery.Where(auction => auction.UpdatedAt >= minUpdatedAt.Value);
 
             if (maxUpdatedAt != null)
                 auctionQuery = auctionQuery.Where(auction => auction.UpdatedAt <= maxUpdatedAt.Value);
 
-            // STUB TODO: come back and rewrite this more efficiently.
-            //
-            // This query sucks because it returns ALL associated rows from ChatLineAuction, and THEN discards
-            // all but the most recent ChatLineAuction row.  I got tired of trying to figure out how to make
-            // Entity Framework select the parent record + only the most recent child record, AND its associated ChatLine record.
-            // Luckily the SQL Server is running on the same machine as the web server, so we can probably get away with this
-            // shameful wastefulness.
+            // order by descending in the sql query, to make sure we get the most recent auctions if we hit the limit imposed by maxResults
+            auctionQuery = auctionQuery.OrderByDescending(auction => auction.UpdatedAt);
 
-            var auctions = auctionQuery
-                .OrderByDescending(auction => auction.UpdatedAt) // order by descending in the sql query, to make sure we get the most recent auctions if we hit the limit imposed by maxResults
-                .Take(maxResults.Value)
+            if (maxResults != null)
+                auctionQuery = auctionQuery.Take(maxResults.Value);
+
+            return auctionQuery
                 .ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
                 .OrderBy(auction => auction.UpdatedAt) // now that we've got the results from the database (possibly truncated by maxResults), re-order them correctly
                 .ToArray();
-
-            // now discard all but the most recent chat line
-            foreach (var auction in auctions)
-            {
-                if (auction.ChatLines.Count > 1)
-                {
-                    var lastChatLineId = auction.ChatLines.Max(chatLineAuction => chatLineAuction.ChatLineId);
-
-                    var newCollection = new List<ChatLineAuction>();
-                    newCollection.Add(auction.ChatLines.First(auctionChatLine => auctionChatLine.ChatLineId == lastChatLineId));
-                    auction.ChatLines = newCollection;
-                }
-            }
-
-            return auctions;
         }
 
         public Dictionary<string, Auction> GetNormalizedAuctions(string serverCode, string playerName, DateTime timestamp, Dictionary<string, Auction> pendingAuctions)
@@ -100,10 +90,60 @@ namespace TunnelQuest.AppLogic
             {
                 var pendingNewAuction = normalizedAuctions[itemName];
 
-                // See if there's an existing auction we should reuse instead of posting this new one.  If so, use it instead of the pending new auction.
-                Auction auctionToReuse = getReusableAuction(serverCode, playerName, timestamp, pendingNewAuction);
-                if (auctionToReuse != null)
-                    normalizedAuctions[itemName] = auctionToReuse;
+                // See if there's an existing auction we should reuse instead of posting this new one.
+
+                Auction lastAuctionBySamePlayerForSameItem = (from auction in context.Auctions
+                                                              join chatLine in context.ChatLines on auction.MostRecentChatLineId equals chatLine.ChatLineId
+                                                              where
+                                                                chatLine.ServerCode == serverCode
+                                                                && chatLine.PlayerName == playerName
+                                                                && auction.ItemName == pendingNewAuction.ItemName
+                                                              orderby auction.UpdatedAt descending
+                                                              select auction).FirstOrDefault();
+
+                if (lastAuctionBySamePlayerForSameItem != null)
+                {
+                    if (lastAuctionBySamePlayerForSameItem.Equals(pendingNewAuction))
+                    {
+                        // Player has auctioned this item before, and nothing has changed...
+
+                        DateTime createNewAuctionDate = lastAuctionBySamePlayerForSameItem.CreatedAt + MAX_NEW_AUCTION_THRESHOLD;
+
+                        if (DateTime.UtcNow < createNewAuctionDate)
+                        {
+                            // reuse the existing auction.
+                            lastAuctionBySamePlayerForSameItem.UpdatedAt = timestamp;
+                            normalizedAuctions[itemName] = lastAuctionBySamePlayerForSameItem;
+                        }
+                        else
+                        {
+                            // create a new auction (even though nothing has changed) so that the old auction
+                            // can become historical data for reporting
+                            pendingNewAuction.PreviousAuctionId = lastAuctionBySamePlayerForSameItem.AuctionId;
+                        }
+                    }
+                    else
+                    {
+                        // Player has auctioned this item before, and something HAS changed (price, etc)...
+
+                        DateTime createNewAuctionDate = lastAuctionBySamePlayerForSameItem.CreatedAt + MIN_NEW_AUCTION_THRESHOLD;
+
+                        if (DateTime.UtcNow < createNewAuctionDate)
+                        {
+                            // It hasn't been long enough since the last time this player created a new auction
+                            // for this item: update the existing auction with the new values.
+                            lastAuctionBySamePlayerForSameItem.CopyValuesFrom(pendingNewAuction);
+                            lastAuctionBySamePlayerForSameItem.UpdatedAt = timestamp;
+                            normalizedAuctions[itemName] = lastAuctionBySamePlayerForSameItem;
+                        }
+                        else
+                        {
+                            // It's been long enough since the last time this player created a new auction
+                            // for this item: create a new auction, and leave the old auction as a historical record.
+                            pendingNewAuction.PreviousAuctionId = lastAuctionBySamePlayerForSameItem.AuctionId;
+                        }
+                    }
+                }
             }
 
             return normalizedAuctions;
@@ -145,37 +185,7 @@ namespace TunnelQuest.AppLogic
                 return auction1;
         }
 
-        // Returns an Auction if there's an existing Auction which can be reused instead of pendingAuction, based on
-        // the rules defined within the function.  If there is no existing auction that we want to reuse, then return
-        // null.
-        private Auction getReusableAuction(string serverCode, string playerName, DateTime timestamp, Auction pendingNewAuction)
-        {
-            Auction lastAuctionBySamePlayerForSameItem = (from auction in context.Auctions
-                                                          join chatLineAuction in context.ChatLineAuctions on auction.AuctionId equals chatLineAuction.AuctionId
-                                                          join chatLine in context.ChatLines on chatLineAuction.ChatLineId equals chatLine.ChatLineId
-                                                          where
-                                                            chatLine.ServerCode == serverCode
-                                                            && chatLine.PlayerName == playerName
-                                                            && auction.ItemName == pendingNewAuction.ItemName
-                                                          orderby auction.UpdatedAt descending
-                                                          select auction).FirstOrDefault();
 
-            if (lastAuctionBySamePlayerForSameItem == null)
-            {
-                // Player has never auctioned this item before: create a new auction.
-                return null;
-            }
-            else
-            {
-                // Player has auctioned this item before: re-use the existing auction, but copy over the values
-                // from the new chat line
-                lastAuctionBySamePlayerForSameItem.CopyValuesFrom(pendingNewAuction);
-                lastAuctionBySamePlayerForSameItem.UpdatedAt = timestamp;
-                return lastAuctionBySamePlayerForSameItem;
-            }
-
-        } // end function
-    
     } // end class
 
 }

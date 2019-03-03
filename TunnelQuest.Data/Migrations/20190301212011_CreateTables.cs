@@ -9,26 +9,6 @@ namespace TunnelQuest.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "auction",
-                columns: table => new
-                {
-                    auction_id = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    item_name = table.Column<string>(nullable: false),
-                    is_known_item = table.Column<bool>(nullable: false),
-                    is_buying = table.Column<bool>(nullable: false),
-                    price = table.Column<int>(nullable: true),
-                    is_or_best_offer = table.Column<bool>(nullable: false),
-                    is_accepting_trades = table.Column<bool>(nullable: false),
-                    created_at = table.Column<DateTime>(nullable: false),
-                    updated_at = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_auction", x => x.auction_id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "auth_token_status",
                 columns: table => new
                 {
@@ -461,33 +441,53 @@ namespace TunnelQuest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "chat_line_auction",
+                name: "auction",
                 columns: table => new
                 {
-                    chat_line_id = table.Column<long>(nullable: false),
                     auction_id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    previous_auction_id = table.Column<long>(nullable: true),
+                    most_recent_chat_line_id = table.Column<long>(nullable: false),
+                    item_name = table.Column<string>(nullable: false),
+                    is_known_item = table.Column<bool>(nullable: false),
+                    is_buying = table.Column<bool>(nullable: false),
+                    price = table.Column<int>(nullable: true),
+                    is_or_best_offer = table.Column<bool>(nullable: false),
+                    is_accepting_trades = table.Column<bool>(nullable: false),
+                    created_at = table.Column<DateTime>(nullable: false),
+                    updated_at = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_chat_line_auction", x => new { x.chat_line_id, x.auction_id });
+                    table.PrimaryKey("PK_auction", x => x.auction_id);
                     table.ForeignKey(
-                        name: "FK_chat_line_auction_auction_auction_id",
-                        column: x => x.auction_id,
-                        principalTable: "auction",
-                        principalColumn: "auction_id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_chat_line_auction_chat_line_chat_line_id",
-                        column: x => x.chat_line_id,
+                        name: "FK_auction_chat_line_most_recent_chat_line_id",
+                        column: x => x.most_recent_chat_line_id,
                         principalTable: "chat_line",
                         principalColumn: "chat_line_id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_auction_auction_previous_auction_id",
+                        column: x => x.previous_auction_id,
+                        principalTable: "auction",
+                        principalColumn: "auction_id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_auction_item_name",
                 table: "auction",
                 column: "item_name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_auction_most_recent_chat_line_id",
+                table: "auction",
+                column: "most_recent_chat_line_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_auction_previous_auction_id",
+                table: "auction",
+                column: "previous_auction_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_auth_token_auth_token_status_code",
@@ -518,16 +518,6 @@ namespace TunnelQuest.Data.Migrations
                 name: "IX_chat_line_server_code_player_name_sent_at",
                 table: "chat_line",
                 columns: new[] { "server_code", "player_name", "sent_at" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_chat_line_auction_auction_id",
-                table: "chat_line_auction",
-                column: "auction_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_chat_line_auction_chat_line_id",
-                table: "chat_line_auction",
-                column: "chat_line_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_item_capacity_size_code",
@@ -623,7 +613,7 @@ namespace TunnelQuest.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "chat_line_auction");
+                name: "auction");
 
             migrationBuilder.DropTable(
                 name: "item_class");
@@ -648,9 +638,6 @@ namespace TunnelQuest.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "spell_source");
-
-            migrationBuilder.DropTable(
-                name: "auction");
 
             migrationBuilder.DropTable(
                 name: "chat_line");

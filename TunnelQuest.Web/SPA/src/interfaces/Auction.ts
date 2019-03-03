@@ -5,6 +5,7 @@ import Item from "../interfaces/Item";
 
 interface Auction {
     id: number,
+    previousAuctionId: number | null,
     itemName: string,
     isKnownItem: boolean,
     isBuying: boolean,
@@ -19,5 +20,6 @@ interface Auction {
     item: Item,                         // not actually passed in from server, but set in client code
     updatedAtMoment: moment.Moment,     // not actually passed in from server, but set in client code
     firstSeenDate: Date,                // not actually passed in from server, but set in client code
+    isPreviousAuction: boolean          // not actually passed in from server, but set in client code
 }
 export default Auction;

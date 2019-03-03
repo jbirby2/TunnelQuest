@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using TunnelQuest.Data.Models;
 using TunnelQuest.Web.Config;
 using TunnelQuest.Web.Hubs;
+using Microsoft.Extensions.Hosting;
+using TunnelQuest.Web.Services;
 
 namespace TunnelQuest.Web
 {
@@ -48,10 +50,13 @@ namespace TunnelQuest.Web
             // STUB add api throttling
 
             services.AddSignalR();
+
+            // custom services
+            services.AddHostedService<PriceHistoryService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
             app.UseForwardedHeaders(new ForwardedHeadersOptions()
             {

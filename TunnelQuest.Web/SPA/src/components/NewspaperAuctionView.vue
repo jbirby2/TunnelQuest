@@ -6,6 +6,10 @@
         vertical-align: top;
     }
 
+    .tqNewspaperAuctionView > span {
+        display: block;
+    }
+
     .tqNewspaperAuctionViewWtb {
         background-color: rgba(7,0,99,0.7);
     }
@@ -104,7 +108,7 @@
             <time-stamp :timeString="auction.updatedAtString" cssClass="tqNewspaperAuctionTimeStamp"></time-stamp>
         </span>
 
-        <div>
+        <span>
             <item-view :item="auction.item">
                 <template slot="footer">
                     <span class="tqNewspaperAuctionChatLine">
@@ -112,7 +116,7 @@
                     </span>
                 </template>
             </item-view>
-        </div>        
+        </span>        
     </span>
 </template>
 

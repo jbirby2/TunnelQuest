@@ -39,6 +39,9 @@ namespace TunnelQuest.Web.Controllers.Api
         [HttpGet]
         public LinesAndAuctions Get([FromQuery]string serverCode, [FromQuery]long? minId = null, [FromQuery]long? maxId = null, [FromQuery]int? maxResults = null)
         {
+            if (maxResults == null)
+                maxResults = ChatLogic.MAX_CHAT_LINES;
+
             var chatLines = new ChatLogic(context).GetLines(serverCode, minId, maxId, maxResults);
             return new LinesAndAuctions(chatLines);
         }
@@ -65,14 +68,19 @@ namespace TunnelQuest.Web.Controllers.Api
             {
                 var chatLogic = new ChatLogic(context);
                 var addedLines = new List<ChatLine>();
+                var addedAuctions = new List<Auction>();
+
                 foreach (string line in payload.Lines)
                 {
                     try
                     {
-                        var chatLine = chatLogic.ProcessLogLine(authToken, payload.ServerCode, line);
+                        var results = chatLogic.ProcessLogLine(authToken, payload.ServerCode, line);
 
-                        if (chatLine != null)
-                            addedLines.Add(chatLine);
+                        if (results != null)
+                        {
+                            addedLines.Add(results.NewLine);
+                            addedAuctions.AddRange(results.NewAuctions);
+                        }
                     }
                     catch (InvalidAuthTokenException)
                     {
@@ -84,22 +92,37 @@ namespace TunnelQuest.Web.Controllers.Api
                     }
                 }
 
-                // send the new lines to every connected signalr client
+                // send new chat lines to chat hub clients
                 if (addedLines.Count > 0)
                 {
-                    var newContent = new LinesAndAuctions(addedLines.ToArray());
+                    var newChatContent = new LinesAndAuctions(addedLines.ToArray());
                     switch (payload.ServerCode)
                     {
                         case ServerCodes.Blue:
-                            await blueAuctionHub.Clients.All.SendAsync("NewContent", newContent);
-                            newContent.Auctions = null;
-                            await blueChatHub.Clients.All.SendAsync("NewContent", newContent);
+                            await blueChatHub.Clients.All.SendAsync("NewContent", newChatContent);
                             break;
 
                         case ServerCodes.Red:
-                            await redAuctionHub.Clients.All.SendAsync("NewContent", newContent);
-                            newContent.Auctions = null;
-                            await redChatHub.Clients.All.SendAsync("NewContent", newContent);
+                            await redChatHub.Clients.All.SendAsync("NewContent", newChatContent);
+                            break;
+
+                        default:
+                            throw new Exception("Unrecognized serverCode '" + payload.ServerCode + "'");
+                    }
+                }
+
+                // send new auctions to auction hub clients
+                if (addedAuctions.Count > 0)
+                {
+                    var newAuctionContent = new LinesAndAuctions(addedAuctions.ToArray());
+                    switch (payload.ServerCode)
+                    {
+                        case ServerCodes.Blue:
+                            await blueAuctionHub.Clients.All.SendAsync("NewContent", newAuctionContent);
+                            break;
+
+                        case ServerCodes.Red:
+                            await redAuctionHub.Clients.All.SendAsync("NewContent", newAuctionContent);
                             break;
 
                         default:

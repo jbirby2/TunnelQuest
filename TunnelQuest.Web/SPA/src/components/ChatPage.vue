@@ -125,7 +125,14 @@
                 console.log("ChatPage.onNewContent():");
                 console.log(newContent);
 
-                this.chatLines.add(newContent.lines, enforceMaxSize);
+                for (let chatLineId in newContent.lines) {
+                    let chatLine = newContent.lines[chatLineId];
+                    this.chatLines.add(chatLine);
+                }
+
+                if (enforceMaxSize)
+                    this.chatLines.enforceMaxSize();
+                this.chatLines.sort();
             },
 
             // inherited from LivePage

@@ -9,6 +9,7 @@ namespace TunnelQuest.Web.Models.Api
     public class ClientAuction
     {
         public long Id { get; set; }
+        public long? PreviousAuctionId { get; set; }
         public string ItemName { get; set; }
         public bool IsKnownItem { get; set; }
         public bool IsBuying { get; set; }
@@ -26,6 +27,7 @@ namespace TunnelQuest.Web.Models.Api
         public ClientAuction(Auction auction, long chatLineId)
         {
             this.Id = auction.AuctionId;
+            this.PreviousAuctionId = auction.PreviousAuctionId;
             this.ItemName = auction.ItemName;
             this.IsKnownItem = auction.IsKnownItem;
             this.IsBuying = auction.IsBuying;

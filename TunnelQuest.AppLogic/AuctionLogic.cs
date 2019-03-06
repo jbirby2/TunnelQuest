@@ -32,27 +32,55 @@ namespace TunnelQuest.AppLogic
             this.context = _context;
         }
 
-        public string[] GetAllItemNames(string serverCode)
+        public string[] GetAllItemNames(string serverCode, bool includeBuying, bool includeUnpriced)
         {
-            return context.Auctions
+            var auctionQuery = context.Auctions
                 .Include(auction => auction.MostRecentChatLine)
-                .Where(auction => auction.MostRecentChatLine.ServerCode == serverCode)
+                .Where(auction => auction.MostRecentChatLine.ServerCode == serverCode);
+
+            if (!includeBuying)
+                auctionQuery = auctionQuery.Where(auction => auction.IsBuying == false);
+
+            if (!includeUnpriced)
+                auctionQuery = auctionQuery.Where(auction => auction.Price != null && auction.Price > 0);
+
+            return auctionQuery
                 .Select(auction => auction.ItemName)
                 .Distinct()
                 .OrderBy(itemName => itemName)
                 .ToArray();
         }
 
-        public Auction[] GetAuctions(string serverCode, bool includeMostRecentChatLine, string itemName = null, DateTime? minUpdatedAt = null, DateTime? maxUpdatedAt = null, int? maxResults = null)
+        public Auction[] GetAuctions(string serverCode, string itemName, bool includeBuying, bool includeUnpriced, int? maxResults = null)
         {
-            var auctionQuery = context.Auctions.Where(auction => auction.MostRecentChatLine.ServerCode == serverCode);
+            var auctionQuery = context.Auctions
+                .Where(auction => auction.MostRecentChatLine.ServerCode == serverCode)
+                .Where(auction => auction.ItemName == itemName);
 
-            if (includeMostRecentChatLine)
-                auctionQuery = auctionQuery.Include(auction => auction.MostRecentChatLine);
+            if (!includeBuying)
+                auctionQuery = auctionQuery.Where(auction => auction.IsBuying == false);
 
-            if (!String.IsNullOrWhiteSpace(itemName))
-                auctionQuery = auctionQuery.Where(auction => auction.ItemName == itemName);
+            if (!includeUnpriced)
+                auctionQuery = auctionQuery.Where(auction => auction.Price != null && auction.Price > 0);
 
+            // order by descending in the sql query, to make sure we get the most recent auctions if we hit the limit imposed by maxResults
+            auctionQuery = auctionQuery.OrderByDescending(auction => auction.UpdatedAt);
+
+            if (maxResults != null)
+                auctionQuery = auctionQuery.Take(maxResults.Value);
+
+            return auctionQuery
+                .ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
+                .OrderBy(auction => auction.UpdatedAt) // now that we've got the results from the database (possibly truncated by maxResults), re-order them correctly
+                .ToArray();
+        }
+
+        public Auction[] GetAuctions(string serverCode, DateTime? minUpdatedAt, DateTime? maxUpdatedAt, int? maxResults = null)
+        {
+            var auctionQuery = context.Auctions
+                .Include(auction => auction.MostRecentChatLine)
+                .Where(auction => auction.MostRecentChatLine.ServerCode == serverCode);
+                
             if (minUpdatedAt != null)
                 auctionQuery = auctionQuery.Where(auction => auction.UpdatedAt >= minUpdatedAt.Value);
 

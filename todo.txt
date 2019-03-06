@@ -46,12 +46,10 @@
 		* display the UI for this setting at the top of main page
 
 	- "Item Filters"
-		** we should be able to make the server do ALL the logic:
-			- signalr client uses its "Items" property on the server to make sure the server always knows its latest filter settings
-				- hub uses this to do the filtering of lines on the server for each individual connection
-			- api query endpoints will take the filter settings as parameters on every call
-				- ultimately the query builder will have to add additional lines to the actual sql query based on the current item filter
-
+		* there's no way to filter hub transmissions on an individual connection level, so unfortunately the filtering logic will
+		  HAVE TO BE CODED SEPARATELY IN BOTH CLIENT AND SERVER.
+			- server to filter the api call results; otherwise a client could get stuck if a call ever returns a max results set with no matching items (also hugely wasteful)
+			- client to filter the live feed content (unfortunately no way to prevent the waste here since can't filter an individual connection's content on server)
 		- applies to both auction pages AND chat page
 			* either way (except for newspaper mode), item filters (except for name) means they have to pull all item data.  it is what it is.
 
@@ -74,15 +72,11 @@
 		- string ItemName (PK)
 			* can also be hand-typed items not found it items table, so no FK
 		- int one_month_median (nullable)
-		- blob one_month_graph (nullable)
 		- int three_month_median (nullable)
-		- blob three_month_graph (nullable)
 		- int six_month_median (nullable)
-		- blob six_month_graph (nullable)
 		- int twelve_month_median (nullable)
-		- blob twelve_month_graph (nullable)
 		- int lifetime_median (NOT nullable)
-		- blob lifetime_graph (NOT nullable)
+		- datetime created_at
 		- datetime updated_at
 
 	- populated once-a-day per item by background worker
@@ -90,8 +84,7 @@
 		- if it doesn't have data going far back enough for a particular column, set it null so the UI knows not to even display it,
 		  cuz it'll look janky to display all those rows with only a few weeks of actual data.
 			- but lifetime will ALWAYS get updated and displayed, at the very least
-		- worker builds image blobs at same time as values
-
+		
 	- on ItemPage:
 		- list the median prices as tabs across the top of the image
 		- move the scroll behavior and callbacks into BasePage so that ItemPage can have infinite scrolling but NOT a live connection
@@ -105,19 +98,6 @@
 
 - special ChatPurge marker in the chat ui to make it clear to users at what point the spam got trimmed
 
-
-- how to do the median price icons embedded in the chat line?
-	- plan ?:
-		- In ParsedChatLine, when building the Auctions, give the PriceSegments references back to any Auctions that used them.
-		  Then, override PriceSegment.Text to return a tokenized string with all the item INDEXES, the wtb/wts, and the price (i.e. the bare minimum data elements to add the PriceDeviationComponents)
-			- the item indexes are the order in which the item appears WITHIN THE CHAT LINE.  this way no need to repeat all the item names; save a ton of data
-
-		* Remember, we can't just return the Auctions along with the ChatLines because the Auction will only contain the MOST RECENT values, not this historical values for each chat line.
-		  For example, if a price changes and updates the existing Auction, then the old chat line will not be able to pull its original price value from the Auction anymore. Same
-		  if it changes from WTB to WTS, etc.  THE MOST FEASIBLE SOLUTION IS TO TOKENIZE THE BARE-MINIMUM DATA AND KEEP THE CHAT LINES SELF-CONTAINED, JUST LIKE HOW I CHANGED
-		  AUCTION TOKENS INTO ITEM NAME TOKENS.	
-
-
 - i think Auction House view is getting the chat lines even though it doesn't use them
 	- refactor so that there's one hub per server, and each hub uses groups to determine which payload to send
 		- "ChatGroup", "AuctionGroup", "ChatAndAuctionGroup"
@@ -129,8 +109,15 @@
 
 
 - create item_alias table to manually associate common player-typed unknown item names with known item names (i.e. "jboots mq" might be an alias for "Journeyman's Boots" strong name)
+	- Alias (PK because logically it can only be an alias for ONE thing)
+	- ItemName (not FK because might be another weak name)
+
 	*** MAKE IT SO THAT weak names can alias a parent weak name too, for commonly sold items with no decent item to link (i.e. ports maybe?  something, surely)
+
 	- links to an item's alias automatically load (location.replace()) the strongly typed name instead
+		** WAIT: if the api method automatically returns the parent, then no need to redirect; just make sure all code
+		   uses item.itemName instead of the one passed in the querystring parameter (except for the api call to /item, which does the alias resolution)
+
 	- aliases are displayed on an item's page
 	- GetAuctions(by itemName) will also pulls auctions for any associated alias, including if for some reason you passed in the child alias instead of the parent alias
 	- item filters will be aware of aliases and let aliased rows through the filter

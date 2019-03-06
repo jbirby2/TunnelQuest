@@ -32,7 +32,11 @@ namespace TunnelQuest.Web.Controllers.Api
             if (maxResults == null)
                 maxResults = AuctionLogic.MAX_AUCTIONS;
 
-            return new LinesAndAuctions(logic.GetAuctions(serverCode, true, itemName, minUpdatedAt, maxUpdatedAt, maxResults));
+            if (String.IsNullOrWhiteSpace(itemName))
+                return new LinesAndAuctions(logic.GetAuctions(serverCode, minUpdatedAt, maxUpdatedAt, maxResults));
+            else
+                return new LinesAndAuctions(logic.GetAuctions(serverCode, itemName, true, true, maxResults));
+
         }
 
     }

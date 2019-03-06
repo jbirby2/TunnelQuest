@@ -54,6 +54,24 @@ namespace TunnelQuest.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "price_history",
+                columns: table => new
+                {
+                    item_name = table.Column<string>(nullable: false),
+                    one_month_median = table.Column<int>(nullable: true),
+                    three_month_median = table.Column<int>(nullable: true),
+                    six_month_median = table.Column<int>(nullable: true),
+                    twelve_month_median = table.Column<int>(nullable: true),
+                    lifetime_median = table.Column<int>(nullable: false),
+                    created_at = table.Column<DateTime>(nullable: false),
+                    updated_at = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_price_history", x => x.item_name);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "race",
                 columns: table => new
                 {
@@ -629,6 +647,9 @@ namespace TunnelQuest.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "item_slot");
+
+            migrationBuilder.DropTable(
+                name: "price_history");
 
             migrationBuilder.DropTable(
                 name: "spell_effect_detail");

@@ -27,6 +27,7 @@ namespace TunnelQuest.Data.Models
         public DbSet<Server> Servers { get; set; }
         public DbSet<ChatLine> ChatLines { get; set; }
         public DbSet<Auction> Auctions { get; set; }
+        public DbSet<PriceHistory> PriceHistories { get; set; }
         public DbSet<AuthToken> AuthTokens { get; set; }
         public DbSet<AuthTokenStatus> AuthTokenStatuses { get; set; }
         

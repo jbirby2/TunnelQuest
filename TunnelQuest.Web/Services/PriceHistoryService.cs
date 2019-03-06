@@ -38,6 +38,10 @@ namespace TunnelQuest.Web.Services
         public Task StopAsync(CancellationToken cancellationToken)
         {
             isRunning = false;
+
+            if (workerThread.ThreadState == ThreadState.Suspended)
+                workerThread.Abort();
+
             return Task.CompletedTask;
         }
 
@@ -51,31 +55,88 @@ namespace TunnelQuest.Web.Services
         {
             while (isRunning)
             {
-                using (var context = new TunnelQuestContext())
+                try
                 {
-                    var serverCodes = context.Servers.Select(server => server.ServerCode).ToArray();
-                    var auctionLogic = new AuctionLogic(context);
-
-                    foreach (var serverCode in serverCodes)
+                    using (var context = new TunnelQuestContext())
                     {
-                        var allItemNames = auctionLogic.GetAllItemNames(serverCode);
+                        var serverCodes = context.Servers.Select(server => server.ServerCode).ToArray();
+                        var auctionLogic = new AuctionLogic(context);
 
-                        foreach (var itemName in allItemNames)
+                        foreach (var serverCode in serverCodes)
                         {
-                            if (!isRunning)
-                                return;
+                            var allItemNames = auctionLogic.GetAllItemNames(serverCode, false, false);
 
-                            var itemAuctions = auctionLogic.GetAuctions(serverCode, false, itemName);
+                            foreach (var itemName in allItemNames)
+                            {
+                                if (!isRunning)
+                                    return;
 
-                            // STUB left off here to go implement a better way to pull most recent chat line in AuctionLogic.GetAuctions()
+                                try
+                                {
+                                    Auction[] itemAuctions = auctionLogic.GetAuctions(serverCode, itemName, false, false, null);
+                                    DateTime? oldestAuctionDate = itemAuctions.Max(auction => auction.CreatedAt);
+                                    
+                                    var priceHistory = context.PriceHistories.Where(pHistory => pHistory.ItemName.Equals(itemName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                                    if (priceHistory == null)
+                                    {
+                                        priceHistory = new PriceHistory();
+                                        priceHistory.ItemName = itemName;
+                                        priceHistory.CreatedAt = DateTime.UtcNow;
+                                        context.PriceHistories.Add(priceHistory);
+                                    }
 
-                            Thread.Sleep(sleepAfterEachItem);
+                                    // 1 month median
+                                    DateTime oneMonthAgo = DateTime.UtcNow.AddMonths(-1);
+                                    if (oldestAuctionDate <= oneMonthAgo)
+                                        priceHistory.OneMonthMedian = itemAuctions.Where(auction => auction.UpdatedAt >= oneMonthAgo).Median(auction => auction.Price.Value);
+                                    else
+                                        priceHistory.OneMonthMedian = null;
+
+                                    // 3 month median
+                                    DateTime threeMonthsAgo = DateTime.UtcNow.AddMonths(-3);
+                                    if (oldestAuctionDate <= threeMonthsAgo)
+                                        priceHistory.ThreeMonthMedian = itemAuctions.Where(auction => auction.UpdatedAt >= threeMonthsAgo).Median(auction => auction.Price.Value);
+                                    else
+                                        priceHistory.ThreeMonthMedian = null;
+
+                                    // 6 month median
+                                    DateTime sixMonthsAgo = DateTime.UtcNow.AddMonths(-6);
+                                    if (oldestAuctionDate <= sixMonthsAgo)
+                                        priceHistory.SixMonthMedian = itemAuctions.Where(auction => auction.UpdatedAt >= sixMonthsAgo).Median(auction => auction.Price.Value);
+                                    else
+                                        priceHistory.SixMonthMedian = null;
+
+                                    // 12 month median
+                                    DateTime twelveMonthsAgo = DateTime.UtcNow.AddMonths(-12);
+                                    if (oldestAuctionDate <= twelveMonthsAgo)
+                                        priceHistory.TwelveMonthMedian = itemAuctions.Where(auction => auction.UpdatedAt >= twelveMonthsAgo).Median(auction => auction.Price.Value);
+                                    else
+                                        priceHistory.TwelveMonthMedian = null;
+
+                                    // lifetime median
+                                    priceHistory.LifetimeMedian = itemAuctions.Median(auction => auction.Price.Value);
+
+                                    priceHistory.UpdatedAt = DateTime.UtcNow;
+                                    context.SaveChanges();
+                                }
+                                catch (Exception ex)
+                                {
+                                    // STUB log the error somewhere
+                                }
+
+                                Thread.Sleep(sleepAfterEachItem);
+                            }
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    // STUB log the error somewhere
                 }
 
                 Thread.Sleep(sleepAfterEachFullPass);
             }
         }
+
     }
 }

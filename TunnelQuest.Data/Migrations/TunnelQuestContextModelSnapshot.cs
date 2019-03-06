@@ -422,6 +422,38 @@ namespace TunnelQuest.Data.Migrations
                     b.ToTable("item_slot");
                 });
 
+            modelBuilder.Entity("TunnelQuest.Data.Models.PriceHistory", b =>
+                {
+                    b.Property<string>("ItemName")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("item_name");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("LifetimeMedian")
+                        .HasColumnName("lifetime_median");
+
+                    b.Property<int?>("OneMonthMedian")
+                        .HasColumnName("one_month_median");
+
+                    b.Property<int?>("SixMonthMedian")
+                        .HasColumnName("six_month_median");
+
+                    b.Property<int?>("ThreeMonthMedian")
+                        .HasColumnName("three_month_median");
+
+                    b.Property<int?>("TwelveMonthMedian")
+                        .HasColumnName("twelve_month_median");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("ItemName");
+
+                    b.ToTable("price_history");
+                });
+
             modelBuilder.Entity("TunnelQuest.Data.Models.Race", b =>
                 {
                     b.Property<string>("RaceCode")

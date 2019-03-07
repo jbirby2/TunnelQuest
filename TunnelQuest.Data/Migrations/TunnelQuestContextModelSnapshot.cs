@@ -140,6 +140,57 @@ namespace TunnelQuest.Data.Migrations
                     b.ToTable("chat_line");
                 });
 
+            modelBuilder.Entity("TunnelQuest.Data.Models.ChatLineToken", b =>
+                {
+                    b.Property<long>("ChatLineTokenId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("ChatLineId")
+                        .HasColumnName("chat_line_id");
+
+                    b.Property<string>("TokenTypeCode")
+                        .IsRequired()
+                        .HasColumnName("token_type_code");
+
+                    b.HasKey("ChatLineTokenId");
+
+                    b.HasIndex("ChatLineId");
+
+                    b.HasIndex("TokenTypeCode");
+
+                    b.ToTable("chat_line_token");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.ChatLineTokenProperty", b =>
+                {
+                    b.Property<long>("ChatLineTokenId")
+                        .HasColumnName("chat_line_token_id");
+
+                    b.Property<string>("Property")
+                        .HasColumnName("property");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnName("value");
+
+                    b.HasKey("ChatLineTokenId", "Property");
+
+                    b.HasIndex("ChatLineTokenId");
+
+                    b.ToTable("chat_line_token_property");
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.ChatLineTokenType", b =>
+                {
+                    b.Property<string>("TokenTypeCode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("token_type_code");
+
+                    b.HasKey("TokenTypeCode");
+
+                    b.ToTable("chat_line_token_type");
+                });
+
             modelBuilder.Entity("TunnelQuest.Data.Models.Class", b =>
                 {
                     b.Property<string>("ClassCode")
@@ -626,6 +677,27 @@ namespace TunnelQuest.Data.Migrations
                     b.HasOne("TunnelQuest.Data.Models.Server", "Server")
                         .WithMany()
                         .HasForeignKey("ServerCode")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.ChatLineToken", b =>
+                {
+                    b.HasOne("TunnelQuest.Data.Models.ChatLine", "ChatLine")
+                        .WithMany("Tokens")
+                        .HasForeignKey("ChatLineId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TunnelQuest.Data.Models.ChatLineTokenType", "TokenType")
+                        .WithMany()
+                        .HasForeignKey("TokenTypeCode")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TunnelQuest.Data.Models.ChatLineTokenProperty", b =>
+                {
+                    b.HasOne("TunnelQuest.Data.Models.ChatLineToken", "ChatLineToken")
+                        .WithMany("Properties")
+                        .HasForeignKey("ChatLineTokenId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

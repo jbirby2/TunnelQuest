@@ -6,9 +6,10 @@ namespace TunnelQuest.AppLogic.ChatSegments
 {
     internal class TextSegment
     {
+        public bool IsTokenized { get; set; }
         public bool HasPrecedingSpace { get; private set; }
         public ParsedChatLine ParentLine { get; private set; }
-        public virtual string Text { get; protected set; }
+        public string Text { get; protected set; }
 
         public TextSegment (ParsedChatLine parentLine, string text, bool hasPrecedingSpace)
         {

@@ -1,17 +1,35 @@
 ﻿<style>
-    .tqPriceDeviation {
-        color: red; /* stub */
+    .tqPriceDeviationGood {
+        color: #00a819;
+    }
+    .tqPriceDeviationEqual {
+        color: #cec400;
+    }
+    .tqPriceDeviationBad {
+        color: #ff0000;
     }
 </style>
 
 <template>
-    <span class="tqPriceDeviation">
-        PriceDeviationView({{itemName}},{{price}},{{isBuying}})
+    <span v-if="itemName && price && medianPrice" class="tqPriceDeviation">
+        <span v-if="price == medianPrice" class="tqPriceDeviationEqual">
+            =
+        </span>
+        <span v-else-if="price < medianPrice" :class="isBuying ? 'tqPriceDeviationBad' : 'tqPriceDeviationGood'">
+            &#9660;{{medianPriceDifference}}
+        </span>
+        <span v-else :class="isBuying ? 'tqPriceDeviationGood' : 'tqPriceDeviationBad'">
+            &#9650;{{medianPriceDifference}}
+        </span>
     </span>
 </template>
 
 <script lang="ts">
     import Vue from "vue";
+
+    import TQGlobals from '../classes/TQGlobals';
+    import PriceHistory from "../interfaces/PriceHistory";
+
 
     export default Vue.extend({
 
@@ -32,8 +50,32 @@
 
         data: function () {
             return {
-                //isDebugMode: false // stub
+                priceHistory: null as PriceHistory | null
             };
+        },
+
+        mounted: function () {
+            this.priceHistory = TQGlobals.priceHistories.get(this.itemName, false);
+        },
+
+        computed: {
+            medianPrice: function () {
+                if (this.priceHistory) {
+                    if (this.priceHistory.threeMonthMedian)
+                        return this.priceHistory.threeMonthMedian;
+                    else
+                        return this.priceHistory.lifetimeMedian;
+                }
+                else
+                    return null;
+            },
+
+            medianPriceDifference: function () {
+                if (this.medianPrice)
+                    return Math.abs(this.price - this.medianPrice);
+                else
+                    return null;
+            }
         },
 
 

@@ -90,6 +90,35 @@ export default mixins(TqPage).extend({
 
     methods: {
 
+        onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
+            
+            if (newContent.lines) {
+                for (let chatLineId in newContent.lines) {
+                    let chatLine = newContent.lines[chatLineId];
+
+                    for (let token of chatLine.tokens) {
+                        if (token.type == "ITEM") {
+                            TQGlobals.priceHistories.get(token.properties["itemName"], false);
+                        }
+                    }
+                }
+            }
+            if (newContent.auctions) {
+                for (let auctionId in newContent.auctions) {
+                    let auction = newContent.auctions[auctionId];
+                    TQGlobals.priceHistories.get(auction.itemName, false);
+                }
+            }
+
+            // fetch all price histories at once
+            TQGlobals.priceHistories.fetchPendingPriceHistories();
+
+            // STUB - filtering logic goes here
+
+            // pass along to child classes
+            this.onFilteredContent(newContent, enforceMaxSize);
+        },
+
         onNewLiveContent: function (newContent: LinesAndAuctions) {
             this.onNewContent(newContent, true);
         },
@@ -151,7 +180,7 @@ export default mixins(TqPage).extend({
             // overridden by extending components
         },
 
-        onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
+        onFilteredContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
             // overridden by extending components
         },
 

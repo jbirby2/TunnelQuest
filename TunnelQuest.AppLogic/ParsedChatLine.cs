@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using TunnelQuest.Data.Models;
 using TunnelQuest.AppLogic.ChatSegments;
+using TunnelQuest.Data;
 
 namespace TunnelQuest.AppLogic
 {
@@ -44,12 +45,14 @@ namespace TunnelQuest.AppLogic
         public string PlayerTypedText { get; private set; }
         public List<TextSegment> Segments { get; private set; }
         public Dictionary<string, Auction> Auctions { get; private set; }
+        public List<ChatLineToken> Tokens { get; private set; }
 
 
         public ParsedChatLine(string playerTypedText, TunnelQuestContext context, DateTime timestamp)
         {
             this.Segments = new List<TextSegment>();
             this.Auctions = new Dictionary<string, Auction>();
+            this.Tokens = new List<ChatLineToken>();
 
             this.PlayerTypedText = playerTypedText;
 
@@ -69,7 +72,7 @@ namespace TunnelQuest.AppLogic
                 var segment = this.Segments[i];
                 if (segment.GetType() == typeof(TextSegment))
                 {
-                    if (segment.Text.Contains(ChatLogic.OUTER_CHAT_TOKEN) || segment.Text.Contains(ChatLogic.INNER_CHAT_TOKEN))
+                    if (segment.Text.Contains(ChatLogic.CHAT_TOKEN))
                     {
                         // in case anybody tries to be mischevious and actually type the token string into chat
                         this.Segments[i] = new TextSegment(this, "clever girl", segment.HasPrecedingSpace);
@@ -170,8 +173,28 @@ namespace TunnelQuest.AppLogic
 
                     lastItemNameIndex++;
                     itemSegmentIndexes.Add(itemNameSegment, lastItemNameIndex);
-
                     itemsSinceLastSeparator.Add(itemNameSegment);
+
+                    itemNameSegment.IsTokenized = true;
+                    var itemToken = new ChatLineToken()
+                    {
+                        TokenTypeCode = ChatLineTokenTypeCodes.Item
+                    };
+                    itemToken.Properties.Add(new ChatLineTokenProperty()
+                    {
+                        ChatLineTokenId = itemToken.ChatLineTokenId,
+                        ChatLineToken = itemToken,
+                        Property = "isKnown",
+                        Value = itemNameSegment.IsKnownItem ? "1" : "0"
+                    });
+                    itemToken.Properties.Add(new ChatLineTokenProperty()
+                    {
+                        ChatLineTokenId = itemToken.ChatLineTokenId,
+                        ChatLineToken = itemToken,
+                        Property = "itemName",
+                        Value = itemNameSegment.ItemName
+                    });
+                    this.Tokens.Add(itemToken);
 
                     Auction auction;
                     if (!this.Auctions.ContainsKey(itemNameSegment.Text))
@@ -207,6 +230,8 @@ namespace TunnelQuest.AppLogic
                 {
                     var priceSegment = (PriceSegment)segment;
 
+                    var itemSegmentIndexesWithThisPrice = new List<int>();
+                    bool isBuying = false;
                     foreach (var itemNameSegment in itemsSinceLastSeparator)
                     {
                         var auction = this.Auctions[itemNameSegment.Text];
@@ -215,10 +240,52 @@ namespace TunnelQuest.AppLogic
                         {
                             auction.Price = priceSegment.Price;
 
-                            // update the priceSegment too, for later when it builds its chat token
-                            priceSegment.UsedByItemIndexes.Add(itemSegmentIndexes[itemNameSegment]);
-                            priceSegment.IsBuying = auction.IsBuying;
+                            priceSegment.IsTokenized = true;
+                            itemSegmentIndexesWithThisPrice.Add(itemSegmentIndexes[itemNameSegment]);
+                            isBuying = auction.IsBuying;
                         }
+                    }
+
+                    if (priceSegment.IsTokenized)
+                    {
+                        var priceToken = new ChatLineToken()
+                        {
+                            TokenTypeCode = ChatLineTokenTypeCodes.Price
+                        };
+
+                        priceToken.Properties.Add(new ChatLineTokenProperty()
+                        {
+                            ChatLineTokenId = priceToken.ChatLineTokenId,
+                            ChatLineToken = priceToken,
+                            Property = "isBuying",
+                            Value = isBuying ? "1" : "0"
+                        });
+
+                        priceToken.Properties.Add(new ChatLineTokenProperty()
+                        {
+                            ChatLineTokenId = priceToken.ChatLineTokenId,
+                            ChatLineToken = priceToken,
+                            Property = "price",
+                            Value = priceSegment.Price.ToString()
+                        });
+
+                        priceToken.Properties.Add(new ChatLineTokenProperty()
+                        {
+                            ChatLineTokenId = priceToken.ChatLineTokenId,
+                            ChatLineToken = priceToken,
+                            Property = "items",
+                            Value = String.Join(',', itemSegmentIndexesWithThisPrice)
+                        });
+
+                        priceToken.Properties.Add(new ChatLineTokenProperty()
+                        {
+                            ChatLineTokenId = priceToken.ChatLineTokenId,
+                            ChatLineToken = priceToken,
+                            Property = "text",
+                            Value = priceSegment.Text
+                        });
+
+                        this.Tokens.Add(priceToken);
                     }
                 }
                 else if (segment is OrBestOfferSegment)
@@ -246,7 +313,11 @@ namespace TunnelQuest.AppLogic
             {
                 if (segment.HasPrecedingSpace)
                     str += ' ';
-                str += segment.Text;
+
+                if (segment.IsTokenized)
+                    str += ChatLogic.CHAT_TOKEN;
+                else
+                    str += segment.Text;
             }
             return str;
         }

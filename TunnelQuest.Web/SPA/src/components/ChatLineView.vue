@@ -126,9 +126,10 @@
                 let indexedItemNames = new Array<string>(); // used when adding PriceDeviationComponents
                 let unparsedText = this.chatLine.text;
                 let textSoFar = ""
+                let nextTokenIndex = 0;
                 while (unparsedText.length > 0) {
 
-                    if (unparsedText.substring(0, TQGlobals.settings.outerChatToken.length) === TQGlobals.settings.outerChatToken) {
+                    if (unparsedText.substring(0, TQGlobals.settings.chatToken.length) === TQGlobals.settings.chatToken) {
                         // the next word is a special data token
 
                         // create a text span for the player-typed words we've found up to this point in the loop
@@ -137,16 +138,14 @@
                         textSpan.appendChild(playerTextSpan);
                         textSoFar = ""; // reset textSoFar for the next iteration after the token
 
-                        // parse the token
-                        let endTokenIndex = unparsedText.indexOf(TQGlobals.settings.outerChatToken, TQGlobals.settings.outerChatToken.length);
-                        let tokenString = unparsedText.substring(TQGlobals.settings.outerChatToken.length, endTokenIndex);
-                        let tokenParts = tokenString.split(TQGlobals.settings.innerChatToken);
+                        let token = this.chatLine.tokens[nextTokenIndex];
+                        nextTokenIndex++;
 
-                        if (tokenParts[0] == "item") {
+                        if (token.type == "ITEM") {
                             // item name token
 
-                            let isKnownItem = (tokenParts[1] == "1");
-                            let itemName = tokenParts[2].replace(/_/g, " ");
+                            let isKnownItem = (token.properties["isKnown"] == "1");
+                            let itemName = token.properties["itemName"];
                             let urlEncodedItemName = encodeURIComponent(itemName);
 
                             indexedItemNames.push(itemName);
@@ -177,13 +176,13 @@
                             }
 
                         }
-                        else if (tokenParts[0] == "price") {
+                        else if (token.type == "PRICE") {
                             // price token
 
-                            let isBuying = (tokenParts[1] == "1");
-                            let price = parseInt(tokenParts[2]);
-                            let itemIndexes = tokenParts[3].split(',');
-                            let playerTypedPriceText = tokenParts[4];
+                            let isBuying = (token.properties["isBuying"] == "1");
+                            let price = parseInt(token.properties["price"]);
+                            let itemIndexes = token.properties["items"].split(',');
+                            let playerTypedPriceText = token.properties["text"];
 
                             // render the text that the player actually typed in chat
                             let priceElem = document.createElement("span") as HTMLSpanElement;
@@ -192,11 +191,12 @@
 
                             // now create a PriceDeviationView for each item associated with this price
                             for (let itemNameIndexString of itemIndexes) {
+                                let itemName = indexedItemNames[parseInt(itemNameIndexString)];
                                 let priceDeviationElem = document.createElement("span") as HTMLSpanElement;
                                 textSpan.appendChild(priceDeviationElem);
                                 let priceDeviationView = new PriceDeviationView({
                                     propsData: {
-                                        itemName: indexedItemNames[parseInt(itemNameIndexString)],
+                                        itemName: itemName,
                                         price: price,
                                         isBuying: isBuying
                                     }
@@ -206,11 +206,11 @@
                         }
                         else {
                             // unrecognized token
-                            throw new Error("Unrecognized chat token: " + tokenString);
+                            throw new Error("Unrecognized chat token type: " + token.type);
                         }
 
                         // update unparsedText
-                        let nextIndex = endTokenIndex + TQGlobals.settings.outerChatToken.length;
+                        let nextIndex = TQGlobals.settings.chatToken.length;
                         if (nextIndex < unparsedText.length)
                             unparsedText = unparsedText.substring(nextIndex);
                         else

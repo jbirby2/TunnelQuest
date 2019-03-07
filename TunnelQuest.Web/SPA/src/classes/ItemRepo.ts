@@ -123,7 +123,7 @@ class ItemRepo {
         // stub
         console.log("ItemRepo.fetchPendingItems()");
         
-        axios.post('/api/items', { itemNames: this.pendingItemNames })
+        axios.post('/api/items', { itemNames: this.pendingItemNames.splice(0) }) // splice clears the array here
             .then(response => {
                 let result = response.data as Array<Item>;
 
@@ -131,11 +131,6 @@ class ItemRepo {
                 console.log(result);
 
                 for (var item of result) {
-
-                    // remove the itemName from pendingItemNames
-                    if (this.pendingItemNames.indexOf(item.itemName) >= 0)
-                        this.pendingItemNames.splice(this.pendingItemNames.indexOf(item.itemName), 1);
-
                     // update the blank .items[] object with the actual data
                     let blankItem = this.items[item.itemName];
 

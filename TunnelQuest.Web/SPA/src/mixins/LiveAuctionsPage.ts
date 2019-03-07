@@ -150,7 +150,7 @@ export default mixins(LivePage).extend({
         },
 
         // inherited from LivePage
-        onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
+        onFilteredContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
             // stub
             console.log("LiveAuctionsPage.onNewContent():");
             console.log(newContent);

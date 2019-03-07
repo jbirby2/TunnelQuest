@@ -107,6 +107,7 @@
 		* also after reconnect
 	** ALSO refactor so that the controller reuses the ClientChatLine and ClientAuction objects as much as possible
 
+- cache static copy of all Item and Spell data (and all static data for that matter) since none of it will ever change; no reason to query over and over
 
 - create item_alias table to manually associate common player-typed unknown item names with known item names (i.e. "jboots mq" might be an alias for "Journeyman's Boots" strong name)
 	- Alias (PK because logically it can only be an alias for ONE thing)

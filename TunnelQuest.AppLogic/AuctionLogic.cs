@@ -36,6 +36,8 @@ namespace TunnelQuest.AppLogic
         {
             var auctionQuery = context.Auctions
                 .Include(auction => auction.MostRecentChatLine)
+                    .ThenInclude(chatLine => chatLine.Tokens)
+                        .ThenInclude(chatLineToken => chatLineToken.Properties)
                 .Where(auction => auction.MostRecentChatLine.ServerCode == serverCode);
 
             if (!includeBuying)
@@ -79,6 +81,8 @@ namespace TunnelQuest.AppLogic
         {
             var auctionQuery = context.Auctions
                 .Include(auction => auction.MostRecentChatLine)
+                    .ThenInclude(chatLine => chatLine.Tokens)
+                            .ThenInclude(chatLineToken => chatLineToken.Properties)
                 .Where(auction => auction.MostRecentChatLine.ServerCode == serverCode);
                 
             if (minUpdatedAt != null)

@@ -15,6 +15,7 @@ namespace TunnelQuest.Data.Migrations
         {
             using (var context = new TunnelQuestContext())
             {
+                insertChatLineTokenTypes(context);
                 insertServers(context);
                 insertAuthTokenStatuses(context);
                 insertAuthTokens(context);
@@ -34,6 +35,7 @@ namespace TunnelQuest.Data.Migrations
         {
             using (var context = new TunnelQuestContext())
             {
+                deleteChatLineTokenTypes(context);
                 deleteServers(context);
                 deleteAuthTokens(context);
                 deleteAuthTokenStatuses(context);
@@ -51,6 +53,30 @@ namespace TunnelQuest.Data.Migrations
 
 
         // private helpers
+
+        #region chatLineTokenType
+        private void insertChatLineTokenTypes(TunnelQuestContext context)
+        {
+            context.AddRange(getChatLineTokenTypes());
+        }
+
+        private void deleteChatLineTokenTypes(TunnelQuestContext context)
+        {
+            context.RemoveRange(getChatLineTokenTypes());
+        }
+
+        private IEnumerable<ChatLineTokenType> getChatLineTokenTypes()
+        {
+            return new ChatLineTokenType[] {
+                new ChatLineTokenType() {
+                    TokenTypeCode = ChatLineTokenTypeCodes.Item
+                },
+                new ChatLineTokenType() {
+                    TokenTypeCode = ChatLineTokenTypeCodes.Price
+                },
+            };
+        }
+        #endregion
 
         #region server
         private void insertServers(TunnelQuestContext context)

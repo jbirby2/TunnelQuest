@@ -120,7 +120,7 @@
             },
 
             // inherited from LivePage
-            onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
+            onFilteredContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
                 // stub
                 console.log("ChatPage.onNewContent():");
                 console.log(newContent);

@@ -37,5 +37,12 @@ namespace TunnelQuest.AppLogic
                 .ToArray();
         }
 
+        public PriceHistory[] GetPriceHistory(string[] itemNames)
+        {
+            return context.PriceHistories
+                .Where(priceHistory => itemNames.Contains(priceHistory.ItemName))
+                .OrderBy(priceHistory => priceHistory.ItemName)
+                .ToArray();
+        }
     }
 }

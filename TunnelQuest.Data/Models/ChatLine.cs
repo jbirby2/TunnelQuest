@@ -35,5 +35,7 @@ namespace TunnelQuest.Data.Models
 
         [Column("sent_at")]
         public DateTime SentAt { get; set; }
+
+        public ICollection<ChatLineToken> Tokens { get; set; } = new List<ChatLineToken>();
     }
 }

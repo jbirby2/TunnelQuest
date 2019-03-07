@@ -45,8 +45,8 @@ class SpellRepo {
 
         // stub
         console.log("SpellRepo.fetchPendingSpells()");
-        
-        axios.post('/api/spells', { spellNames: this.pendingSpellNames })
+
+        axios.post('/api/spells', { spellNames: this.pendingSpellNames.splice(0) }) // splice clears the array here
             .then(response => {
                 let result = response.data as Array<Spell>;
 
@@ -54,11 +54,6 @@ class SpellRepo {
                 console.log(result);
 
                 for (var spell of result) {
-
-                    // remove the spellName from pendingSpellNames
-                    if (this.pendingSpellNames.indexOf(spell.spellName) >= 0)
-                        this.pendingSpellNames.splice(this.pendingSpellNames.indexOf(spell.spellName), 1);
-
                     // update the blank .spells[] object with the actual data
                     let blankSpell = this.spells[spell.spellName];
 

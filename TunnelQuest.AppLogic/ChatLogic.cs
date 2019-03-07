@@ -12,8 +12,7 @@ namespace TunnelQuest.AppLogic
 {
     public class ChatLogic
     {
-        public const string OUTER_CHAT_TOKEN = "#TQO#";
-        public const string INNER_CHAT_TOKEN = "#TQI#";
+        public const string CHAT_TOKEN = "#TQT#";
         public const int MAX_CHAT_LINES = 100;
 
         // static stuff
@@ -37,6 +36,8 @@ namespace TunnelQuest.AppLogic
         public ChatLine[] GetLines(string serverCode, long? minId = null, long? maxId = null, int? maxResults = null)
         {
             var query = context.ChatLines
+                .Include(chatLine => chatLine.Tokens)
+                    .ThenInclude(chatLineToken => chatLineToken.Properties)
                 .Where(line => line.ServerCode == serverCode);
 
             if (minId != null)
@@ -124,19 +125,31 @@ namespace TunnelQuest.AppLogic
 
                     parsedLine = cachedLine.ParsedLine;
 
-                    // create new Auction objects instead of reusing the Auction objects that were previously saved to database,
+                    // create new database objects instead of reusing the objects that were previously saved to database,
                     // just to be sure there's no unexpected entity framework behavior
                     foreach (string itemName in parsedLine.Auctions.Keys.ToArray())
                     {
                         parsedLine.Auctions[itemName] = new Auction(parsedLine.Auctions[itemName], newChatLine.SentAt);
                     }
+                    for (int i = 0; i < parsedLine.Tokens.Count; i++)
+                    {
+                        parsedLine.Tokens[i] = new ChatLineToken(parsedLine.Tokens[i]);
+                    }
+                }
+
+                // attach the parsed tokens to the ChatLine object
+                foreach (var token in parsedLine.Tokens)
+                {
+                    token.ChatLineId = newChatLine.ChatLineId;
+                    token.ChatLine = newChatLine;
+                    newChatLine.Tokens.Add(token);
                 }
 
                 // apply AuctionLogic
                 var auctionLogic = new AuctionLogic(context);
                 var normalizedAuctions = auctionLogic.GetNormalizedAuctions(serverCode, playerName, newChatLine.SentAt, parsedLine.Auctions);
 
-                // update MostRecentChatLineId
+                // update auctions' MostRecentChatLineId
                 foreach (var auction in normalizedAuctions.Values)
                 {
                     auction.MostRecentChatLine = newChatLine;

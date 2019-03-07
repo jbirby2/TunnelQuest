@@ -1,7 +1,6 @@
 ﻿
 interface Settings {
-    outerChatToken: string,
-    innerChatToken: string,
+    chatToken: string,
     maxChatLines: number,
     maxAuctions: number,
     classes: { [classCode: string]: string }

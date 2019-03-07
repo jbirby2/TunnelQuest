@@ -4,6 +4,7 @@ import Settings from "../interfaces/Settings";
 
 import ItemRepo from "../classes/ItemRepo";
 import SpellRepo from "../classes/SpellRepo";
+import PriceHistoryRepo from "../classes/PriceHistoryRepo";
 
 class TQGlobals {
 
@@ -13,6 +14,7 @@ class TQGlobals {
     static settings: Settings;
     static items: ItemRepo;
     static spells: SpellRepo;
+    static priceHistories: PriceHistoryRepo;
 
     static init(callback: Function) {
 
@@ -32,6 +34,7 @@ class TQGlobals {
                         this.settings = response.data as Settings;
                         this.spells = new SpellRepo();
                         this.items = new ItemRepo(this.spells);
+                        this.priceHistories = new PriceHistoryRepo();
 
                         this.isInitializing = false;
 

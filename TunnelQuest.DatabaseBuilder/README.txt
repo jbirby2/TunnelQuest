@@ -1,10 +1,10 @@
 ﻿
 I use TunnelQuest.DatabaseBuilder for two different purposes:
 
-1.	I use TunnelQuest.DatabaseBuilder as my StartupProject instead of TunnelQuest.Web when I run commands in
-	Entity Framework tools, because that way I can run EF tools as a different MySQL user than TunnelQuest.Web.
-	This is better practice because it means I only have to grant MySQL admin permissions to the TunnelQuestDatabaseBuilder
-	user, and I can leave the TunnelQuestWeb user running with only data-reader permissions.
+1.	When I run commands in Entity Framework tools, I use TunnelQuest.DatabaseBuilder as my StartupProject instead 
+	of TunnelQuest.Web because then I can run EF tools as a different MySQL user than the website (since they have 
+	different config files with different connection strings). This way, the website runs with minimal MySQL permissions, 
+	in case of a catastrophic bug or security breach.
 
 	For example:
 		Add-Migration -Name whatever -Project TunnelQuest.Data -StartupProject TunnelQuest.DatabaseBuilder

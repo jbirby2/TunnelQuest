@@ -41,23 +41,6 @@
 
 - test to make sure people can't mess up the page by typing a really long string or something
 
-- SettingsPage
-	- "Auto load last viewed live page? yes/no"
-		* display the UI for this setting at the top of main page
-
-	- "Item Filters"
-		* there's no way to filter hub transmissions on an individual connection level, so unfortunately the filtering logic will
-		  HAVE TO BE CODED SEPARATELY IN BOTH CLIENT AND SERVER.
-			- server to filter the api call results; otherwise a client could get stuck if a call ever returns a max results set with no matching items (also hugely wasteful)
-			- client to filter the live feed content (unfortunately no way to prevent the waste here since can't filter an individual connection's content on server)
-		- applies to both auction pages AND chat page
-			* either way (except for newspaper mode), item filters (except for name) means they have to pull all item data.  it is what it is.
-
-		- on filter changed (debounced), pull whole new set of lines
-		- on scroll down / reconnect, use current filter in query
-			* see https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-2.2
-		- on new hub lines, only save them if they match the filter; otherwise discard them completely
-
 - build in client-side check to remember the last downward scroll params, and not to repeat the same downward scroll query twice in a row
 
 - alternating background colors on auction page, and color the text different for wtb maybe?  point is, alternating background colors
@@ -66,30 +49,6 @@
 	- make sure no auction is ever created for whitespace
 	
 - spend the time to make the "<<" top menu buttons do a javascript:back() when appropriate
-
-- price_history table
-	- columns:
-		- string ItemName (PK)
-			* can also be hand-typed items not found it items table, so no FK
-		- int one_month_median (nullable)
-		- int three_month_median (nullable)
-		- int six_month_median (nullable)
-		- int twelve_month_median (nullable)
-		- int lifetime_median (NOT nullable)
-		- datetime created_at
-		- datetime updated_at
-
-	- populated once-a-day per item by background worker
-		- make sure it filters isBuying = 0
-		- if it doesn't have data going far back enough for a particular column, set it null so the UI knows not to even display it,
-		  cuz it'll look janky to display all those rows with only a few weeks of actual data.
-			- but lifetime will ALWAYS get updated and displayed, at the very least
-		
-	- on ItemPage:
-		- list the median prices as tabs across the top of the image
-		- move the scroll behavior and callbacks into BasePage so that ItemPage can have infinite scrolling but NOT a live connection
-		- start by pulling small amount of recent auctions and let them scroll down from there
-			* need to add new optional date args to Auctions query
 
 - timestamp not positioned all the way to right in newspaper auctions
 
@@ -127,3 +86,36 @@
 	?? maybe other api endpoints that need to automatically return data for the parent alias??
 
 	** with the setup above, I don't **think** there's any reason for the javascript code to be aware of aliases at all
+
+
+- show price history on item page
+
+- make item page scroll infinitely to show past auctions
+
+- make PriceService's worker thread a LowPriority thread
+
+- for pc users, hover over PriceDeviationViews to see full info; hover over item names to see item view
+
+- SettingsPage
+	- "Item Filters"
+		* there's no way to filter hub transmissions on an individual connection level, so unfortunately the filtering logic will
+		  HAVE TO BE CODED SEPARATELY IN BOTH CLIENT AND SERVER.
+			- server to filter the api call results; otherwise a client could get stuck if a call ever returns a max results set with no matching items (also hugely wasteful)
+			- client to filter the live feed content (unfortunately no way to prevent the waste here since can't filter an individual connection's content on server)
+
+			!! FILTER IDEA: 
+
+				- basically wrap every AuctionView and ChatLineView in a v-if="passesFilter(item|auction)", that way vue will automatically
+				  handle the unhiding after all the data comes in from ajax
+					* this way we can also filter on metadata, i.e. only show lines|auctions with a good value above 100
+
+				- will need to make sure there the entire global filter object structure exists in its entirety before anything is mounted,
+				  just like how vue won't update if you don't have all the properties on the blank items and spells before the mount
+
+		- applies to both auction pages AND chat page
+			* either way (except for newspaper mode), item filters (except for name) means they have to pull all item data.  it is what it is.
+
+		- on filter changed (debounced), pull whole new set of lines
+		- on scroll down / reconnect, use current filter in query
+			* see https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-2.2
+		- on new hub lines, only save them if they match the filter; otherwise discard them completely

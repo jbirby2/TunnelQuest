@@ -46,9 +46,13 @@
     }
 
     .tqAuctionHouseAuctionPrice {
-        padding-right: 5px;
+        text-align: right !important;
     }
 
+    .tqAuctionHouseAuctionPriceDeviation {
+        text-align: center !important;
+        padding-right: 5px;
+    }
 
     @media screen and (min-width: 952px) {
         /* start of desktop styles */
@@ -100,8 +104,12 @@
             <a :class="auction.isKnownItem ? 'tqAuctionHouseAuctionKnownItemLink' : 'tqAuctionHouseAuctionUnknownItemLink'" :href="'/item/' + this.urlEncodedItemName" @click="onItemNameClick">{{auction.itemName}}</a>
         </span>
 
-        <span>
-            <span v-if="this.auction.price != null" class="tqAuctionHouseAuctionPrice">{{ formattedPrice }}pp</span>
+        <span class="tqAuctionHouseAuctionPrice">
+            <span v-if="this.auction.price != null">{{ formattedPrice }}</span>
+        </span>
+
+        <span class="tqAuctionHouseAuctionPriceDeviation">
+            <price-deviation-view v-if="this.auction.price != null" :itemName="auction.itemName" :price="auction.price" :isBuying="auction.isBuying"></price-deviation-view>
         </span>
     </span>
 </template>
@@ -116,6 +124,7 @@
 
     import IfDebug from "./IfDebug.vue";
     import TimeStamp from "./TimeStamp.vue";
+    import PriceDeviationView from "./PriceDeviationView.vue";
 
 
     export default Vue.extend({
@@ -157,7 +166,8 @@
 
         components: {
             IfDebug,
-            TimeStamp
+            TimeStamp,
+            PriceDeviationView
         }
     });
 </script>

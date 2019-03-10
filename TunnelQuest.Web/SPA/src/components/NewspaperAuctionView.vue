@@ -30,18 +30,26 @@
     }
 
     .tqNewspaperAuctionHeader {
+        display: table-row;
         padding: 0 5px 0 5px;
         display: flex;
         justify-content: space-between;
         font-style: italic;
     }
 
+    .tqNewspaperAuctionHeader > span {
+        display: table-cell;
+    }
+
     .tqNewspaperAuctionPriceHeader {
+        white-space: nowrap;
     }
 
     .tqNewspaperAuctionTimeStamp {
         font-style: italic;
         white-space: nowrap;
+        width: 100%;
+        text-align: right;
     }
 
     .tqNewspaperAuctionChatLine {
@@ -101,7 +109,8 @@
                     {{ auction.isBuying ? "is buying" : "is selling" }}
                 </span>
                 <span v-if="auction.price != null">
-                    for {{ formattedPrice }}
+                    <span>for {{ formattedPrice }}</span>
+                    <price-deviation-view :itemName="auction.itemName" :price="auction.price" :isBuying="auction.isBuying"></price-deviation-view>
                 </span>
             </span>
 
@@ -132,6 +141,7 @@
     import TimeStamp from "./TimeStamp.vue";
     import ItemView from "./ItemView.vue";
     import ChatLineView from "./ChatLineView.vue";
+    import PriceDeviationView from "./PriceDeviationView.vue";
 
 
     export default Vue.extend({
@@ -164,7 +174,8 @@
             IfDebug,
             TimeStamp,
             ItemView,
-            ChatLineView
+            ChatLineView,
+            PriceDeviationView
         }
     });
 </script>

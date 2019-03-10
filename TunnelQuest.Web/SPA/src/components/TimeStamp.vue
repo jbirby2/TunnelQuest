@@ -1,6 +1,6 @@
 ﻿<template>
     <span :class="cssClass">
-        <span style="vertical-align:middle;">{{text}}</span>
+        <span>{{text}}</span>
     </span>
 </template>
 

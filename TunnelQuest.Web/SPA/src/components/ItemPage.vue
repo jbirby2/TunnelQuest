@@ -17,6 +17,7 @@
     <div class="tqItemPage">
         <site-header></site-header>
         <item-view v-if="item != null && item.isFetched" :item="item"></item-view>
+        <price-history-view :itemName="$route.params.itemName"></price-history-view>
     </div>
 </template>
 
@@ -27,6 +28,7 @@
 
     import SiteHeader from "./SiteHeader.vue";
     import ItemView from "./ItemView.vue";
+    import PriceHistoryView from "./PriceHistoryView.vue";
 
     import TQGlobals from "../classes/TQGlobals";
 
@@ -54,7 +56,8 @@
 
         components: {
             SiteHeader,
-            ItemView
+            ItemView,
+            PriceHistoryView
         },
     });
 </script>

@@ -50,8 +50,6 @@
 	
 - spend the time to make the "<<" top menu buttons do a javascript:back() when appropriate
 
-- timestamp not positioned all the way to right in newspaper auctions
-
 - create new migration for initial eq log files
 	- actually use timestamp for these
 
@@ -88,7 +86,6 @@
 	** with the setup above, I don't **think** there's any reason for the javascript code to be aware of aliases at all
 
 
-- show price history on item page
 
 - make item page scroll infinitely to show past auctions
 

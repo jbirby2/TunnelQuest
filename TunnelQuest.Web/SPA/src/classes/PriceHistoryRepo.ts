@@ -46,14 +46,14 @@ class PriceHistoryRepo {
             return;
 
         // stub
-        //console.log("PriceHistoryRepo.fetchPendingPriceHistories()");
+        console.log("PriceHistoryRepo.fetchPendingPriceHistories()");
         
         axios.post('/api/price_history', { itemNames: this.pendingItemNames.splice(0) }) // splice clears the array here
             .then(response => {
                 let result = response.data as Array<PriceHistory>;
 
                 // stub
-                //console.log(result);
+                console.log(result);
 
                 for (var priceHistory of result) {
                     // update the blank .priceHistories[] object with the actual data

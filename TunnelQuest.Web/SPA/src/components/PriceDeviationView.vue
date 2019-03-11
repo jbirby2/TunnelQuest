@@ -11,7 +11,7 @@
 </style>
 
 <template>
-    <span v-if="itemName && price && medianPrice" class="tqPriceDeviation">
+    <span v-if="itemName && price && medianPrice && priceHistory && priceHistory.isFetched" class="tqPriceDeviation">
         <span v-if="price == medianPrice" class="tqPriceDeviationEqual">
             =
         </span>

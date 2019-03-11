@@ -33,8 +33,9 @@ namespace TunnelQuest.Web.Models.Api
 
             foreach (var auction in auctions)
             {
-                this.Auctions[auction.AuctionId] = new ClientAuction(auction, auction.MostRecentChatLine.ChatLineId);
-                this.Lines[auction.MostRecentChatLine.ChatLineId] = new ClientChatLine(auction.MostRecentChatLine);
+                this.Auctions[auction.AuctionId] = new ClientAuction(auction);
+                if (auction.MostRecentChatLine != null)
+                    this.Lines[auction.MostRecentChatLine.ChatLineId] = new ClientChatLine(auction.MostRecentChatLine);
             }
         }
     }

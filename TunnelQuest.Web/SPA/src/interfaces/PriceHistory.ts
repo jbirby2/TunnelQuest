@@ -6,7 +6,10 @@ interface PriceHistory {
     sixMonthMedian: number | null,
     twelveMonthMedian: number | null,
     lifetimeMedian: number | null,
-    updatedAtString: string
+    updatedAtString: string,
+
+    // filled in by client code
+    isFetched: boolean
 }
 
 export default PriceHistory;

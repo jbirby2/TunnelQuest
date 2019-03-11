@@ -86,7 +86,7 @@
 </style>
 
 <template>
-    <span :class="'tqAuctionHouseAuctionView ' + backgroundCssClass">
+    <div :class="'tqAuctionHouseAuctionView ' + backgroundCssClass">
         <if-debug>
             <span class="tqAuctionHouseAuctionId">
                 [A{{auction.id}}]
@@ -111,14 +111,13 @@
         <span class="tqAuctionHouseAuctionPriceDeviation">
             <price-deviation-view v-if="this.auction.price != null" :itemName="auction.itemName" :price="auction.price" :isBuying="auction.isBuying"></price-deviation-view>
         </span>
-    </span>
+    </div>
 </template>
 
 <script lang="ts">
     import Vue from "vue";
 
     import Auction from "../interfaces/Auction";
-    import ChatLine from "../interfaces/ChatLine";
 
     import TQGlobals from '../classes/TQGlobals';
 
@@ -132,10 +131,6 @@
         props: {
             auction: {
                 type: Object as () => Auction,
-                required: true
-            },
-            chatLine: {
-                type: Object as () => ChatLine,
                 required: true
             }
         },

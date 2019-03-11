@@ -35,17 +35,6 @@ namespace TunnelQuest.Web.Controllers.Api
             this.redAuctionHub = _redAuctionHub;
         }
 
-        // GET api/chat_lines
-        [HttpGet]
-        public LinesAndAuctions Get([FromQuery]string serverCode, [FromQuery]long? minId = null, [FromQuery]long? maxId = null, [FromQuery]int? maxResults = null)
-        {
-            if (maxResults == null)
-                maxResults = ChatLogic.MAX_CHAT_LINES;
-
-            var chatLines = new ChatLogic(context).GetLines(serverCode, minId, maxId, maxResults);
-            return new LinesAndAuctions(chatLines);
-        }
-
         // POST api/chat_lines
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] TunnelWatcherLog payload)

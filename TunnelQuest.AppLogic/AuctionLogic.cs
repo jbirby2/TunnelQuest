@@ -53,49 +53,44 @@ namespace TunnelQuest.AppLogic
                 .ToArray();
         }
 
-        public Auction[] GetAuctions(string serverCode, string itemName, bool includeBuying, bool includeUnpriced, int? maxResults = null)
+        public Auction[] GetAuctions(AuctionsQuery criteria)
         {
-            var auctionQuery = context.Auctions
-                .Where(auction => auction.MostRecentChatLine.ServerCode == serverCode)
-                .Where(auction => auction.ItemName == itemName);
+            IQueryable<Auction> auctionQuery;
+            if (criteria.IncludeChatLine)
+            {
+                auctionQuery = context.Auctions
+                    .Include(auction => auction.MostRecentChatLine)
+                        .ThenInclude(chatLine => chatLine.Tokens)
+                                .ThenInclude(chatLineToken => chatLineToken.Properties)
+                    .Where(auction => auction.MostRecentChatLine.ServerCode == criteria.ServerCode);
+            }
+            else
+            {
+                auctionQuery = context.Auctions
+                    .Where(auction => auction.MostRecentChatLine.ServerCode == criteria.ServerCode);
+            }
 
-            if (!includeBuying)
+            if (!String.IsNullOrWhiteSpace(criteria.ItemName))
+                auctionQuery = auctionQuery.Where(auction => auction.ItemName.Equals(criteria.ItemName, StringComparison.InvariantCultureIgnoreCase));
+
+            if (!criteria.IncludeBuying)
                 auctionQuery = auctionQuery.Where(auction => auction.IsBuying == false);
 
-            if (!includeUnpriced)
+            if (!criteria.IncludeUnpriced)
                 auctionQuery = auctionQuery.Where(auction => auction.Price != null && auction.Price > 0);
 
-            // order by descending in the sql query, to make sure we get the most recent auctions if we hit the limit imposed by maxResults
-            auctionQuery = auctionQuery.OrderByDescending(auction => auction.UpdatedAt);
+            if (criteria.MinimumId != null)
+                auctionQuery = auctionQuery.Where(auction => auction.AuctionId >= criteria.MinimumId.Value);
 
-            if (maxResults != null)
-                auctionQuery = auctionQuery.Take(maxResults.Value);
+            if (criteria.MaximumId != null)
+                auctionQuery = auctionQuery.Where(auction => auction.AuctionId <= criteria.MaximumId.Value);
 
-            return auctionQuery
-                .ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
-                .OrderBy(auction => auction.UpdatedAt) // now that we've got the results from the database (possibly truncated by maxResults), re-order them correctly
-                .ToArray();
-        }
-
-        public Auction[] GetAuctions(string serverCode, DateTime? minUpdatedAt, DateTime? maxUpdatedAt, int? maxResults = null)
-        {
-            var auctionQuery = context.Auctions
-                .Include(auction => auction.MostRecentChatLine)
-                    .ThenInclude(chatLine => chatLine.Tokens)
-                            .ThenInclude(chatLineToken => chatLineToken.Properties)
-                .Where(auction => auction.MostRecentChatLine.ServerCode == serverCode);
-                
-            if (minUpdatedAt != null)
-                auctionQuery = auctionQuery.Where(auction => auction.UpdatedAt >= minUpdatedAt.Value);
-
-            if (maxUpdatedAt != null)
-                auctionQuery = auctionQuery.Where(auction => auction.UpdatedAt <= maxUpdatedAt.Value);
 
             // order by descending in the sql query, to make sure we get the most recent auctions if we hit the limit imposed by maxResults
             auctionQuery = auctionQuery.OrderByDescending(auction => auction.UpdatedAt);
 
-            if (maxResults != null)
-                auctionQuery = auctionQuery.Take(maxResults.Value);
+            if (criteria.MaxResults != null)
+                auctionQuery = auctionQuery.Take(criteria.MaxResults.Value);
 
             return auctionQuery
                 .ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database

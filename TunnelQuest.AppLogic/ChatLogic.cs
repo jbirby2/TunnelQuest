@@ -33,24 +33,24 @@ namespace TunnelQuest.AppLogic
             this.context = _context;
         }
 
-        public ChatLine[] GetLines(string serverCode, long? minId = null, long? maxId = null, int? maxResults = null)
+        public ChatLine[] GetLines(ChatLinesQuery criteria)
         {
             var query = context.ChatLines
                 .Include(chatLine => chatLine.Tokens)
                     .ThenInclude(chatLineToken => chatLineToken.Properties)
-                .Where(line => line.ServerCode == serverCode);
+                .Where(line => line.ServerCode == criteria.ServerCode);
 
-            if (minId != null)
-                query = query.Where(line => line.ChatLineId >= minId.Value);
+            if (criteria.MinimumId != null)
+                query = query.Where(line => line.ChatLineId >= criteria.MinimumId.Value);
 
-            if (maxId != null)
-                query = query.Where(line => line.ChatLineId <= maxId.Value);
+            if (criteria.MaximumId != null)
+                query = query.Where(line => line.ChatLineId <= criteria.MaximumId.Value);
 
             // order by descending in the sql query, to make sure we get the most recent lines if we hit the limit imposed by maxResults
             query = query.OrderByDescending(line => line.ChatLineId);
 
-            if (maxResults != null)
-                query = query.Take(maxResults.Value);
+            if (criteria.MaxResults != null)
+                query = query.Take(criteria.MaxResults.Value);
 
             return query.ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
                 .OrderBy(line => line.ChatLineId) // now that we've got the results from the database (possibly truncated by maxResults), re-order them correctly

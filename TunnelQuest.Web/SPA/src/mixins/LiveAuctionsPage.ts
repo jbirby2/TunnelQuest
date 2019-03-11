@@ -106,50 +106,49 @@ export default mixins(LivePage).extend({
             this.auctions.maxSize = TQGlobals.settings.maxAuctions;
         },
 
-        // inherited from LivePage
+        // inherited from TqPage
         getLatestContent: function () {
-            let minUpdatedAt: Date | null = null;
-            if (this.auctions.array.length > 0) {
-                minUpdatedAt = new Date(this.auctions.array[this.auctions.array.length - 1].updatedAtString);
+            let minId: number | null = null;
+            if (this.auctions.array.length > 0)
+                minId = this.auctions.array[this.auctions.array.length - 1].id + 1;
 
-                // add 1 ms so we don't always get one auction that we already know about in the results
-                minUpdatedAt = new Date(minUpdatedAt.getTime() + 1);
-            }
-
-            axios.get('/api/auctions?serverCode=' + this.serverCode + "&minUpdatedAt=" + (minUpdatedAt == null ? "" : minUpdatedAt.toISOString()))
-                .then(response => {
-                    let result = response.data as LinesAndAuctions;
-                    this.onNewContent(result, true);
-                })
-                .catch(err => {
-                    // stub
-                    console.log(err);
-                }); // end axios.get(chat_lines)
+            axios.post('/api/auction_query', {
+                serverCode: this.serverCode,
+                minimumId: minId,
+                includeChatLine: true
+            })
+            .then(response => {
+                let result = response.data as LinesAndAuctions;
+                this.onNewContent(result, true);
+            })
+            .catch(err => {
+                // stub
+                console.log(err);
+            });
         },
 
-        // inherited from LivePage
+        // inherited from TqPage
         getEarlierContent: function () {
+            let maxId: number | null = null;
+            if (this.auctions.array.length > 0)
+                maxId = this.auctions.array[0].id - 1;
 
-            let maxUpdatedAt: Date | null = null;
-            if (this.auctions.array.length > 0) {
-                maxUpdatedAt = new Date(this.auctions.array[0].updatedAtString);
-
-                // subtract 1 ms so we don't always get one auction that we already know about in the results
-                maxUpdatedAt = new Date(maxUpdatedAt.getTime() - 1);
-            }
-
-            axios.get('/api/auctions?serverCode=' + this.serverCode + "&maxUpdatedAt=" + (maxUpdatedAt == null ? "" : maxUpdatedAt.toISOString()) + "&maxResults=" + TQGlobals.settings.maxAuctions.toString())
-                .then(response => {
-                    let result = response.data as LinesAndAuctions;
-                    this.onNewContent(result, false);
-                })
-                .catch(err => {
-                    // stub
-                    console.log(err);
-                }); // end axios.get(chat_lines)
+            axios.post('/api/auction_query', {
+                serverCode: this.serverCode,
+                maximumId: maxId,
+                includeChatLine: true
+            })
+            .then(response => {
+                let result = response.data as LinesAndAuctions;
+                this.onNewContent(result, false);
+            })
+            .catch(err => {
+                // stub
+                console.log(err);
+            });
         },
 
-        // inherited from LivePage
+        // inherited from TqPage
         onFilteredContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
             // stub
             console.log("LiveAuctionsPage.onNewContent():");
@@ -159,7 +158,6 @@ export default mixins(LivePage).extend({
 
             for (let auctionId in newContent.auctions) {
                 let auction = newContent.auctions[auctionId];
-                auction.chatLine = newContent.lines[auction.chatLineId];
                 auction.updatedAtMoment = moment.utc(auction.updatedAtString).local();
 
                 // if necessary, update the previous auction object

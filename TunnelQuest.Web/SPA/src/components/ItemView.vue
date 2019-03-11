@@ -23,9 +23,16 @@
     .tqItemName {
         margin-top: 5px;
         font-size: 1.2em;
-        color: #e049ff;
         font-weight: bold;
         white-space: nowrap;
+    }
+
+    .tqKnownItemName {
+        color: #e049ff;
+    }
+
+    .tqUnknownItemName {
+        color: #f7d8ff;
     }
 
     .tqItemStat {
@@ -98,7 +105,7 @@
 <template>
     <span class="tqItem">
 
-        <span class="tqItemLine tqItemName">
+        <span :class="'tqItemLine tqItemName ' + (item.isFetched ? 'tqKnownItemName' : 'tqUnknownItemName')">
             {{ item.itemName }}
         </span>
 

@@ -26,6 +26,10 @@
         text-decoration: none;
     }
 
+    .tqHighlightedItemLink {
+        font-weight: bold;
+    }
+
     .tqChatLineTimeStamp {
         font-family: Courier New, Courier, monospace;
         color: #c9c9c9;
@@ -62,7 +66,7 @@
 </style>
 
 <template>
-    <span class="tqChatLineView">
+    <span :class="'tqChatLineView ' + cssClass">
         <if-debug>
             <span class="tqChatLineId">[C{{chatLine.id}}]</span>
         </if-debug>
@@ -99,6 +103,10 @@
                 required: true
             },
             itemNameToHighlight: {
+                type: String,
+                required: false
+            },
+            cssClass: {
                 type: String,
                 required: false
             }
@@ -153,14 +161,17 @@
                             if (this.itemNameLinks) {
                                 // make the item name a clickable link
                                 let linkElem = document.createElement("a") as HTMLAnchorElement;
+
                                 linkElem.classList.add(isKnownItem ? "tqKnownItemLink" : "tqUnknownItemLink");
+                                if (this.itemNameToHighlight == itemName)
+                                    linkElem.classList.add("tqHighlightedItemLink");
+
                                 linkElem.href = "/item/" + urlEncodedItemName;
                                 let thisComponent = this;
                                 linkElem.addEventListener("click", function (e) {
                                     e.preventDefault();
                                     thisComponent.$router.push("/item/" + urlEncodedItemName);
                                 });
-
                                 linkElem.text = itemName;
                                 textSpan.appendChild(linkElem);
                             }

@@ -21,6 +21,7 @@ class PriceHistoryRepo {
             // when Vue wires into them, before we get the price history data back from the server
             let blankPriceHistory = {} as PriceHistory;
 
+            blankPriceHistory.isFetched = false;
             blankPriceHistory.itemName = itemName;
             blankPriceHistory.oneMonthMedian = null;
             blankPriceHistory.threeMonthMedian = null;
@@ -59,6 +60,7 @@ class PriceHistoryRepo {
                     // update the blank .priceHistories[] object with the actual data
                     let blankPriceHistory = this.priceHistories[priceHistory.itemName];
 
+                    blankPriceHistory.isFetched = true;
                     blankPriceHistory.oneMonthMedian = priceHistory.oneMonthMedian;
                     blankPriceHistory.threeMonthMedian = priceHistory.threeMonthMedian;
                     blankPriceHistory.sixMonthMedian = priceHistory.sixMonthMedian;

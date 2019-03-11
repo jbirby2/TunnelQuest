@@ -73,7 +73,16 @@ namespace TunnelQuest.Web.Services
 
                                 try
                                 {
-                                    Auction[] itemAuctions = auctionLogic.GetAuctions(serverCode, itemName, false, false, null);
+                                    Auction[] itemAuctions = auctionLogic.GetAuctions(new AuctionsQuery()
+                                    {
+                                        ServerCode = serverCode,
+                                        ItemName = itemName,
+                                        IncludeChatLine = false,
+                                        IncludeBuying = false,
+                                        IncludeUnpriced = false,
+                                        MaxResults = null
+                                    });
+
                                     DateTime? oldestAuctionDate = itemAuctions.Max(auction => auction.CreatedAt);
                                     
                                     var priceHistory = context.PriceHistories.Where(pHistory => pHistory.ItemName.Equals(itemName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();

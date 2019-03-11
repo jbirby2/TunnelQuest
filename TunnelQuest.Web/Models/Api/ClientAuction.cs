@@ -24,7 +24,7 @@ namespace TunnelQuest.Web.Models.Api
         {
         }
 
-        public ClientAuction(Auction auction, long chatLineId)
+        public ClientAuction(Auction auction)
         {
             this.Id = auction.AuctionId;
             this.PreviousAuctionId = auction.PreviousAuctionId;
@@ -36,7 +36,7 @@ namespace TunnelQuest.Web.Models.Api
             this.IsAcceptingTrades = auction.IsAcceptingTrades;
             this.CreatedAtString = auction.CreatedAt;
             this.UpdatedAtString = auction.UpdatedAt;
-            this.ChatLineId = chatLineId;
+            this.ChatLineId = auction.MostRecentChatLineId;
         }
     }
 }

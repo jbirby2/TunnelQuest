@@ -83,43 +83,47 @@
                 this.chatLines.maxSize = TQGlobals.settings.maxChatLines;
             },
 
-            // inherited from LivePage
+            // inherited from TqPage
             getLatestContent: function () {
                 let minId: number | null = null;
                 if (this.chatLines.array.length > 0)
                     minId = this.chatLines.array[this.chatLines.array.length - 1].id + 1;
 
-                axios.get('/api/chat_lines?serverCode=' + this.serverCode + "&minId=" + (minId == null ? "" : minId.toString()))
-                    .then(response => {
-                        let result = response.data as LinesAndAuctions;
-                        this.onNewContent(result, true);
-                    })
-                    .catch(err => {
-                        // stub
-                        console.log(err);
-                    }); // end axios.get(chat_lines)
+                axios.post('/api/chat_query', {
+                    serverCode: this.serverCode,
+                    minimumId: minId
+                })
+                .then(response => {
+                    let result = response.data as LinesAndAuctions;
+                    this.onNewContent(result, true);
+                })
+                .catch(err => {
+                    // stub
+                    console.log(err);
+                });
             },
 
-            // inherited from LivePage
+            // inherited from TqPage
             getEarlierContent: function () {
                 let maxId: number | null = null;
                 if (this.chatLines.array.length > 0)
                     maxId = this.chatLines.array[0].id - 1;
 
-                console.log("stub ChatPage.getEarlierContent(maxId=" + maxId + ")");
-
-                axios.get('/api/chat_lines?serverCode=' + this.serverCode + "&maxId=" + (maxId == null ? "" : maxId.toString()) + "&maxResults=" + TQGlobals.settings.maxChatLines.toString())
-                    .then(response => {
-                        let result = response.data as LinesAndAuctions;
-                        this.onNewContent(result, false);
-                    })
-                    .catch(err => {
-                        // stub
-                        console.log(err);
-                    }); // end axios.get(chat_lines)
+                axios.post('/api/chat_query', {
+                    serverCode: this.serverCode,
+                    maximumId: maxId
+                })
+                .then(response => {
+                    let result = response.data as LinesAndAuctions;
+                    this.onNewContent(result, false);
+                })
+                .catch(err => {
+                    // stub
+                    console.log(err);
+                });
             },
 
-            // inherited from LivePage
+            // inherited from TqPage
             onFilteredContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
                 // stub
                 console.log("ChatPage.onNewContent():");

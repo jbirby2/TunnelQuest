@@ -90,35 +90,6 @@ export default mixins(TqPage).extend({
 
     methods: {
 
-        onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
-            
-            if (newContent.lines) {
-                for (let chatLineId in newContent.lines) {
-                    let chatLine = newContent.lines[chatLineId];
-
-                    for (let token of chatLine.tokens) {
-                        if (token.type == "ITEM") {
-                            TQGlobals.priceHistories.get(token.properties["itemName"], false);
-                        }
-                    }
-                }
-            }
-            if (newContent.auctions) {
-                for (let auctionId in newContent.auctions) {
-                    let auction = newContent.auctions[auctionId];
-                    TQGlobals.priceHistories.get(auction.itemName, false);
-                }
-            }
-
-            // fetch all price histories at once
-            TQGlobals.priceHistories.fetchPendingPriceHistories();
-
-            // STUB - filtering logic goes here
-
-            // pass along to child classes
-            this.onFilteredContent(newContent, enforceMaxSize);
-        },
-
         onNewLiveContent: function (newContent: LinesAndAuctions) {
             this.onNewContent(newContent, true);
         },
@@ -130,13 +101,13 @@ export default mixins(TqPage).extend({
         onDisconnected: function () {
         },
 
-        onScroll: function () {
-            //console.log("stub onScroll");
 
-            if (this.isInitialized == false || document == null || document.documentElement == null)
+        // inherited from TqPage
+        onScrolled: function () {
+            //console.log("stub onScrolled");
+
+            if (this.isInitialized == false)
                 return;
-
-            //console.log("scrollTop " + document.documentElement.scrollTop.toString() + " innerHeight " + window.innerHeight.toString() + " scrollheight " + document.documentElement.scrollHeight.toString());
 
             if (this.isScrolledToTop()) {
                 this.transitionName = "slidedown";
@@ -149,19 +120,9 @@ export default mixins(TqPage).extend({
 
                 if (this.connection.isConnected())
                     this.connection.disconnect();
-
-                if (this.isScrolledToBottom())
-                    this.getEarlierContent();
             }
         },
 
-        isScrolledToTop: function () {
-            return (document != null && document.documentElement != null && document.documentElement.scrollTop == 0);
-        },
-
-        isScrolledToBottom: function () {
-            return (document != null && document.documentElement != null && Math.ceil(document.documentElement.scrollTop) + window.innerHeight >= document.documentElement.scrollHeight);
-        },
 
         getHubUrl: function () {
             // overridden by extending components
@@ -169,18 +130,6 @@ export default mixins(TqPage).extend({
         },
 
         onInitialized: function () {
-            // overridden by extending components
-        },
-
-        getLatestContent: function () {
-            // overridden by extending components
-        },
-
-        getEarlierContent: function () {
-            // overridden by extending components
-        },
-
-        onFilteredContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
             // overridden by extending components
         },
 

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using TunnelQuest.AppLogic;
-using TunnelQuest.Data;
-using TunnelQuest.Data.Models;
+using TunnelQuest.Core;
+using TunnelQuest.Core.Models;
 using TunnelQuest.Web.Hubs;
 using TunnelQuest.Web.Models.Api;
 

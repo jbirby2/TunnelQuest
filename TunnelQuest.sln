@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TunnelQuest.Web", "TunnelQuest.Web\TunnelQuest.Web.csproj", "{0C50EC11-76DB-498C-B99C-084F31519F84}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TunnelQuest.Data", "TunnelQuest.Data\TunnelQuest.Data.csproj", "{00D3240C-FF10-4DA9-AFB3-5071ED255974}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TunnelQuest.Core", "TunnelQuest.Core\TunnelQuest.Core.csproj", "{00D3240C-FF10-4DA9-AFB3-5071ED255974}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A7A3A23F-1623-467E-8074-B2ADD3256359}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,8 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TunnelQuest.DatabaseBuilder", "TunnelQuest.DatabaseBuilder\TunnelQuest.DatabaseBuilder.csproj", "{1E4959DF-CCE9-4E3D-B321-14512220EA48}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TunnelQuest.AppLogic", "TunnelQuest.AppLogic\TunnelQuest.AppLogic.csproj", "{8766DAD5-769F-4BE8-8170-208637CE609B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TunnelQuest.TunnelWatcher", "TunnelQuest.TunnelWatcher\TunnelQuest.TunnelWatcher.csproj", "{207A5707-CBD9-4181-B2FE-B7D0395277BA}"
 EndProject
@@ -37,10 +35,6 @@ Global
 		{1E4959DF-CCE9-4E3D-B321-14512220EA48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E4959DF-CCE9-4E3D-B321-14512220EA48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E4959DF-CCE9-4E3D-B321-14512220EA48}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8766DAD5-769F-4BE8-8170-208637CE609B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8766DAD5-769F-4BE8-8170-208637CE609B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8766DAD5-769F-4BE8-8170-208637CE609B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8766DAD5-769F-4BE8-8170-208637CE609B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{207A5707-CBD9-4181-B2FE-B7D0395277BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{207A5707-CBD9-4181-B2FE-B7D0395277BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{207A5707-CBD9-4181-B2FE-B7D0395277BA}.Release|Any CPU.ActiveCfg = Release|Any CPU

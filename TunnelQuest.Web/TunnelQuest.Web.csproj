@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TunnelQuest.AppLogic\TunnelQuest.AppLogic.csproj" />
+    <ProjectReference Include="..\TunnelQuest.Core\TunnelQuest.Core.csproj" />
   </ItemGroup>
 
 </Project>

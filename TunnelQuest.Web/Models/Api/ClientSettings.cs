@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TunnelQuest.AppLogic;
-using TunnelQuest.Data;
-using TunnelQuest.Data.Models;
+using TunnelQuest.Core;
+using TunnelQuest.Core.Models;
 
 namespace TunnelQuest.Web.Models.Api
 {

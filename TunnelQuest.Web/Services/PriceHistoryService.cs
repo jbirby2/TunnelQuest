@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TunnelQuest.AppLogic;
-using TunnelQuest.Data.Models;
+using TunnelQuest.Core;
+using TunnelQuest.Core.Models;
 
 namespace TunnelQuest.Web.Services
 {
@@ -133,7 +133,7 @@ namespace TunnelQuest.Web.Services
                                     // STUB log the error somewhere
                                 }
 
-                                Thread.Sleep(sleepAfterEachItem);
+                                //Thread.Sleep(sleepAfterEachItem);
                             }
                         }
                     }
@@ -143,7 +143,7 @@ namespace TunnelQuest.Web.Services
                     // STUB log the error somewhere
                 }
 
-                Thread.Sleep(sleepAfterEachFullPass);
+                //Thread.Sleep(sleepAfterEachFullPass);
             }
         }
 

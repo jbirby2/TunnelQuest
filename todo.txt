@@ -85,13 +85,32 @@
 
 	** with the setup above, I don't **think** there's any reason for the javascript code to be aware of aliases at all
 
-
-
-- make item page scroll infinitely to show past auctions
-
 - make PriceService's worker thread a LowPriority thread
 
 - for pc users, hover over PriceDeviationViews to see full info; hover over item names to see item view
+
+- remove embedded resources from TunnelQuest.Core to greatly reduce file size in memory
+
+- show the chat line for unknown item auctions
+
+- do not create PriceSegment if number followed by "stack" or "stacks" (i.e. "Bone Chips 5 stacks" creating PriceSegment of 5 for Bone Chips)
+
+** PriceHistoryService stopping?  need to go back and implement logging
+
+*** FIX AND RE-ENABLE CACHING
+
+*** CHAT LINE PROCESSING SPEED DROPS VASTLY AFTER A FEW ROWS GET IN
+	- denormalize server_code to auction table for indexing
+	- denormalize player_name to auction table for indexing
+	- add the triple index
+	- update the AuctionLogic query to use the newly denormalized columns in the auction table
+	- ALSO update any other queries that use server_code
+	- TEST
+
+
+*** auction scrolling is bugged because I changed the query to use ID instead of UpdatedAt.  change it back and test
+
+
 
 - SettingsPage
 	- "Item Filters"

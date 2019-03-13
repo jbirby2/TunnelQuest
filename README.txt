@@ -7,4 +7,4 @@ To create the database:
    create the empty schema beforehand; the next step will create the schema from scratch.
 
 2. Run the following line in Package Manager Console (i.e. PowerShell) to create the new schema and build the tables:
-	Update-Database -Project TunnelQuest.Data -StartupProject TunnelQuest.DatabaseBuilder
+	Update-Database -Project TunnelQuest.Core -StartupProject TunnelQuest.DatabaseBuilder

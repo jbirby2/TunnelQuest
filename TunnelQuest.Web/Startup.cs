@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.HttpOverrides;
-using TunnelQuest.Data.Models;
+using TunnelQuest.Core.Models;
 using TunnelQuest.Web.Config;
 using TunnelQuest.Web.Hubs;
 using Microsoft.Extensions.Hosting;

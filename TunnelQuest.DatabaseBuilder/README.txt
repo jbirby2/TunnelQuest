@@ -7,15 +7,15 @@ I use TunnelQuest.DatabaseBuilder for two different purposes:
 	in case of a catastrophic bug or security breach.
 
 	For example:
-		Add-Migration -Name whatever -Project TunnelQuest.Data -StartupProject TunnelQuest.DatabaseBuilder
-		Update-Database -Project TunnelQuest.Data -StartupProject TunnelQuest.DatabaseBuilder
+		Add-Migration -Name whatever -Project TunnelQuest.Core -StartupProject TunnelQuest.DatabaseBuilder
+		Update-Database -Project TunnelQuest.Core -StartupProject TunnelQuest.DatabaseBuilder
 
 
 2.	I also used TunnelQuest.DatabaseBuilder to scrape all the item data and icons from wiki.project1999.com.  
-	The scraped data is in TunnelQuest.Data\Migrations\Data\WikiScrapes, and the scraped icons are 
+	The scraped data is in TunnelQuest.Core\Migrations\Data\WikiScrapes, and the scraped icons are 
 	in TunnelQuest.Web\SPA\public\game_assets.  They were scraped from the wiki by running the following command:
 
-		dotnet TunnelQuest.DatabaseBuilder.dll Scrape "..\..\..\..\TunnelQuest.Data\Migrations\Data\WikiScrapes" "..\..\..\..\TunnelQuest.Web\wwwroot\images" false
+		dotnet TunnelQuest.DatabaseBuilder.dll Scrape "..\..\..\..\TunnelQuest.Core\Migrations\Data\WikiScrapes" "..\..\..\..\TunnelQuest.Web\wwwroot\images" false
 
 			-	This command can be stopped and re-run as many times as necessary.  It will
 				never delete anything, or re-download anything that it's already downloaded.
@@ -40,7 +40,7 @@ I use TunnelQuest.DatabaseBuilder for two different purposes:
 
 	Additional commands:
 
-		dotnet TunnelQuest.DatabaseBuilder.dll List-Duplicate-Names "..\..\..\..\TunnelQuest.Data\Migrations\Data"
+		dotnet TunnelQuest.DatabaseBuilder.dll List-Duplicate-Names "..\..\..\..\TunnelQuest.Core\Migrations\Data"
 
 			-	This command will list any items in the json data file which have identical names (case-insensitive)
 

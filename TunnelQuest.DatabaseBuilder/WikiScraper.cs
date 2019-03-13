@@ -8,8 +8,8 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using TunnelQuest.Data;
-using TunnelQuest.Data.Migrations.Data;
+using TunnelQuest.Core;
+using TunnelQuest.Core.Migrations.Data;
 
 namespace TunnelQuest.DatabaseBuilder
 {

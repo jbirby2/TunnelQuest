@@ -190,6 +190,12 @@
                         else if (token.type == "PRICE") {
                             // price token
 
+                            // stub
+                            if (!token.properties["items"]) {
+                                console.log("STUB!!!");
+                                console.log(this.chatLine);
+                            }
+
                             let isBuying = (token.properties["isBuying"] == "1");
                             let price = parseInt(token.properties["price"]);
                             let itemIndexes = token.properties["items"].split(',');

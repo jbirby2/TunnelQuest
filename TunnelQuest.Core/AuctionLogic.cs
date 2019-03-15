@@ -34,10 +34,7 @@ namespace TunnelQuest.Core
         public string[] GetAllItemNames(string serverCode, bool includeBuying, bool includeUnpriced)
         {
             var auctionQuery = context.Auctions
-                .Include(auction => auction.MostRecentChatLine)
-                    .ThenInclude(chatLine => chatLine.Tokens)
-                        .ThenInclude(chatLineToken => chatLineToken.Properties)
-                .Where(auction => auction.MostRecentChatLine.ServerCode == serverCode);
+                .Where(auction => auction.ServerCode == serverCode);
 
             if (!includeBuying)
                 auctionQuery = auctionQuery.Where(auction => auction.IsBuying == false);
@@ -61,12 +58,12 @@ namespace TunnelQuest.Core
                     .Include(auction => auction.MostRecentChatLine)
                         .ThenInclude(chatLine => chatLine.Tokens)
                                 .ThenInclude(chatLineToken => chatLineToken.Properties)
-                    .Where(auction => auction.MostRecentChatLine.ServerCode == criteria.ServerCode);
+                    .Where(auction => auction.ServerCode == criteria.ServerCode);
             }
             else
             {
                 auctionQuery = context.Auctions
-                    .Where(auction => auction.MostRecentChatLine.ServerCode == criteria.ServerCode);
+                    .Where(auction => auction.ServerCode == criteria.ServerCode);
             }
 
             if (!String.IsNullOrWhiteSpace(criteria.ItemName))
@@ -78,11 +75,11 @@ namespace TunnelQuest.Core
             if (!criteria.IncludeUnpriced)
                 auctionQuery = auctionQuery.Where(auction => auction.Price != null && auction.Price > 0);
 
-            if (criteria.MinimumId != null)
-                auctionQuery = auctionQuery.Where(auction => auction.AuctionId >= criteria.MinimumId.Value);
+            if (criteria.MinimumUpdatedAt != null)
+                auctionQuery = auctionQuery.Where(auction => auction.UpdatedAt >= criteria.MinimumUpdatedAt.Value);
 
-            if (criteria.MaximumId != null)
-                auctionQuery = auctionQuery.Where(auction => auction.AuctionId <= criteria.MaximumId.Value);
+            if (criteria.MaximumUpdatedAt != null)
+                auctionQuery = auctionQuery.Where(auction => auction.UpdatedAt <= criteria.MaximumUpdatedAt.Value);
 
 
             // order by descending in the sql query, to make sure we get the most recent auctions if we hit the limit imposed by maxResults
@@ -119,11 +116,10 @@ namespace TunnelQuest.Core
                 // See if there's an existing auction we should reuse instead of posting this new one.
 
                 Auction lastAuctionBySamePlayerForSameItem = (from auction in context.Auctions
-                                                              join chatLine in context.ChatLines on auction.MostRecentChatLineId equals chatLine.ChatLineId
                                                               where
-                                                                chatLine.ServerCode == serverCode
-                                                                && chatLine.PlayerName == playerName
+                                                                auction.ServerCode == serverCode
                                                                 && auction.ItemName == pendingNewAuction.ItemName
+                                                                && auction.PlayerName == playerName
                                                               orderby auction.UpdatedAt descending
                                                               select auction).FirstOrDefault();
 

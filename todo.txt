@@ -99,19 +99,6 @@
 
 *** FIX AND RE-ENABLE CACHING
 
-*** CHAT LINE PROCESSING SPEED DROPS VASTLY AFTER A FEW ROWS GET IN
-	- denormalize server_code to auction table for indexing
-	- denormalize player_name to auction table for indexing
-	- add the triple index
-	- update the AuctionLogic query to use the newly denormalized columns in the auction table
-	- ALSO update any other queries that use server_code
-	- TEST
-
-
-*** auction scrolling is bugged because I changed the query to use ID instead of UpdatedAt.  change it back and test
-
-
-
 - SettingsPage
 	- "Item Filters"
 		* there's no way to filter hub transmissions on an individual connection level, so unfortunately the filtering logic will

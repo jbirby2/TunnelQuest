@@ -155,11 +155,17 @@ namespace TunnelQuest.Core
                 var auctionLogic = new AuctionLogic(context);
                 var normalizedAuctions = auctionLogic.GetNormalizedAuctions(serverCode, playerName, newChatLine.SentAt, parsedLine.Auctions);
 
-                // update auctions' MostRecentChatLineId
+                // fill in some additional auction data properties
                 foreach (var auction in normalizedAuctions.Values)
                 {
                     auction.MostRecentChatLine = newChatLine;
                     auction.MostRecentChatLineId = newChatLine.ChatLineId;
+                    
+                    if (auction.AuctionId <= 0)
+                    {
+                        auction.PlayerName = newChatLine.PlayerName;
+                        auction.ServerCode = newChatLine.ServerCode;
+                    }
                 }
 
                 // save everything to database

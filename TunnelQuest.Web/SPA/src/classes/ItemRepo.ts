@@ -133,85 +133,88 @@ class ItemRepo {
                 for (var item of result) {
                     // update the blank .items[] object with the actual data
                     let blankItem = this.items[item.itemName];
+                    if (blankItem) {
+                        blankItem.iconFileName = item.iconFileName;
+                        blankItem.isMagic = item.isMagic;
+                        blankItem.isLore = item.isLore;
+                        blankItem.isNoDrop = item.isNoDrop;
+                        blankItem.isNoTrade = item.isNoTrade;
+                        blankItem.isTemporary = item.isTemporary;
+                        blankItem.isQuestItem = item.isQuestItem;
+                        blankItem.isArtifact = item.isArtifact;
+                        blankItem.requiredLevel = item.requiredLevel;
+                        blankItem.weight = item.weight;
+                        blankItem.sizeCode = item.sizeCode;
 
-                    blankItem.iconFileName = item.iconFileName;
-                    blankItem.isMagic = item.isMagic;
-                    blankItem.isLore = item.isLore;
-                    blankItem.isNoDrop = item.isNoDrop;
-                    blankItem.isNoTrade = item.isNoTrade;
-                    blankItem.isTemporary = item.isTemporary;
-                    blankItem.isQuestItem = item.isQuestItem;
-                    blankItem.isArtifact = item.isArtifact;
-                    blankItem.requiredLevel = item.requiredLevel;
-                    blankItem.weight = item.weight;
-                    blankItem.sizeCode = item.sizeCode;
+                        // stats
 
-                    // stats
+                        blankItem.strength = item.strength;
+                        blankItem.stamina = item.stamina;
+                        blankItem.agility = item.agility;
+                        blankItem.dexterity = item.dexterity;
+                        blankItem.wisdom = item.wisdom;
+                        blankItem.intelligence = item.intelligence;
+                        blankItem.charisma = item.charisma;
+                        blankItem.hitPoints = item.hitPoints;
+                        blankItem.mana = item.mana;
+                        blankItem.armorClass = item.armorClass;
+                        blankItem.magicResist = item.magicResist;
+                        blankItem.poisonResist = item.poisonResist;
+                        blankItem.diseaseResist = item.diseaseResist;
+                        blankItem.fireResist = item.fireResist;
+                        blankItem.coldResist = item.coldResist;
+                        blankItem.haste = item.haste;
 
-                    blankItem.strength = item.strength;
-                    blankItem.stamina = item.stamina;
-                    blankItem.agility = item.agility;
-                    blankItem.dexterity = item.dexterity;
-                    blankItem.wisdom = item.wisdom;
-                    blankItem.intelligence = item.intelligence;
-                    blankItem.charisma = item.charisma;
-                    blankItem.hitPoints = item.hitPoints;
-                    blankItem.mana = item.mana;
-                    blankItem.armorClass = item.armorClass;
-                    blankItem.magicResist = item.magicResist;
-                    blankItem.poisonResist = item.poisonResist;
-                    blankItem.diseaseResist = item.diseaseResist;
-                    blankItem.fireResist = item.fireResist;
-                    blankItem.coldResist = item.coldResist;
-                    blankItem.haste = item.haste;
+                        // bard instruments
 
-                    // bard instruments
+                        blankItem.singingModifier = item.singingModifier;
+                        blankItem.percussionModifier = item.percussionModifier;
+                        blankItem.stringedModifier = item.stringedModifier;
+                        blankItem.brassModifier = item.brassModifier;
+                        blankItem.windModifier = item.windModifier;
 
-                    blankItem.singingModifier = item.singingModifier;
-                    blankItem.percussionModifier = item.percussionModifier;
-                    blankItem.stringedModifier = item.stringedModifier;
-                    blankItem.brassModifier = item.brassModifier;
-                    blankItem.windModifier = item.windModifier;
+                        // spell effect
 
-                    // spell effect
+                        blankItem.effectSpellName = item.effectSpellName;
+                        blankItem.effectTypeCode = item.effectTypeCode;
+                        blankItem.effectMinimumLevel = item.effectMinimumLevel;
+                        blankItem.effectCastingTime = item.effectCastingTime;
 
-                    blankItem.effectSpellName = item.effectSpellName;
-                    blankItem.effectTypeCode = item.effectTypeCode;
-                    blankItem.effectMinimumLevel = item.effectMinimumLevel;
-                    blankItem.effectCastingTime = item.effectCastingTime;
+                        // weapons
 
-                    // weapons
+                        blankItem.weaponSkillCode = item.weaponSkillCode;
+                        blankItem.attackDamage = item.attackDamage;
+                        blankItem.attackDelay = item.attackDelay;
+                        blankItem.range = item.range;
 
-                    blankItem.weaponSkillCode = item.weaponSkillCode;
-                    blankItem.attackDamage = item.attackDamage;
-                    blankItem.attackDelay = item.attackDelay;
-                    blankItem.range = item.range;
+                        // containers
 
-                    // containers
+                        blankItem.capacity = item.capacity;
+                        blankItem.capacitySizeCode = item.capacitySizeCode;
+                        blankItem.weightReduction = item.weightReduction;
 
-                    blankItem.capacity = item.capacity;
-                    blankItem.capacitySizeCode = item.capacitySizeCode;
-                    blankItem.weightReduction = item.weightReduction;
+                        // consumables
 
-                    // consumables
+                        blankItem.isExpendable = item.isExpendable;
+                        blankItem.maxCharges = item.maxCharges;
 
-                    blankItem.isExpendable = item.isExpendable;
-                    blankItem.maxCharges = item.maxCharges;
+                        // relationships
 
-                    // relationships
+                        blankItem.races = item.races;
+                        blankItem.classes = item.classes;
+                        blankItem.slots = item.slots;
+                        blankItem.deities = item.deities;
+                        blankItem.info = item.info;
 
-                    blankItem.races = item.races;
-                    blankItem.classes = item.classes;
-                    blankItem.slots = item.slots;
-                    blankItem.deities = item.deities;
-                    blankItem.info = item.info;
+                        // if the item is a spell scroll, then also go ahead and pull its spell
+                        if (blankItem.effectSpellName != null && blankItem.effectTypeCode == "LearnSpell")
+                            blankItem.effectSpell = this.spellRepo.get(blankItem.effectSpellName, false);
 
-                    // if the item is a spell scroll, then also go ahead and pull its spell
-                    if (blankItem.effectSpellName != null && blankItem.effectTypeCode == "LearnSpell")
-                        blankItem.effectSpell = this.spellRepo.get(blankItem.effectSpellName, false);
-
-                    blankItem.isFetched = true;
-
+                        blankItem.isFetched = true;
+                    }
+                    else {
+                        console.log("ERROR got back unexpected item.itemName: " + item.itemName);
+                    }
                 } // end foreach (item)
 
                 this.spellRepo.fetchPendingSpells();

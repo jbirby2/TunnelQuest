@@ -14,6 +14,18 @@ namespace TunnelQuest.Core.Models
         [Column("auction_id")]
         public long AuctionId { get; set; }
 
+        // denormalized to this table for performance reasons (indexes)
+        [Required]
+        [ForeignKey("Server")]
+        [Column("server_code")]
+        public string ServerCode { get; set; }
+        public Server Server { get; set; }
+
+        // denormalized to this table for performance reasons (indexes)
+        [Required]
+        [Column("player_name")]
+        public string PlayerName { get; set; }
+
         [ForeignKey("PreviousAuction")]
         [Column("previous_auction_id")]
         public long? PreviousAuctionId { get; set; }

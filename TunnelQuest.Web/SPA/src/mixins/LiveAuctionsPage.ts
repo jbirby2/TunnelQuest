@@ -91,6 +91,7 @@ export default mixins(LivePage).extend({
                 });
         }
     },
+
     methods: {
 
         // inherited from LivePage
@@ -108,13 +109,16 @@ export default mixins(LivePage).extend({
 
         // inherited from TqPage
         getLatestContent: function () {
-            let minId: number | null = null;
-            if (this.auctions.array.length > 0)
-                minId = this.auctions.array[this.auctions.array.length - 1].id + 1;
+            let minUpdatedAt: moment.Moment | null = null;
+            if (this.auctions.array.length > 0) {
+                minUpdatedAt = moment.utc(this.auctions.array[this.auctions.array.length - 1].updatedAtString);
+                // add 1 ms so we don't always get one auction that we already know about in the results
+                minUpdatedAt.add(1, "seconds");
+            }
 
             axios.post('/api/auction_query', {
                 serverCode: this.serverCode,
-                minimumId: minId,
+                minimumUpdatedAt: (minUpdatedAt == null ? null : minUpdatedAt.toISOString()),
                 includeChatLine: true
             })
             .then(response => {
@@ -129,13 +133,16 @@ export default mixins(LivePage).extend({
 
         // inherited from TqPage
         getEarlierContent: function () {
-            let maxId: number | null = null;
-            if (this.auctions.array.length > 0)
-                maxId = this.auctions.array[0].id - 1;
+            let maxUpdatedAt: moment.Moment | null = null;
+            if (this.auctions.array.length > 0) {
+                maxUpdatedAt = moment.utc(this.auctions.array[0].updatedAtString)
+                // subtract 1 ms so we don't always get one auction that we already know about in the results
+                maxUpdatedAt.subtract(1, "seconds");
+            }
 
             axios.post('/api/auction_query', {
                 serverCode: this.serverCode,
-                maximumId: maxId,
+                maximumUpdatedAt: (maxUpdatedAt == null ? null : maxUpdatedAt.toISOString()),
                 includeChatLine: true
             })
             .then(response => {
@@ -151,7 +158,7 @@ export default mixins(LivePage).extend({
         // inherited from TqPage
         onFilteredContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
             // stub
-            console.log("LiveAuctionsPage.onNewContent():");
+            console.log("LiveAuctionsPage.onFilteredContent():");
             console.log(newContent);
 
             // manually set some properties on the auction objects

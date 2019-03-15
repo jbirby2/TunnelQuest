@@ -60,13 +60,18 @@ class PriceHistoryRepo {
                     // update the blank .priceHistories[] object with the actual data
                     let blankPriceHistory = this.priceHistories[priceHistory.itemName];
 
-                    blankPriceHistory.isFetched = true;
-                    blankPriceHistory.oneMonthMedian = priceHistory.oneMonthMedian;
-                    blankPriceHistory.threeMonthMedian = priceHistory.threeMonthMedian;
-                    blankPriceHistory.sixMonthMedian = priceHistory.sixMonthMedian;
-                    blankPriceHistory.twelveMonthMedian = priceHistory.twelveMonthMedian;
-                    blankPriceHistory.lifetimeMedian = priceHistory.lifetimeMedian;
-                    blankPriceHistory.updatedAtString = priceHistory.updatedAtString;
+                    if (blankPriceHistory) {
+                        blankPriceHistory.isFetched = true;
+                        blankPriceHistory.oneMonthMedian = priceHistory.oneMonthMedian;
+                        blankPriceHistory.threeMonthMedian = priceHistory.threeMonthMedian;
+                        blankPriceHistory.sixMonthMedian = priceHistory.sixMonthMedian;
+                        blankPriceHistory.twelveMonthMedian = priceHistory.twelveMonthMedian;
+                        blankPriceHistory.lifetimeMedian = priceHistory.lifetimeMedian;
+                        blankPriceHistory.updatedAtString = priceHistory.updatedAtString;
+                    }
+                    else {
+                        console.log("ERROR got back unexpected priceHistory.itemName: " + priceHistory.itemName);
+                    }
                 }
             })
             .catch(err => {

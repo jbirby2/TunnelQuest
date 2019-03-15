@@ -53,7 +53,7 @@
                 Auction History
             </div>
             <div>
-                <chat-line-view v-for="auction in auctions.array" :key="auction.chatLine.id" :chatLine="auction.chatLine" :showTimestamp="true" :itemNameLinks="true" :itemNameToHighlight="auction.itemName" :cssClass="auction.isBuying ? 'tqAuctionHouseAuctionWtb' : 'tqAuctionHouseAuctionWts'"></chat-line-view>
+                <item-auction-view v-for="auction in auctions.array" :key="auction.id" :auction="auction" :cssClass="auction.isBuying ? 'tqItemAuctionWtb' : 'tqItemAuctionWts'"></item-auction-view>
             </div>
         </div>
     </div>
@@ -75,7 +75,7 @@
     import SiteHeader from "./SiteHeader.vue";
     import ItemView from "./ItemView.vue";
     import PriceHistoryView from "./PriceHistoryView.vue";
-    import ChatLineView from "./ChatLineView.vue";
+    import ItemAuctionView from "./ItemAuctionView.vue";
 
 
     export default mixins(TqPage).extend({
@@ -189,7 +189,7 @@
             SiteHeader,
             ItemView,
             PriceHistoryView,
-            ChatLineView
+            ItemAuctionView
         },
     });
 </script>

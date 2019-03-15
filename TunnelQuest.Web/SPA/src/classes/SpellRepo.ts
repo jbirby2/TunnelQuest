@@ -57,11 +57,16 @@ class SpellRepo {
                     // update the blank .spells[] object with the actual data
                     let blankSpell = this.spells[spell.spellName];
 
-                    blankSpell.iconFileName = spell.iconFileName;
-                    blankSpell.description = spell.description;
-                    blankSpell.requirements = spell.requirements;
-                    blankSpell.details = spell.details;
-                    blankSpell.sources = spell.sources;
+                    if (blankSpell) {
+                        blankSpell.iconFileName = spell.iconFileName;
+                        blankSpell.description = spell.description;
+                        blankSpell.requirements = spell.requirements;
+                        blankSpell.details = spell.details;
+                        blankSpell.sources = spell.sources;
+                    }
+                    else {
+                        console.log("ERROR got back unexpected spell.spellName: " + spell.spellName);
+                    }
                 }
             })
             .catch(err => {

@@ -12,8 +12,8 @@ namespace TunnelQuest.Core
         public bool IncludeChatLine { get; set; } = false;
         public bool IncludeBuying { get; set; } = true;
         public bool IncludeUnpriced { get; set; } = true;
-        public long? MinimumId { get; set; } = null;
-        public long? MaximumId { get; set; } = null;
+        public DateTime? MinimumUpdatedAt { get; set; } = null;
+        public DateTime? MaximumUpdatedAt { get; set; } = null;
         public int? MaxResults { get; set; } = null;
     }
 }

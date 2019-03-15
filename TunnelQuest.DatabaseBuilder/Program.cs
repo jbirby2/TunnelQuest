@@ -11,6 +11,10 @@ namespace TunnelQuest.DatabaseBuilder
     {
         static void Main(string[] args)
         {
+            //stub
+            new InsertChatLogData().STUB();
+            return;
+
             try
             {
                 if (args.Length == 4 && args[0].Equals("Scrape", StringComparison.InvariantCultureIgnoreCase))

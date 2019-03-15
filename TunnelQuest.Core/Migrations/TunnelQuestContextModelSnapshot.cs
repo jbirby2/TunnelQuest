@@ -45,22 +45,32 @@ namespace TunnelQuest.Core.Migrations
                     b.Property<long>("MostRecentChatLineId")
                         .HasColumnName("most_recent_chat_line_id");
 
+                    b.Property<string>("PlayerName")
+                        .IsRequired()
+                        .HasColumnName("player_name");
+
                     b.Property<long?>("PreviousAuctionId")
                         .HasColumnName("previous_auction_id");
 
                     b.Property<int?>("Price")
                         .HasColumnName("price");
 
+                    b.Property<string>("ServerCode")
+                        .IsRequired()
+                        .HasColumnName("server_code");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnName("updated_at");
 
                     b.HasKey("AuctionId");
 
-                    b.HasIndex("ItemName");
-
                     b.HasIndex("MostRecentChatLineId");
 
                     b.HasIndex("PreviousAuctionId");
+
+                    b.HasIndex("ServerCode", "UpdatedAt");
+
+                    b.HasIndex("ServerCode", "ItemName", "PlayerName", "UpdatedAt");
 
                     b.ToTable("auction");
                 });
@@ -129,13 +139,7 @@ namespace TunnelQuest.Core.Migrations
 
                     b.HasIndex("AuthTokenId");
 
-                    b.HasIndex("ServerCode");
-
-                    b.HasIndex("ServerCode", "PlayerName");
-
-                    b.HasIndex("ServerCode", "SentAt");
-
-                    b.HasIndex("ServerCode", "PlayerName", "SentAt");
+                    b.HasIndex("ServerCode", "ChatLineId");
 
                     b.ToTable("chat_line");
                 });
@@ -658,6 +662,11 @@ namespace TunnelQuest.Core.Migrations
                     b.HasOne("TunnelQuest.Core.Models.Auction", "PreviousAuction")
                         .WithMany()
                         .HasForeignKey("PreviousAuctionId");
+
+                    b.HasOne("TunnelQuest.Core.Models.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerCode")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("TunnelQuest.Core.Models.AuthToken", b =>

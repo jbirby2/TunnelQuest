@@ -133,7 +133,8 @@ namespace TunnelQuest.Web.Services
                                     // STUB log the error somewhere
                                 }
 
-                                Thread.Sleep(sleepAfterEachItem);
+                                //if (!System.Diagnostics.Debugger.IsAttached)
+                                    Thread.Sleep(sleepAfterEachItem);
                             }
                         }
                     }
@@ -143,7 +144,8 @@ namespace TunnelQuest.Web.Services
                     // STUB log the error somewhere
                 }
 
-                Thread.Sleep(sleepAfterEachFullPass);
+                //if (!System.Diagnostics.Debugger.IsAttached)
+                    Thread.Sleep(sleepAfterEachFullPass);
             }
         }
 

@@ -24,13 +24,27 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\Data\EcTunnelChatLogs\eqlog_project1999_1.txt" />
-    <EmbeddedResource Include="Migrations\Data\WikiScrapes\items.json" />
-    <EmbeddedResource Include="Migrations\Data\WikiScrapes\items_corrections.json" />
-    <EmbeddedResource Include="Migrations\Data\WikiScrapes\non_p99_content.json" />
-    <EmbeddedResource Include="Migrations\Data\WikiScrapes\spells.json" />
-    <EmbeddedResource Include="Migrations\Data\WikiScrapes\non_p99_content_corrections.json" />
-    <EmbeddedResource Include="Migrations\Data\WikiScrapes\spells_corrections.json" />
+    <Content Include="Migrations\Data\EcTunnelChatLogs\eqlog_project1999_1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Data\WikiScrapes\items.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Data\WikiScrapes\items_corrections.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Data\WikiScrapes\non_p99_content.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Data\WikiScrapes\spells.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Data\WikiScrapes\non_p99_content_corrections.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Data\WikiScrapes\spells_corrections.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

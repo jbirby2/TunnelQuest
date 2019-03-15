@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TunnelQuest.Core.Migrations.Data;
 using TunnelQuest.Core.Models;
 
@@ -115,12 +116,14 @@ namespace TunnelQuest.Core.Migrations
 
         private AllItemsAndSpells getAllItemsAndSpells()
         {
-            var spellFile = new WikiResourceHelper<WikiSpellData>("spells.json", "spells_corrections.json");
-            var wikiSpells = spellFile.ReadFromEmbeddedResource();
+            string folderPath = AppDomain.CurrentDomain.BaseDirectory + @"Migrations\Data\WikiScrapes\";
+
+            var spellFile = new WikiFileHelper<WikiSpellData>(folderPath + "spells.json", folderPath + "spells_corrections.json");
+            var wikiSpells = spellFile.ReadFromFile();
             var spells = parseWikiSpells(wikiSpells);
 
-            var itemFile = new WikiResourceHelper<WikiItemData>("items.json", "items_corrections.json");
-            var wikiItems = itemFile.ReadFromEmbeddedResource();
+            var itemFile = new WikiFileHelper<WikiItemData>(folderPath + "items.json", folderPath + "items_corrections.json");
+            var wikiItems = itemFile.ReadFromFile();
             var items = parseWikiItems(wikiItems);
 
             // Find any item whose effect is not a known spell, and artificially

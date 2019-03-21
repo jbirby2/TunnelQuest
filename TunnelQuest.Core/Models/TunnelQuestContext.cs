@@ -31,7 +31,8 @@ namespace TunnelQuest.Core.Models
         public DbSet<PriceHistory> PriceHistories { get; set; }
         public DbSet<AuthToken> AuthTokens { get; set; }
         public DbSet<AuthTokenStatus> AuthTokenStatuses { get; set; }
-        
+        public DbSet<Alias> Aliases { get; set; }
+
 
         public TunnelQuestContext ()
             : base()
@@ -108,6 +109,9 @@ namespace TunnelQuest.Core.Models
             // auction
             modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.UpdatedAt });
             modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ItemName, auction.PlayerName, auction.UpdatedAt });
+
+            // alias
+            modelBuilder.Entity<Alias>().HasIndex(alias => alias.ItemName);
         }
     }
 }

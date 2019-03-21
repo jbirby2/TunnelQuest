@@ -44,5 +44,12 @@ namespace TunnelQuest.Core
                 .OrderBy(priceHistory => priceHistory.ItemName)
                 .ToArray();
         }
+
+        public Alias[] GetAliases()
+        {
+            return context.Aliases
+                .OrderBy(alias => alias.AliasText)
+                .ToArray();
+        }
     }
 }

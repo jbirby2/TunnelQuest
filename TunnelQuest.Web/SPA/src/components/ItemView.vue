@@ -26,13 +26,18 @@
         font-weight: bold;
         white-space: nowrap;
     }
-
     .tqKnownItemName {
         color: #e049ff;
     }
-
     .tqUnknownItemName {
         color: #f7d8ff;
+    }
+
+    .tqItemAliases {
+        font-style: italic;
+    }
+    .tqItemAliases span:nth-child(2) {
+        color: #e049ff;
     }
 
     .tqItemStat {
@@ -106,7 +111,12 @@
     <span class="tqItem">
 
         <span :class="'tqItemLine tqItemName ' + (item.isFetched ? 'tqKnownItemName' : 'tqUnknownItemName')">
-            {{ item.itemName }}
+            {{item.itemName}}
+        </span>
+
+        <span v-if="showAliases == true && aliasesString != null" class="tqItemAliases">
+            <span>aka </span>
+            <span>{{aliasesString}}</span>
         </span>
 
         <span v-if="item.effectSpell != null && item.effectTypeCode == 'LearnSpell'">
@@ -281,12 +291,33 @@
             item: {
                 type: Object as () => Item,
                 required: true
-            }
+            },
+            showAliases: {
+                type: Boolean,
+                required: true
+            },
         },
 
         computed: {
             iconUrl: function () {
                 return "/game_assets/" + this.item.iconFileName;
+            },
+
+            aliasesString: function () {
+                console.log("STUB");
+                console.log();
+
+                if (TQGlobals.settings.aliasesByItemName[this.item.itemName]) {
+                    let str = "";
+                    for (let alias of TQGlobals.settings.aliasesByItemName[this.item.itemName]) {
+                        if (str != "")
+                            str += ", ";
+                        str += '"' + alias + '"';
+                    }
+                    return str;
+                }
+                else
+                    return null;
             },
 
             effectTypeDesc: function () {

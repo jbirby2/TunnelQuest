@@ -101,7 +101,7 @@
         <span v-else>WTS</span>
 
         <span class="tqAuctionHouseAuctionItemName">
-            <a :class="auction.isKnownItem ? 'tqAuctionHouseAuctionKnownItemLink' : 'tqAuctionHouseAuctionUnknownItemLink'" :href="'/item/' + this.urlEncodedItemName" @click="onItemNameClick">{{auction.itemName}}</a>
+            <a :class="(auction.isKnownItem ? 'tqAuctionHouseAuctionKnownItemLink' : 'tqAuctionHouseAuctionUnknownItemLink'" :href="'/item/' + this.urlEncodedItemName" @click="onItemNameClick">{{auction.itemName}}</a>
         </span>
 
         <span class="tqAuctionHouseAuctionPrice">

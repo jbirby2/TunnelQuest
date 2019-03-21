@@ -42,7 +42,7 @@
 <template>
     <div class="tqItemPage">
         <site-header></site-header>
-        <item-view v-if="item != null && item.isFetched" :item="item"></item-view>
+        <item-view v-if="item != null && item.isFetched" :item="item" :showAliases="true"></item-view>
 
         <div class="tqItemPageSection">
             <price-history-view :itemName="$route.params.itemName"></price-history-view>
@@ -112,12 +112,19 @@
             window.addEventListener("scroll", this.onScroll);
 
             TQGlobals.init(() => {
-                this.item = TQGlobals.items.get(this.$route.params.itemName);
-                this.getLatestContent();
+                let aliasedItemName = TQGlobals.resolveItemAlias(this.$route.params.itemName);
+                if (aliasedItemName != this.$route.params.itemName) {
+                    this.$router.replace("/item/" + encodeURIComponent(aliasedItemName));
+                }
+                else {
+                    this.item = TQGlobals.items.get(this.$route.params.itemName);
+                    this.getLatestContent();
+                }
             });
         },
 
         watch: {
+            // so that we can navigate from one item page to another, and everything will update
             $route (to, from) {
                 this.item = TQGlobals.items.get(this.$route.params.itemName);
                 this.getLatestContent();

@@ -154,6 +154,7 @@
 
                             let isKnownItem = (token.properties["isKnown"] == "1");
                             let itemName = token.properties["itemName"];
+                            let text = token.properties["text"];
                             let urlEncodedItemName = encodeURIComponent(itemName);
 
                             indexedItemNames.push(itemName);
@@ -172,18 +173,18 @@
                                     e.preventDefault();
                                     thisComponent.$router.push("/item/" + urlEncodedItemName);
                                 });
-                                linkElem.text = itemName;
+                                linkElem.text = text;
                                 textSpan.appendChild(linkElem);
                             }
                             else if (this.itemNameToHighlight == itemName) {
                                 // highlight the item name without making it a clickable link
                                 let spanElem = document.createElement("span") as HTMLSpanElement;
                                 spanElem.classList.add(isKnownItem ? "tqKnownItemLink" : "tqUnknownItemLink");
-                                spanElem.innerHTML = this.htmlEncode(itemName);
+                                spanElem.innerHTML = this.htmlEncode(text);
                                 textSpan.appendChild(spanElem);
                             }
                             else {
-                                textSoFar += itemName;
+                                textSoFar += text;
                             }
 
                         }

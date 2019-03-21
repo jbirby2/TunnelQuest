@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TunnelQuest.Web
 {
-    // Code stolen from https://stackoverflow.com/questions/4140719/calculate-median-in-c-sharp
+    // Code stolen from https://stackoverflow.com/questions/4140719/calculate-median-in-c-sharp and tweaked slightly
 
     public static class MedianAlgorithms
     {
@@ -65,19 +65,16 @@ namespace TunnelQuest.Web
             list[j] = temp;
         }
 
-        /// <summary>
-        /// Note: specified list would be mutated in the process.
-        /// </summary>
-        public static T Median<T>(this IList<T> list) where T : IComparable<T>
+        public static int? Median<T>(this IEnumerable<T> sequence, Func<T, int> getValue)
         {
-            return list.NthOrderStatistic((list.Count - 1) / 2);
-        }
-
-        public static int Median<T>(this IEnumerable<T> sequence, Func<T, int> getValue)
-        {
-            var list = sequence.Select(getValue).ToList();
-            var mid = (list.Count - 1) / 2;
-            return list.NthOrderStatistic(mid);
+            if (sequence.Any())
+            {
+                var list = sequence.Select(getValue).ToList();
+                var mid = (list.Count - 1) / 2;
+                return list.NthOrderStatistic(mid);
+            }
+            else
+                return null;
         }
     }
 }

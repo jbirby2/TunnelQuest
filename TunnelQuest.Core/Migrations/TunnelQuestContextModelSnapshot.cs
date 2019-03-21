@@ -17,6 +17,26 @@ namespace TunnelQuest.Core.Migrations
                 .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("TunnelQuest.Core.Models.Alias", b =>
+                {
+                    b.Property<string>("AliasText")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("alias_text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasColumnName("item_name");
+
+                    b.HasKey("AliasText");
+
+                    b.HasIndex("ItemName");
+
+                    b.ToTable("alias");
+                });
+
             modelBuilder.Entity("TunnelQuest.Core.Models.Auction", b =>
                 {
                     b.Property<long>("AuctionId")

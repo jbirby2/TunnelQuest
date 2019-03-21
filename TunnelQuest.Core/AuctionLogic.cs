@@ -31,19 +31,17 @@ namespace TunnelQuest.Core
             this.context = _context;
         }
 
-        public string[] GetAllItemNames(string serverCode, bool includeBuying, bool includeUnpriced)
+        public string[] GetAllItemNames(string serverCode)
         {
-            var auctionQuery = context.Auctions
-                .Where(auction => auction.ServerCode == serverCode);
-
-            if (!includeBuying)
-                auctionQuery = auctionQuery.Where(auction => auction.IsBuying == false);
-
-            if (!includeUnpriced)
-                auctionQuery = auctionQuery.Where(auction => auction.Price != null && auction.Price > 0);
+            var auctionQuery = from auction in context.Auctions
+                               where
+                                auction.ServerCode == serverCode
+                                && auction.IsBuying == false
+                                && auction.Price != null
+                                && auction.Price > 0
+                               select auction.ItemName;
 
             return auctionQuery
-                .Select(auction => auction.ItemName)
                 .Distinct()
                 .OrderBy(itemName => itemName)
                 .ToArray();
@@ -54,21 +52,21 @@ namespace TunnelQuest.Core
             IQueryable<Auction> auctionQuery;
             if (criteria.IncludeChatLine)
             {
-                auctionQuery = context.Auctions
-                    .Include(auction => auction.MostRecentChatLine)
-                        .ThenInclude(chatLine => chatLine.Tokens)
-                                .ThenInclude(chatLineToken => chatLineToken.Properties)
-                    .Where(auction => auction.ServerCode == criteria.ServerCode);
+                auctionQuery = from auction in context.Auctions.Include(auction => auction.MostRecentChatLine)
+                                                                    .ThenInclude(chatLine => chatLine.Tokens)
+                                                                            .ThenInclude(chatLineToken => chatLineToken.Properties)
+                               where auction.ServerCode == criteria.ServerCode
+                               select auction;
             }
             else
             {
-                auctionQuery = context.Auctions
-                    .Where(auction => auction.ServerCode == criteria.ServerCode);
+                auctionQuery = from auction in context.Auctions
+                               where auction.ServerCode == criteria.ServerCode
+                               select auction;
             }
 
             if (!String.IsNullOrWhiteSpace(criteria.ItemName))
                 auctionQuery = auctionQuery.Where(auction => auction.ItemName.Equals(criteria.ItemName, StringComparison.InvariantCultureIgnoreCase));
-
             if (!criteria.IncludeBuying)
                 auctionQuery = auctionQuery.Where(auction => auction.IsBuying == false);
 
@@ -207,7 +205,6 @@ namespace TunnelQuest.Core
                 return auction1;
         }
 
-
-    } // end class
+    }
 
 }

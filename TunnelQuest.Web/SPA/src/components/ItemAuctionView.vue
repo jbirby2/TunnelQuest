@@ -35,12 +35,12 @@
         width: 100%;
     }
 
-    .tqItemAuctionKnownItemLink {
+    .tqItemAuctionKnownItem {
         color: #e049ff;
         text-decoration: none;
     }
 
-    .tqItemAuctionUnknownItemLink {
+    .tqItemAuctionUnknownItem {
         color: #f7d8ff;
         text-decoration: none;
     }
@@ -100,8 +100,8 @@
         <span v-if="auction.isBuying">WTB</span>
         <span v-else>WTS</span>
 
-        <span class="tqItemAuctionItemName">
-            <a :class="auction.isKnownItem ? 'tqItemAuctionKnownItemLink' : 'tqItemAuctionUnknownItemLink'" :href="'/item/' + this.urlEncodedItemName" @click="onItemNameClick">{{auction.itemName}}</a>
+        <span :class="'tqItemAuctionItemName ' + (auction.isKnownItem ? 'tqItemAuctionKnownItem' : 'tqItemAuctionUnknownItem')">
+            {{ playerTypedItemName }}
         </span>
 
         <span class="tqItemAuctionPrice">
@@ -136,6 +136,19 @@
         },
 
         computed: {
+            playerTypedItemName: function () {
+                if (!this.auction)
+                    return null;
+
+                for (let chatToken of this.auction.chatLine.tokens) {
+                    if (chatToken.type == "ITEM" && chatToken.properties["itemName"] == this.auction.itemName)
+                        return chatToken.properties["text"];
+                }
+
+                // this shouldn't really happen, but we couldn't find the token for this item in the chat line for some reason
+                return this.auction.itemName;
+            },
+
             urlEncodedItemName: function () {
                 return encodeURIComponent(this.auction.itemName);
             },
@@ -153,10 +166,6 @@
         },
 
         methods: {
-            onItemNameClick: function (e: any) {
-                e.preventDefault();
-                this.$router.push("/item/" + this.urlEncodedItemName);
-            }
         },
 
         components: {

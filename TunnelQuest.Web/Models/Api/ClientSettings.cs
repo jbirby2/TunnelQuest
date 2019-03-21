@@ -21,6 +21,7 @@ namespace TunnelQuest.Web.Models.Api
         public int MaxAuctions { get; set; }
         public Dictionary<string, string> Classes { get; set; }
         public Dictionary<string, string> Races { get; set; }
+        public Dictionary<string, string> Aliases { get; set; }
 
         private ClientSettings()
         {
@@ -58,6 +59,17 @@ namespace TunnelQuest.Web.Models.Api
             this.Races.Add(RaceCodes.Ogre, RaceNames.Ogre);
             this.Races.Add(RaceCodes.Troll, RaceNames.Troll);
             this.Races.Add(RaceCodes.WoodElf, RaceNames.WoodElf);
+
+            this.Aliases = new Dictionary<string, string>();
+            using (var context = new TunnelQuestContext())
+            {
+                var itemLogic = new ItemLogic(context);
+                var aliases = itemLogic.GetAliases();
+                foreach (var alias in aliases)
+                {
+                    this.Aliases[alias.AliasText] = alias.ItemName;
+                }
+            }
         }
 
     }

@@ -118,7 +118,7 @@
         </span>
 
         <span>
-            <item-view :item="auction.item">
+            <item-view :item="auction.item" :showAliases="false">
                 <template slot="footer">
                     <span class="tqNewspaperAuctionChatLine">
                         <chat-line-view :chatLine="auction.chatLine" :itemNameToHighlight="auction.itemName" :showTimestamp="false" :itemNameLinks="false"></chat-line-view>

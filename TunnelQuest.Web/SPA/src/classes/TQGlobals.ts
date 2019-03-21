@@ -36,6 +36,30 @@ class TQGlobals {
                         this.items = new ItemRepo(this.spells);
                         this.priceHistories = new PriceHistoryRepo();
 
+                        // make sure all aliases are lowercase
+                        let aliasesToFix = new Array<string>();
+                        for (let aliasText in this.settings.aliases) {
+                            let lowerAliasText = aliasText.toLowerCase();
+                            if (aliasText != lowerAliasText) {
+                                // it was not already lowercase
+                                aliasesToFix.push(aliasText);
+                            }
+                        }
+                        for (let aliasText of aliasesToFix) {
+                            let lowerAliasText = aliasText.toLowerCase();
+                            this.settings.aliases[lowerAliasText] = this.settings.aliases[aliasText];
+                            delete this.settings.aliases[aliasText];
+                        }
+
+                        // build settings.aliasesByItemName
+                        this.settings.aliasesByItemName = {};
+                        for (let aliasText in this.settings.aliases) {
+                            let itemName = this.settings.aliases[aliasText];
+                            if (!this.settings.aliasesByItemName[itemName])
+                                this.settings.aliasesByItemName[itemName] = new Array<string>();
+                            this.settings.aliasesByItemName[itemName].push(aliasText);
+                        }
+
                         this.isInitializing = false;
 
                         for (let callback of this.initCallbacks) {
@@ -53,6 +77,19 @@ class TQGlobals {
     }
 
     // utility / helper functions
+
+    // if itemName is an alias such as "schw" or "fbss", return the actual itemName; otherwi
+    static resolveItemAlias(itemName: string) {
+        if (!itemName)
+            return itemName;
+
+        let realItemName = this.settings.aliases[itemName.toLowerCase()];
+
+        if (realItemName)
+            return realItemName;
+        else
+            return itemName;
+    }
 
     // code lifted from this stackoverflow post: https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
     static formatNumber(numberToFormat: number, decimals: number, dec_point: string, thousands_sep: string) {

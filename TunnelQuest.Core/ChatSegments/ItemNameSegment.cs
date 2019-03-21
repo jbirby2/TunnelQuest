@@ -7,16 +7,13 @@ namespace TunnelQuest.Core.ChatSegments
 {
     internal class ItemNameSegment : TextSegment
     {
-        public string ItemName
-        {
-            get { return base.Text; }
-        }
-
+        public string ItemName { get; private set; }
         public bool IsKnownItem { get; private set; }
 
-        public ItemNameSegment(ParsedChatLine parentLine, string itemName, bool isKnownItem, bool hasPrecedingSpace)
-            : base(parentLine, itemName, hasPrecedingSpace)
+        public ItemNameSegment(ParsedChatLine parentLine, string text, string itemName, bool isKnownItem, bool hasPrecedingSpace)
+            : base(parentLine, text, hasPrecedingSpace)
         {
+            this.ItemName = itemName;
             this.IsKnownItem = isKnownItem;
         }
     }

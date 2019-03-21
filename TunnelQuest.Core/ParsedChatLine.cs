@@ -12,33 +12,51 @@ namespace TunnelQuest.Core
     {
         // static
 
-        private static Node rootNode = null;
-
-        private static void ensureStaticItemNamesTree(TunnelQuestContext context)
+        private static Node itemNamesRootNode = null;
+        
+        // static constructor
+        static ParsedChatLine()
         {
-            if (rootNode == null)
+            // get the list of all item names
+            IEnumerable<string> itemNames;
+            IEnumerable<Alias> itemAliases;
+            using (var context = new TunnelQuestContext())
             {
-                rootNode = new Node();
-
-                IEnumerable<string> itemNames;
-
                 itemNames = (from item in context.Items
                              orderby item.ItemName
                              select item.ItemName).ToArray();
 
-                foreach (string name in itemNames)
+                itemAliases = (from alias in context.Aliases
+                               orderby alias.AliasText
+                               select alias).ToArray();
+            }
+
+            // build itemNamesRootNode
+            itemNamesRootNode = new Node();
+            foreach (Alias alias in itemAliases)
+            {
+                Node currentNode = itemNamesRootNode;
+                foreach (char letter in alias.AliasText.ToLower()) // ToLower() because we want all matching to be case-insensitive
                 {
-                    Node currentNode = rootNode;
-                    foreach (char letter in name)
-                    {
-                        if (!currentNode.NextChars.ContainsKey(letter))
-                            currentNode.NextChars[letter] = new Node();
-                        currentNode = currentNode.NextChars[letter];
-                    }
-                    currentNode.ItemName = name;
+                    if (!currentNode.NextChars.ContainsKey(letter))
+                        currentNode.NextChars[letter] = new Node();
+                    currentNode = currentNode.NextChars[letter];
                 }
+                currentNode.ItemName = alias.ItemName;
+            }
+            foreach (string name in itemNames)
+            {
+                Node currentNode = itemNamesRootNode;
+                foreach (char letter in name.ToLower()) // ToLower() because we want all matching to be case-insensitive
+                {
+                    if (!currentNode.NextChars.ContainsKey(letter))
+                        currentNode.NextChars[letter] = new Node();
+                    currentNode = currentNode.NextChars[letter];
+                }
+                currentNode.ItemName = name;
             }
         }
+
 
         // non-static
 
@@ -55,8 +73,6 @@ namespace TunnelQuest.Core
             this.Tokens = new List<ChatLineToken>();
 
             this.PlayerTypedText = playerTypedText;
-
-            ParsedChatLine.ensureStaticItemNamesTree(context);
 
             // At this point, Segments is an empty list.  The next function will parse PlayerTypedText
             // and fill Segments with a combination of TextSegments and ItemNameSegments.
@@ -146,7 +162,7 @@ namespace TunnelQuest.Core
                     // real world auction logs
 
                     if (createAuction)
-                        Segments.Insert(i, new ItemNameSegment(this, mergedText, false, mergedTextHasPrecedingSpace));
+                        Segments.Insert(i, new ItemNameSegment(this, mergedText, mergedText.Trim(), false, mergedTextHasPrecedingSpace)); // the .Trim() is important
                     else
                         Segments.Insert(i, new TextSegment(this, mergedText, mergedTextHasPrecedingSpace));
                 }
@@ -184,6 +200,13 @@ namespace TunnelQuest.Core
                     {
                         ChatLineTokenId = itemToken.ChatLineTokenId,
                         ChatLineToken = itemToken,
+                        Property = "text",
+                        Value = itemNameSegment.Text
+                    });
+                    itemToken.Properties.Add(new ChatLineTokenProperty()
+                    {
+                        ChatLineTokenId = itemToken.ChatLineTokenId,
+                        ChatLineToken = itemToken,
                         Property = "isKnown",
                         Value = itemNameSegment.IsKnownItem ? "1" : "0"
                     });
@@ -197,7 +220,7 @@ namespace TunnelQuest.Core
                     this.Tokens.Add(itemToken);
 
                     Auction auction;
-                    if (!this.Auctions.ContainsKey(itemNameSegment.Text))
+                    if (!this.Auctions.ContainsKey(itemNameSegment.ItemName))
                     {
                         auction = new Auction()
                         {
@@ -207,11 +230,11 @@ namespace TunnelQuest.Core
                             UpdatedAt = timestamp
                         };
 
-                        this.Auctions.Add(itemNameSegment.Text, auction);
+                        this.Auctions.Add(itemNameSegment.ItemName, auction);
                     }
                     else
                     {
-                        auction = this.Auctions[itemNameSegment.Text];
+                        auction = this.Auctions[itemNameSegment.ItemName];
                     }
 
                     if (lastFoundBuySellTrade != null)
@@ -234,7 +257,7 @@ namespace TunnelQuest.Core
                     bool isBuying = false;
                     foreach (var itemNameSegment in itemsSinceLastSeparator)
                     {
-                        var auction = this.Auctions[itemNameSegment.Text];
+                        var auction = this.Auctions[itemNameSegment.ItemName];
 
                         if (auction.Price == null)
                         {
@@ -292,7 +315,7 @@ namespace TunnelQuest.Core
                 {
                     foreach (var itemNameSegment in itemsSinceLastSeparator)
                     {
-                        var auction = this.Auctions[itemNameSegment.Text];
+                        var auction = this.Auctions[itemNameSegment.ItemName];
 
                         if (auction.Price != null)
                             auction.IsOrBestOffer = true;
@@ -351,21 +374,23 @@ namespace TunnelQuest.Core
 
         private void parseItemNames(DateTime timestamp)
         {
+            string lowerPlayerTypedText = PlayerTypedText.ToLower();
+
             int searchStartIndex = 0;
             string currentSegmentText = "";
             bool wasPrecedingSpace = false;
-            while (searchStartIndex < PlayerTypedText.Length)
+            while (searchStartIndex < lowerPlayerTypedText.Length)
             {
-                Node prevNode = rootNode;
+                Node prevNode = itemNamesRootNode;
                 var nodesTraversed = new Stack<Node>();
                 int searchEndIndex = searchStartIndex;
 
                 // build nodesTraversed
-                while (searchEndIndex < PlayerTypedText.Length)
+                while (searchEndIndex < lowerPlayerTypedText.Length)
                 {
-                    if (prevNode.NextChars.ContainsKey(PlayerTypedText[searchEndIndex]))
+                    if (prevNode.NextChars.ContainsKey(lowerPlayerTypedText[searchEndIndex]))
                     {
-                        prevNode = prevNode.NextChars[PlayerTypedText[searchEndIndex]];
+                        prevNode = prevNode.NextChars[lowerPlayerTypedText[searchEndIndex]];
                         nodesTraversed.Push(prevNode);
                         searchEndIndex++;
                     }
@@ -379,14 +404,14 @@ namespace TunnelQuest.Core
                     var lastNode = nodesTraversed.Pop();
                     if (lastNode.ItemName != null)
                     {
-                        Segments.Add(new ItemNameSegment(this, lastNode.ItemName, true, wasPrecedingSpace));
+                        Segments.Add(new ItemNameSegment(this, PlayerTypedText.Substring(searchStartIndex, searchEndIndex - searchStartIndex), lastNode.ItemName, true, wasPrecedingSpace));
                         break;
                     }
                 }
 
                 if (nodesTraversed.Count == 0)
                 {
-                    // no item was found
+                    // current text is not an item name
 
                     if (PlayerTypedText[searchStartIndex] == ' ')
                     {
@@ -400,7 +425,7 @@ namespace TunnelQuest.Core
                 }
                 else
                 {
-                    // item was found
+                    // current text is an item name
 
                     wasPrecedingSpace = false;
                 }
@@ -408,8 +433,7 @@ namespace TunnelQuest.Core
                 searchStartIndex += nodesTraversed.Count + 1;
             }
 
-            //if (currentSegmentText != "")
-                Segments.Add(new TextSegment(this, currentSegmentText, wasPrecedingSpace));
+            Segments.Add(new TextSegment(this, currentSegmentText, wasPrecedingSpace));
         }
 
 

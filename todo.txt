@@ -35,8 +35,6 @@
 
 - make it auto-retry connect on failure (try all kinds of failure)
 
-- stickyheader disco message fade transition not working?
-
 - horizontal scrollbar in smallest width (because of the auction padding?)
 
 - test to make sure people can't mess up the page by typing a really long string or something
@@ -64,13 +62,13 @@
 		* also after reconnect
 	** ALSO refactor so that the controller reuses the ClientChatLine and ClientAuction objects as much as possible
 
-- cache static copy of all Item and Spell data (and all static data for that matter) since none of it will ever change; no reason to query over and over
-
 - create item_alias table to manually associate common player-typed unknown item names with known item names (i.e. "jboots mq" might be an alias for "Journeyman's Boots" strong name)
 	- Alias (PK because logically it can only be an alias for ONE thing)
 	- ItemName (not FK because might be another weak name)
 
 	*** MAKE IT SO THAT weak names can alias a parent weak name too, for commonly sold items with no decent item to link (i.e. ports maybe?  something, surely)
+
+	- all aliases downloaded to client with settings
 
 	- links to an item's alias automatically load (location.replace()) the strongly typed name instead
 		** WAIT: if the api method automatically returns the parent, then no need to redirect; just make sure all code
@@ -80,24 +78,34 @@
 	- GetAuctions(by itemName) will also pulls auctions for any associated alias, including if for some reason you passed in the child alias instead of the parent alias
 	- item filters will be aware of aliases and let aliased rows through the filter
 	- PriceHistory endpoint will also automatically resolve to parent alias
+	- will need to do javascript implementation of the filters JUST for the live feed, because signalr
+	  can't gracefully handle different individual payloads for individual connections
 	
-	?? maybe other api endpoints that need to automatically return data for the parent alias??
-
-	** with the setup above, I don't **think** there's any reason for the javascript code to be aware of aliases at all
+	- places to take alias into account so far:
+		- price history service
+			- do a join in its query to filter out auctions
 
 - make PriceService's worker thread a LowPriority thread
 
 - for pc users, hover over PriceDeviationViews to see full info; hover over item names to see item view
 
-- remove embedded resources from TunnelQuest.Core to greatly reduce file size in memory
-
 - show the chat line for unknown item auctions
 
 - do not create PriceSegment if number followed by "stack" or "stacks" (i.e. "Bone Chips 5 stacks" creating PriceSegment of 5 for Bone Chips)
 
-** PriceHistoryService stopping?  need to go back and implement logging
+- item auction history includes pink names, but nothing else does; make it consistent
 
-*** FIX AND RE-ENABLE CACHING
+- fix and re-enable caching
+
+- move chat logs out of source control to some external large storage
+	- maybe move them out of migrations altogether and implement them as a new command in DatabaseBuilder
+
+- make newspaper items clickable to go to item page
+
+- auction names that end with dots break vue router
+
+- add a javascript button to ItemAuctionView that allows you to expand it down to show the ChatLineView
+	* OR maybe just if they click on the row?  could be a little confusing with the item names colored like links
 
 - SettingsPage
 	- "Item Filters"
@@ -106,14 +114,8 @@
 			- server to filter the api call results; otherwise a client could get stuck if a call ever returns a max results set with no matching items (also hugely wasteful)
 			- client to filter the live feed content (unfortunately no way to prevent the waste here since can't filter an individual connection's content on server)
 
-			!! FILTER IDEA: 
-
-				- basically wrap every AuctionView and ChatLineView in a v-if="passesFilter(item|auction)", that way vue will automatically
-				  handle the unhiding after all the data comes in from ajax
-					* this way we can also filter on metadata, i.e. only show lines|auctions with a good value above 100
-
-				- will need to make sure there the entire global filter object structure exists in its entirety before anything is mounted,
-				  just like how vue won't update if you don't have all the properties on the blank items and spells before the mount
+			* Cannot rely on vue to filter the rows out, because the objects will still be taking up space in the arrays.
+			  So, the array will constantly be trimmed down way further than the rows that are actually visible.
 
 		- applies to both auction pages AND chat page
 			* either way (except for newspaper mode), item filters (except for name) means they have to pull all item data.  it is what it is.

@@ -1,6 +1,7 @@
 ﻿import axios from "axios";
 
 import Settings from "../interfaces/Settings";
+import Filters from "../interfaces/Filters";
 
 import ItemRepo from "../classes/ItemRepo";
 import SpellRepo from "../classes/SpellRepo";
@@ -11,10 +12,13 @@ class TQGlobals {
     private static isInitializing: boolean = false;
     private static initCallbacks: Array<Function> = new Array<Function>();
 
+    static isInitialized: boolean = false;
     static settings: Settings;
+    static filters: Filters;
     static items: ItemRepo;
     static spells: SpellRepo;
     static priceHistories: PriceHistoryRepo;
+
 
     static init(callback: Function) {
 
@@ -60,7 +64,20 @@ class TQGlobals {
                             this.settings.aliasesByItemName[itemName].push(aliasText);
                         }
 
+                        // attempt to load previous filter settings from localstorage
+                        let existingFiltersJson = localStorage.getItem("Filters");
+                        if (existingFiltersJson == null) {
+                            // no previously saved filter was found; use default filter values
+                            this.filters = {} as Filters;
+                            this.filters.matchAny = true;
+                            this.filters.itemNames = [];
+                        }
+                        else {
+                            this.filters = JSON.parse(existingFiltersJson);
+                        }
+
                         this.isInitializing = false;
+                        this.isInitialized = true;
 
                         for (let callback of this.initCallbacks) {
                             callback();
@@ -74,6 +91,12 @@ class TQGlobals {
                     }); // end axios.get(settings)
             }
         }
+    }
+
+
+    static saveFilter() {
+        if (this.isInitialized)
+            localStorage.setItem("Filters", JSON.stringify(this.filters));
     }
 
     // utility / helper functions

@@ -14,6 +14,7 @@
     <div>
         <site-header>
             <connection-status-view :connection="connection"></connection-status-view>
+            <filters-link></filters-link>
         </site-header>
 
         <div class="tqChatPage">
@@ -35,6 +36,7 @@
     import LivePage from "../mixins/LivePage";
 
     import SiteHeader from "./SiteHeader.vue";
+    import FiltersLink from "./FiltersLink.vue";
     import ConnectionStatusView from "./ConnectionStatusView.vue";
     import ChatLineView from "./ChatLineView.vue";
 
@@ -147,6 +149,7 @@
 
         components: {
             SiteHeader,
+            FiltersLink,
             ConnectionStatusView,
             ChatLineView
         },

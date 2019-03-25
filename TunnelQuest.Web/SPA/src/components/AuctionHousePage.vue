@@ -26,6 +26,7 @@
     <div>
         <site-header>
             <connection-status-view :connection="connection"></connection-status-view>
+            <filters-link></filters-link>
         </site-header>
 
         <div class="tqAuctionHousePageListDivider">Recent auctions:</div>
@@ -51,6 +52,7 @@
     import LiveAuctionsPage from "../mixins/LiveAuctionsPage";
 
     import SiteHeader from "./SiteHeader.vue";
+    import FiltersLink from "./FiltersLink.vue";
     import ConnectionStatusView from "./ConnectionStatusView.vue";
     import AuctionHouseAuctionView from "./AuctionHouseAuctionView.vue";
 
@@ -67,6 +69,7 @@
 
         components: {
             SiteHeader,
+            FiltersLink,
             ConnectionStatusView,
             AuctionHouseAuctionView
         }

@@ -3,7 +3,7 @@
 
 <template>
     <span>
-        <span v-if="$route.fullPath == '/'">
+        <span v-if="$route.name == 'Main Menu'">
             Welcome to TunnelQuest
         </span>
         <span v-else-if="lastLivePageInfo == null || lastLivePageInfo.fullPath == $route.fullPath">
@@ -26,9 +26,21 @@
         },
 
         mounted: function () {
-            let lastLivePageString = localStorage.getItem("LastLivePage");
-            if (lastLivePageString != null)
-                this.lastLivePageInfo = JSON.parse(lastLivePageString);
-        }
+            this.setLastLivePageInfo();
+        },
+
+        activated: function () {
+            this.setLastLivePageInfo();
+        },
+
+        methods: {
+
+            setLastLivePageInfo: function () {
+                let lastLivePageString = localStorage.getItem("LastLivePage");
+                if (lastLivePageString != null)
+                    this.lastLivePageInfo = JSON.parse(lastLivePageString);
+            }
+        },
+
     });
 </script>

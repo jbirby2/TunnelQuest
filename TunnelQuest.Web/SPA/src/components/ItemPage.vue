@@ -84,9 +84,6 @@
 
         data: function () {
             return {
-                // STUB hard-coded
-                serverCode: "BLUE",
-
                 item: null as Item | null,
 
                 auctions: new SlidingList<Auction>(function (a: Auction, b: Auction) {
@@ -141,7 +138,7 @@
                 this.auctions.clear();
 
                 axios.post('/api/auction_query', {
-                    serverCode: this.serverCode,
+                    serverCode: TQGlobals.serverCode,
                     itemName: this.$route.params.itemName,
                     includeChatLine: true
                 })
@@ -162,7 +159,7 @@
                     maxId = this.auctions.array[this.auctions.array.length - 1].id - 1;
 
                 axios.post('/api/auction_query', {
-                    serverCode: this.serverCode,
+                    serverCode: TQGlobals.serverCode,
                     itemName: this.$route.params.itemName,
                     maximumId: maxId,
                     includeChatLine: true

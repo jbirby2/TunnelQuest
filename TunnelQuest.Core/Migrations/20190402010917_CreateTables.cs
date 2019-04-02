@@ -78,24 +78,6 @@ namespace TunnelQuest.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "price_history",
-                columns: table => new
-                {
-                    item_name = table.Column<string>(nullable: false),
-                    one_month_median = table.Column<int>(nullable: true),
-                    three_month_median = table.Column<int>(nullable: true),
-                    six_month_median = table.Column<int>(nullable: true),
-                    twelve_month_median = table.Column<int>(nullable: true),
-                    lifetime_median = table.Column<int>(nullable: false),
-                    created_at = table.Column<DateTime>(nullable: false),
-                    updated_at = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_price_history", x => x.item_name);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "race",
                 columns: table => new
                 {
@@ -183,6 +165,54 @@ namespace TunnelQuest.Core.Migrations
                         column: x => x.auth_token_status_code,
                         principalTable: "auth_token_status",
                         principalColumn: "auth_token_status_code",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "filter_item",
+                columns: table => new
+                {
+                    filter_item_id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    server_code = table.Column<string>(nullable: true),
+                    item_name = table.Column<string>(nullable: false),
+                    alias_text = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_filter_item", x => x.filter_item_id);
+                    table.ForeignKey(
+                        name: "FK_filter_item_server_server_code",
+                        column: x => x.server_code,
+                        principalTable: "server",
+                        principalColumn: "server_code",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "price_history",
+                columns: table => new
+                {
+                    price_history_id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    server_code = table.Column<string>(nullable: false),
+                    item_name = table.Column<string>(nullable: true),
+                    one_month_median = table.Column<int>(nullable: true),
+                    three_month_median = table.Column<int>(nullable: true),
+                    six_month_median = table.Column<int>(nullable: true),
+                    twelve_month_median = table.Column<int>(nullable: true),
+                    lifetime_median = table.Column<int>(nullable: false),
+                    created_at = table.Column<DateTime>(nullable: false),
+                    updated_at = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_price_history", x => x.price_history_id);
+                    table.ForeignKey(
+                        name: "FK_price_history_server_server_code",
+                        column: x => x.server_code,
+                        principalTable: "server",
+                        principalColumn: "server_code",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -625,6 +655,11 @@ namespace TunnelQuest.Core.Migrations
                 column: "chat_line_token_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_filter_item_server_code_item_name",
+                table: "filter_item",
+                columns: new[] { "server_code", "item_name" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_item_capacity_size_code",
                 table: "item",
                 column: "capacity_size_code");
@@ -695,6 +730,11 @@ namespace TunnelQuest.Core.Migrations
                 column: "slot_code");
 
             migrationBuilder.CreateIndex(
+                name: "IX_price_history_server_code_item_name",
+                table: "price_history",
+                columns: new[] { "server_code", "item_name" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_spell_effect_detail_spell_name",
                 table: "spell_effect_detail",
                 column: "spell_name");
@@ -725,6 +765,9 @@ namespace TunnelQuest.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "chat_line_token_property");
+
+            migrationBuilder.DropTable(
+                name: "filter_item");
 
             migrationBuilder.DropTable(
                 name: "item_class");

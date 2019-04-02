@@ -7,6 +7,7 @@ namespace TunnelQuest.Web.Models.Api
 {
     public class ItemsQuery
     {
+        public string ServerCode { get; set; }
         public string[] ItemNames { get; set; } = new string[0];
     }
 }

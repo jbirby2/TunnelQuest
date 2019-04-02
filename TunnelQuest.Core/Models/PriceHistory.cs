@@ -9,9 +9,19 @@ namespace TunnelQuest.Core.Models
     [Table("price_history")]
     public class PriceHistory
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("price_history_id")]
+        public long PriceHistoryId { get; set; }
+
+        [Required]
+        [ForeignKey("Server")]
+        [Column("server_code")]
+        public string ServerCode { get; set; }
+        public Server Server { get; set; }
+
         // ItemName is intentionally NOT declared a ForeignKey here, because ItemName
         // might also be a text string that matches no known item (e.g. "jboots mq")
-        [Key]
         [Column("item_name")]
         public string ItemName { get; set; }
 

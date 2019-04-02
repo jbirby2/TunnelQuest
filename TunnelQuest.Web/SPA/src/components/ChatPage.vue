@@ -49,9 +49,6 @@
 
         data: function () {
             return {
-                // STUB hard-coded
-                serverCode: "BLUE",
-
                 chatLines: new SlidingList<ChatLine>(function (a: ChatLine, b: ChatLine) {
                     // sort ascending
                     if (a.id < b.id)
@@ -92,7 +89,7 @@
                     minId = this.chatLines.array[this.chatLines.array.length - 1].id + 1;
 
                 axios.post('/api/chat_query', {
-                    serverCode: this.serverCode,
+                    serverCode: TQGlobals.serverCode,
                     minimumId: minId
                 })
                 .then(response => {
@@ -112,7 +109,7 @@
                     maxId = this.chatLines.array[0].id - 1;
 
                 axios.post('/api/chat_query', {
-                    serverCode: this.serverCode,
+                    serverCode: TQGlobals.serverCode,
                     maximumId: maxId
                 })
                 .then(response => {

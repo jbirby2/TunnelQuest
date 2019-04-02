@@ -26,7 +26,7 @@ namespace TunnelQuest.Web.Controllers.Api
         public ClientPriceHistory[] Post([FromBody]ItemsQuery query)
         {
             var itemLogic = new ItemLogic(context);
-            return ClientPriceHistory.Create(itemLogic.GetPriceHistory(query.ItemNames));
+            return ClientPriceHistory.Create(itemLogic.GetPriceHistory(query.ServerCode, query.ItemNames));
         }
     }
 }

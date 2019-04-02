@@ -17,9 +17,6 @@ export default mixins(LivePage).extend({
 
     data: function () {
         return {
-            // STUB hard-coded
-            serverCode: "BLUE",
-
             auctions: new SlidingList<Auction>(function (a: Auction, b: Auction) {
                 // sort ascending updatedAtString
                 if (a.updatedAtString < b.updatedAtString)
@@ -117,7 +114,7 @@ export default mixins(LivePage).extend({
             }
 
             axios.post('/api/auction_query', {
-                serverCode: this.serverCode,
+                serverCode: TQGlobals.serverCode,
                 minimumUpdatedAt: (minUpdatedAt == null ? null : minUpdatedAt.toISOString()),
                 includeChatLine: true
             })
@@ -141,7 +138,7 @@ export default mixins(LivePage).extend({
             }
 
             axios.post('/api/auction_query', {
-                serverCode: this.serverCode,
+                serverCode: TQGlobals.serverCode,
                 maximumUpdatedAt: (maxUpdatedAt == null ? null : maxUpdatedAt.toISOString()),
                 includeChatLine: true
             })

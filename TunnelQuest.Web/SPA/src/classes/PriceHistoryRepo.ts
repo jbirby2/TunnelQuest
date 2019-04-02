@@ -5,10 +5,12 @@ import PriceHistory from "../interfaces/PriceHistory";
 
 class PriceHistoryRepo {
 
+    private serverCode: string;
     private pendingItemNames: Array<string> = new Array<string>();
     private priceHistories: { [itemName: string]: PriceHistory } = {};
 
-    constructor() {
+    constructor(serverCode: string) {
+        this.serverCode = serverCode;
     }
 
     public get(itemName: string, fetchImmediately: boolean = true) {
@@ -49,7 +51,10 @@ class PriceHistoryRepo {
         // stub
         console.log("PriceHistoryRepo.fetchPendingPriceHistories()");
         
-        axios.post('/api/price_history', { itemNames: this.pendingItemNames.splice(0) }) // splice clears the array here
+        axios.post('/api/price_history', {
+                itemNames: this.pendingItemNames.splice(0), // splice clears the array here
+                serverCode: this.serverCode
+            }) 
             .then(response => {
                 let result = response.data as Array<PriceHistory>;
 

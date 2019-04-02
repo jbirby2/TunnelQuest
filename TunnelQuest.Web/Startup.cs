@@ -51,8 +51,9 @@ namespace TunnelQuest.Web
 
             services.AddSignalR();
 
-            // custom services
+            // custom TunnelQuest services
             services.AddHostedService<PriceHistoryService>();
+            services.AddHostedService<FilterItemService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

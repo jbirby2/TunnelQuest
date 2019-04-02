@@ -120,7 +120,10 @@
 		- applies to both auction pages AND chat page
 			* either way (except for newspaper mode), item filters (except for name) means they have to pull all item data.  it is what it is.
 
-		- on filter changed (debounced), pull whole new set of lines
+		- implement TQGlobals.onFilterChanged() and have LivePage wire in to clear its contents (while it's deactivated in the background)
+
 		- on scroll down / reconnect, use current filter in query
 			* see https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-2.2
+
 		- on new hub lines, only save them if they match the filter; otherwise discard them completely
+

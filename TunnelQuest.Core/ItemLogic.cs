@@ -37,10 +37,10 @@ namespace TunnelQuest.Core
                 .ToArray();
         }
 
-        public PriceHistory[] GetPriceHistory(string[] itemNames)
+        public PriceHistory[] GetPriceHistory(string serverCode, string[] itemNames)
         {
             return context.PriceHistories
-                .Where(priceHistory => itemNames.Contains(priceHistory.ItemName))
+                .Where(priceHistory => priceHistory.ServerCode == serverCode && itemNames.Contains(priceHistory.ItemName))
                 .OrderBy(priceHistory => priceHistory.ItemName)
                 .ToArray();
         }

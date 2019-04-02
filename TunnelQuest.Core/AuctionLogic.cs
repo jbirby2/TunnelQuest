@@ -31,22 +31,6 @@ namespace TunnelQuest.Core
             this.context = _context;
         }
 
-        public string[] GetAllItemNames(string serverCode)
-        {
-            var auctionQuery = from auction in context.Auctions
-                               where
-                                auction.ServerCode == serverCode
-                                && auction.IsBuying == false
-                                && auction.Price != null
-                                && auction.Price > 0
-                               select auction.ItemName;
-
-            return auctionQuery
-                .Distinct()
-                .OrderBy(itemName => itemName)
-                .ToArray();
-        }
-
         public Auction[] GetAuctions(AuctionsQuery criteria)
         {
             IQueryable<Auction> auctionQuery;

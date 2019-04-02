@@ -253,6 +253,29 @@ namespace TunnelQuest.Core.Migrations
                     b.ToTable("effect_type");
                 });
 
+            modelBuilder.Entity("TunnelQuest.Core.Models.FilterItem", b =>
+                {
+                    b.Property<long>("FilterItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("filter_item_id");
+
+                    b.Property<string>("AliasText")
+                        .HasColumnName("alias_text");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasColumnName("item_name");
+
+                    b.Property<string>("ServerCode")
+                        .HasColumnName("server_code");
+
+                    b.HasKey("FilterItemId");
+
+                    b.HasIndex("ServerCode", "ItemName");
+
+                    b.ToTable("filter_item");
+                });
+
             modelBuilder.Entity("TunnelQuest.Core.Models.Item", b =>
                 {
                     b.Property<string>("ItemName")
@@ -500,18 +523,25 @@ namespace TunnelQuest.Core.Migrations
 
             modelBuilder.Entity("TunnelQuest.Core.Models.PriceHistory", b =>
                 {
-                    b.Property<string>("ItemName")
+                    b.Property<long>("PriceHistoryId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("item_name");
+                        .HasColumnName("price_history_id");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnName("created_at");
+
+                    b.Property<string>("ItemName")
+                        .HasColumnName("item_name");
 
                     b.Property<int>("LifetimeMedian")
                         .HasColumnName("lifetime_median");
 
                     b.Property<int?>("OneMonthMedian")
                         .HasColumnName("one_month_median");
+
+                    b.Property<string>("ServerCode")
+                        .IsRequired()
+                        .HasColumnName("server_code");
 
                     b.Property<int?>("SixMonthMedian")
                         .HasColumnName("six_month_median");
@@ -525,7 +555,9 @@ namespace TunnelQuest.Core.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnName("updated_at");
 
-                    b.HasKey("ItemName");
+                    b.HasKey("PriceHistoryId");
+
+                    b.HasIndex("ServerCode", "ItemName");
 
                     b.ToTable("price_history");
                 });
@@ -731,6 +763,13 @@ namespace TunnelQuest.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("TunnelQuest.Core.Models.FilterItem", b =>
+                {
+                    b.HasOne("TunnelQuest.Core.Models.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerCode");
+                });
+
             modelBuilder.Entity("TunnelQuest.Core.Models.Item", b =>
                 {
                     b.HasOne("TunnelQuest.Core.Models.Size", "CapacitySize")
@@ -811,6 +850,14 @@ namespace TunnelQuest.Core.Migrations
                     b.HasOne("TunnelQuest.Core.Models.Slot", "Slot")
                         .WithMany()
                         .HasForeignKey("SlotCode")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TunnelQuest.Core.Models.PriceHistory", b =>
+                {
+                    b.HasOne("TunnelQuest.Core.Models.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerCode")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

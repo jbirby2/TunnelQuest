@@ -18,7 +18,7 @@ class TQGlobals {
     static items: ItemRepo;
     static spells: SpellRepo;
     static priceHistories: PriceHistoryRepo;
-
+    static serverCode: string;
 
     static init(callback: Function) {
 
@@ -35,10 +35,11 @@ class TQGlobals {
 
                 axios.get('/api/settings')
                     .then(response => {
+                        this.serverCode = "BLUE"; // STUB hard-coded
                         this.settings = response.data as Settings;
                         this.spells = new SpellRepo();
                         this.items = new ItemRepo(this.spells);
-                        this.priceHistories = new PriceHistoryRepo();
+                        this.priceHistories = new PriceHistoryRepo(this.serverCode);
 
                         // make sure all aliases are lowercase
                         let aliasesToFix = new Array<string>();

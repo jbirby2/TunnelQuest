@@ -253,29 +253,6 @@ namespace TunnelQuest.Core.Migrations
                     b.ToTable("effect_type");
                 });
 
-            modelBuilder.Entity("TunnelQuest.Core.Models.FilterItem", b =>
-                {
-                    b.Property<long>("FilterItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("filter_item_id");
-
-                    b.Property<string>("AliasText")
-                        .HasColumnName("alias_text");
-
-                    b.Property<string>("ItemName")
-                        .IsRequired()
-                        .HasColumnName("item_name");
-
-                    b.Property<string>("ServerCode")
-                        .HasColumnName("server_code");
-
-                    b.HasKey("FilterItemId");
-
-                    b.HasIndex("ServerCode", "ItemName");
-
-                    b.ToTable("filter_item");
-                });
-
             modelBuilder.Entity("TunnelQuest.Core.Models.Item", b =>
                 {
                     b.Property<string>("ItemName")
@@ -693,6 +670,29 @@ namespace TunnelQuest.Core.Migrations
                     b.ToTable("spell_source");
                 });
 
+            modelBuilder.Entity("TunnelQuest.Core.Models.UnknownItem", b =>
+                {
+                    b.Property<string>("ServerCode")
+                        .HasColumnName("server_code");
+
+                    b.Property<bool>("IsBuying")
+                        .HasColumnName("is_buying");
+
+                    b.Property<string>("ItemName")
+                        .HasColumnName("item_name");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnName("created_at");
+
+                    b.HasKey("ServerCode", "IsBuying", "ItemName");
+
+                    b.HasIndex("ServerCode");
+
+                    b.HasIndex("ServerCode", "IsBuying");
+
+                    b.ToTable("unknown_item");
+                });
+
             modelBuilder.Entity("TunnelQuest.Core.Models.WeaponSkill", b =>
                 {
                     b.Property<string>("WeaponSkillCode")
@@ -761,13 +761,6 @@ namespace TunnelQuest.Core.Migrations
                         .WithMany("Properties")
                         .HasForeignKey("ChatLineTokenId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("TunnelQuest.Core.Models.FilterItem", b =>
-                {
-                    b.HasOne("TunnelQuest.Core.Models.Server", "Server")
-                        .WithMany()
-                        .HasForeignKey("ServerCode");
                 });
 
             modelBuilder.Entity("TunnelQuest.Core.Models.Item", b =>
@@ -887,6 +880,14 @@ namespace TunnelQuest.Core.Migrations
                     b.HasOne("TunnelQuest.Core.Models.Spell", "Spell")
                         .WithMany("Sources")
                         .HasForeignKey("SpellName")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TunnelQuest.Core.Models.UnknownItem", b =>
+                {
+                    b.HasOne("TunnelQuest.Core.Models.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerCode")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

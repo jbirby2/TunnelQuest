@@ -6,24 +6,22 @@ using System.Text;
 
 namespace TunnelQuest.Core.Models
 {
-    [Table("filter_item")]
-    public class FilterItem
+    [Table("unknown_item")]
+    public class UnknownItem
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("filter_item_id")]
-        public long FilterItemId { get; set; }
-
         [ForeignKey("Server")]
         [Column("server_code")]
         public string ServerCode { get; set; }
         public Server Server { get; set; }
 
+        [Column("is_buying")]
+        public bool IsBuying { get; set; }
+
         [Required]
         [Column("item_name")]
         public string ItemName { get; set; }
 
-        [Column("alias_text")]
-        public string AliasText { get; set; }
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
     }
 }

@@ -169,27 +169,6 @@ namespace TunnelQuest.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "filter_item",
-                columns: table => new
-                {
-                    filter_item_id = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    server_code = table.Column<string>(nullable: true),
-                    item_name = table.Column<string>(nullable: false),
-                    alias_text = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_filter_item", x => x.filter_item_id);
-                    table.ForeignKey(
-                        name: "FK_filter_item_server_server_code",
-                        column: x => x.server_code,
-                        principalTable: "server",
-                        principalColumn: "server_code",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "price_history",
                 columns: table => new
                 {
@@ -210,6 +189,26 @@ namespace TunnelQuest.Core.Migrations
                     table.PrimaryKey("PK_price_history", x => x.price_history_id);
                     table.ForeignKey(
                         name: "FK_price_history_server_server_code",
+                        column: x => x.server_code,
+                        principalTable: "server",
+                        principalColumn: "server_code",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "unknown_item",
+                columns: table => new
+                {
+                    server_code = table.Column<string>(nullable: false),
+                    is_buying = table.Column<bool>(nullable: false),
+                    item_name = table.Column<string>(nullable: false),
+                    created_at = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_unknown_item", x => new { x.server_code, x.is_buying, x.item_name });
+                    table.ForeignKey(
+                        name: "FK_unknown_item_server_server_code",
                         column: x => x.server_code,
                         principalTable: "server",
                         principalColumn: "server_code",
@@ -655,11 +654,6 @@ namespace TunnelQuest.Core.Migrations
                 column: "chat_line_token_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_filter_item_server_code_item_name",
-                table: "filter_item",
-                columns: new[] { "server_code", "item_name" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_item_capacity_size_code",
                 table: "item",
                 column: "capacity_size_code");
@@ -753,6 +747,16 @@ namespace TunnelQuest.Core.Migrations
                 name: "IX_spell_source_spell_name",
                 table: "spell_source",
                 column: "spell_name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_unknown_item_server_code",
+                table: "unknown_item",
+                column: "server_code");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_unknown_item_server_code_is_buying",
+                table: "unknown_item",
+                columns: new[] { "server_code", "is_buying" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -765,9 +769,6 @@ namespace TunnelQuest.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "chat_line_token_property");
-
-            migrationBuilder.DropTable(
-                name: "filter_item");
 
             migrationBuilder.DropTable(
                 name: "item_class");
@@ -795,6 +796,9 @@ namespace TunnelQuest.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "spell_source");
+
+            migrationBuilder.DropTable(
+                name: "unknown_item");
 
             migrationBuilder.DropTable(
                 name: "chat_line_token");

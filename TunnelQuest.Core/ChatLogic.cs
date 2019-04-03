@@ -181,8 +181,22 @@ namespace TunnelQuest.Core
                         
                         // insert any NEW auction records (not pre-existing auction records)
                         context.AddRange(normalizedAuctions.Values.Where(auction => auction.AuctionId <= 0));
-                        context.SaveChanges();
 
+                        // also insert any new UnknownItems
+                        foreach (var auction in normalizedAuctions.Values.Where(auction => auction.IsKnownItem == false))
+                        {
+                            if (context.UnknownItems.Count(unknownItem => unknownItem.ServerCode == serverCode && unknownItem.IsBuying == auction.IsBuying && unknownItem.ItemName == auction.ItemName) == 0)
+                            {
+                                context.UnknownItems.Add(new UnknownItem() {
+                                    ServerCode = serverCode,
+                                    IsBuying = auction.IsBuying,
+                                    ItemName = auction.ItemName,
+                                    CreatedAt = auction.CreatedAt
+                                });
+                            }
+                        }
+
+                        context.SaveChanges();
                         transaction.Commit();
                     }
                     catch
@@ -192,6 +206,8 @@ namespace TunnelQuest.Core
                     }
                 }
 
+                // STUB disabled caching STUB
+                /*
                 MemoryCache.Default.Set(cacheKey, new CachedLine()
                 {
                     AuthTokenId = authTokenId,
@@ -200,6 +216,7 @@ namespace TunnelQuest.Core
                     Timestamp = newChatLine.SentAt,
                     ParsedLine = parsedLine
                 }, DateTimeOffset.Now.AddMinutes(10));
+                */
 
                 return new ProcessLogLineResult(newChatLine, normalizedAuctions.Values.ToArray());
             }

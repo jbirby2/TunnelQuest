@@ -54,7 +54,7 @@ namespace TunnelQuest.Web.Services
 
                         DateTime? oldestAuctionDate = itemAuctions.Max(auction => auction.CreatedAt);
 
-                        var priceHistory = context.PriceHistories.Where(pHistory => pHistory.ItemName.Equals(itemName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                        var priceHistory = context.PriceHistories.Where(pHistory => pHistory.ItemName == itemName).FirstOrDefault();
                         if (priceHistory == null)
                         {
                             priceHistory = new PriceHistory();

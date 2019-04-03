@@ -50,7 +50,7 @@ namespace TunnelQuest.Core
             }
 
             if (!String.IsNullOrWhiteSpace(criteria.ItemName))
-                auctionQuery = auctionQuery.Where(auction => auction.ItemName.Equals(criteria.ItemName, StringComparison.InvariantCultureIgnoreCase));
+                auctionQuery = auctionQuery.Where(auction => auction.ItemName == criteria.ItemName);
             if (!criteria.IncludeBuying)
                 auctionQuery = auctionQuery.Where(auction => auction.IsBuying == false);
 

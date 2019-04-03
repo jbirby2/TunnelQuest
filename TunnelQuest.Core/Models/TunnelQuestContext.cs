@@ -32,7 +32,7 @@ namespace TunnelQuest.Core.Models
         public DbSet<AuthToken> AuthTokens { get; set; }
         public DbSet<AuthTokenStatus> AuthTokenStatuses { get; set; }
         public DbSet<Alias> Aliases { get; set; }
-        public DbSet<FilterItem> FilterItems { get; set; }
+        public DbSet<UnknownItem> UnknownItems { get; set; }
 
 
         public TunnelQuestContext ()
@@ -117,8 +117,10 @@ namespace TunnelQuest.Core.Models
             // alias
             modelBuilder.Entity<Alias>().HasIndex(alias => alias.ItemName);
 
-            // filter_item
-            modelBuilder.Entity<FilterItem>().HasIndex(filterItem => new { filterItem.ServerCode, filterItem.ItemName });
+            // unknown_item
+            modelBuilder.Entity<UnknownItem>().HasKey(unknownItem => new { unknownItem.ServerCode, unknownItem.IsBuying, unknownItem.ItemName });
+            modelBuilder.Entity<UnknownItem>().HasIndex(unknownItem => unknownItem.ServerCode);
+            modelBuilder.Entity<UnknownItem>().HasIndex(unknownItem => new { unknownItem.ServerCode, unknownItem.IsBuying });
         }
     }
 }

@@ -194,27 +194,27 @@ namespace TunnelQuest.Core
                     itemNameSegment.IsTokenized = true;
                     var itemToken = new ChatLineToken()
                     {
-                        TokenTypeCode = ChatLineTokenTypeCodes.Item,
-                        Index = Convert.ToByte(this.Tokens.Count)
+                        TokenIndex = Convert.ToByte(this.Tokens.Count),
+                        TokenTypeCode = ChatLineTokenTypeCodes.Item
                     };
                     itemToken.Properties.Add(new ChatLineTokenProperty()
                     {
-                        ChatLineTokenId = itemToken.ChatLineTokenId,
-                        ChatLineToken = itemToken,
+                        ChatLineId = itemToken.ChatLineId,
+                        TokenIndex = itemToken.TokenIndex,
                         Property = "text",
                         Value = itemNameSegment.Text
                     });
                     itemToken.Properties.Add(new ChatLineTokenProperty()
                     {
-                        ChatLineTokenId = itemToken.ChatLineTokenId,
-                        ChatLineToken = itemToken,
+                        ChatLineId = itemToken.ChatLineId,
+                        TokenIndex = itemToken.TokenIndex,
                         Property = "isKnown",
                         Value = itemNameSegment.IsKnownItem ? "1" : "0"
                     });
                     itemToken.Properties.Add(new ChatLineTokenProperty()
                     {
-                        ChatLineTokenId = itemToken.ChatLineTokenId,
-                        ChatLineToken = itemToken,
+                        ChatLineId = itemToken.ChatLineId,
+                        TokenIndex = itemToken.TokenIndex,
                         Property = "itemName",
                         Value = itemNameSegment.ItemName
                     });
@@ -274,38 +274,38 @@ namespace TunnelQuest.Core
                     {
                         var priceToken = new ChatLineToken()
                         {
-                            TokenTypeCode = ChatLineTokenTypeCodes.Price,
-                            Index = Convert.ToByte(this.Tokens.Count)
+                            TokenIndex = Convert.ToByte(this.Tokens.Count),
+                            TokenTypeCode = ChatLineTokenTypeCodes.Price
                         };
 
                         priceToken.Properties.Add(new ChatLineTokenProperty()
                         {
-                            ChatLineTokenId = priceToken.ChatLineTokenId,
-                            ChatLineToken = priceToken,
+                            ChatLineId = priceToken.ChatLineId,
+                            TokenIndex = priceToken.TokenIndex,
                             Property = "isBuying",
                             Value = isBuying ? "1" : "0"
                         });
 
                         priceToken.Properties.Add(new ChatLineTokenProperty()
                         {
-                            ChatLineTokenId = priceToken.ChatLineTokenId,
-                            ChatLineToken = priceToken,
+                            ChatLineId = priceToken.ChatLineId,
+                            TokenIndex = priceToken.TokenIndex,
                             Property = "price",
                             Value = priceSegment.Price.ToString()
                         });
 
                         priceToken.Properties.Add(new ChatLineTokenProperty()
                         {
-                            ChatLineTokenId = priceToken.ChatLineTokenId,
-                            ChatLineToken = priceToken,
+                            ChatLineId = priceToken.ChatLineId,
+                            TokenIndex = priceToken.TokenIndex,
                             Property = "items",
                             Value = String.Join(',', itemSegmentIndexesWithThisPrice)
                         });
 
                         priceToken.Properties.Add(new ChatLineTokenProperty()
                         {
-                            ChatLineTokenId = priceToken.ChatLineTokenId,
-                            ChatLineToken = priceToken,
+                            ChatLineId = priceToken.ChatLineId,
+                            TokenIndex = priceToken.TokenIndex,
                             Property = "text",
                             Value = priceSegment.Text
                         });

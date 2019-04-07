@@ -29,7 +29,7 @@ namespace TunnelQuest.Web.Models.Api
             foreach (var lineToken in line.Tokens)
             {
                 // make sure to use lineToken.Index here to ensure that the tokens are ordered correctly
-                this.Tokens[lineToken.Index] = new ClientChatLineToken(lineToken);
+                this.Tokens[lineToken.TokenIndex] = new ClientChatLineToken(lineToken);
             }
         }
     }

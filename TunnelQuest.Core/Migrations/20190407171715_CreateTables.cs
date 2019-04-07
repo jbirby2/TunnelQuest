@@ -557,15 +557,13 @@ namespace TunnelQuest.Core.Migrations
                 name: "chat_line_token",
                 columns: table => new
                 {
-                    chat_line_token_id = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     chat_line_id = table.Column<long>(nullable: false),
-                    token_type_code = table.Column<string>(nullable: false),
-                    index = table.Column<byte>(nullable: false)
+                    token_index = table.Column<byte>(nullable: false),
+                    token_type_code = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_chat_line_token", x => x.chat_line_token_id);
+                    table.PrimaryKey("PK_chat_line_token", x => new { x.chat_line_id, x.token_index });
                     table.ForeignKey(
                         name: "FK_chat_line_token_chat_line_chat_line_id",
                         column: x => x.chat_line_id,
@@ -584,18 +582,25 @@ namespace TunnelQuest.Core.Migrations
                 name: "chat_line_token_property",
                 columns: table => new
                 {
-                    chat_line_token_id = table.Column<long>(nullable: false),
+                    chat_line_id = table.Column<long>(nullable: false),
+                    token_index = table.Column<byte>(nullable: false),
                     property = table.Column<string>(nullable: false),
                     value = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_chat_line_token_property", x => new { x.chat_line_token_id, x.property });
+                    table.PrimaryKey("PK_chat_line_token_property", x => new { x.chat_line_id, x.token_index, x.property });
                     table.ForeignKey(
-                        name: "FK_chat_line_token_property_chat_line_token_chat_line_token_id",
-                        column: x => x.chat_line_token_id,
+                        name: "FK_chat_line_token_property_chat_line_chat_line_id",
+                        column: x => x.chat_line_id,
+                        principalTable: "chat_line",
+                        principalColumn: "chat_line_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_chat_line_token_property_chat_line_token_chat_line_id_token_~",
+                        columns: x => new { x.chat_line_id, x.token_index },
                         principalTable: "chat_line_token",
-                        principalColumn: "chat_line_token_id",
+                        principalColumns: new[] { "chat_line_id", "token_index" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -650,9 +655,9 @@ namespace TunnelQuest.Core.Migrations
                 column: "token_type_code");
 
             migrationBuilder.CreateIndex(
-                name: "IX_chat_line_token_property_chat_line_token_id",
+                name: "IX_chat_line_token_property_chat_line_id_token_index",
                 table: "chat_line_token_property",
-                column: "chat_line_token_id");
+                columns: new[] { "chat_line_id", "token_index" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_item_capacity_size_code",

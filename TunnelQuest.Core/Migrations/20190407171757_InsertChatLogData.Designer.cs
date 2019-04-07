@@ -9,7 +9,7 @@ using TunnelQuest.Core.Models;
 namespace TunnelQuest.Core.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    [Migration("20190407160502_InsertChatLogData")]
+    [Migration("20190407171757_InsertChatLogData")]
     partial class InsertChatLogData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,21 +168,17 @@ namespace TunnelQuest.Core.Migrations
 
             modelBuilder.Entity("TunnelQuest.Core.Models.ChatLineToken", b =>
                 {
-                    b.Property<long>("ChatLineTokenId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("chat_line_token_id");
-
                     b.Property<long>("ChatLineId")
                         .HasColumnName("chat_line_id");
 
-                    b.Property<byte>("Index")
-                        .HasColumnName("index");
+                    b.Property<byte>("TokenIndex")
+                        .HasColumnName("token_index");
 
                     b.Property<string>("TokenTypeCode")
                         .IsRequired()
                         .HasColumnName("token_type_code");
 
-                    b.HasKey("ChatLineTokenId");
+                    b.HasKey("ChatLineId", "TokenIndex");
 
                     b.HasIndex("ChatLineId");
 
@@ -193,8 +189,11 @@ namespace TunnelQuest.Core.Migrations
 
             modelBuilder.Entity("TunnelQuest.Core.Models.ChatLineTokenProperty", b =>
                 {
-                    b.Property<long>("ChatLineTokenId")
-                        .HasColumnName("chat_line_token_id");
+                    b.Property<long>("ChatLineId")
+                        .HasColumnName("chat_line_id");
+
+                    b.Property<byte>("TokenIndex")
+                        .HasColumnName("token_index");
 
                     b.Property<string>("Property")
                         .HasColumnName("property");
@@ -203,9 +202,9 @@ namespace TunnelQuest.Core.Migrations
                         .IsRequired()
                         .HasColumnName("value");
 
-                    b.HasKey("ChatLineTokenId", "Property");
+                    b.HasKey("ChatLineId", "TokenIndex", "Property");
 
-                    b.HasIndex("ChatLineTokenId");
+                    b.HasIndex("ChatLineId", "TokenIndex");
 
                     b.ToTable("chat_line_token_property");
                 });
@@ -762,9 +761,14 @@ namespace TunnelQuest.Core.Migrations
 
             modelBuilder.Entity("TunnelQuest.Core.Models.ChatLineTokenProperty", b =>
                 {
-                    b.HasOne("TunnelQuest.Core.Models.ChatLineToken", "ChatLineToken")
+                    b.HasOne("TunnelQuest.Core.Models.ChatLine", "ChatLine")
+                        .WithMany()
+                        .HasForeignKey("ChatLineId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TunnelQuest.Core.Models.ChatLineToken")
                         .WithMany("Properties")
-                        .HasForeignKey("ChatLineTokenId")
+                        .HasForeignKey("ChatLineId", "TokenIndex")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

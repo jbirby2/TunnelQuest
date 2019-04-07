@@ -101,11 +101,12 @@ namespace TunnelQuest.Core.Models
             modelBuilder.Entity<ChatLine>().HasIndex(line => new { line.ServerCode, line.ChatLineId });
 
             // chat_line_token
+            modelBuilder.Entity<ChatLineToken>().HasKey(clt => new { clt.ChatLineId, clt.TokenIndex });
             modelBuilder.Entity<ChatLineToken>().HasIndex(clt => clt.ChatLineId);
 
             // chat_line_token_property
-            modelBuilder.Entity<ChatLineTokenProperty>().HasKey(cltp => new { cltp.ChatLineTokenId, cltp.Property });
-            modelBuilder.Entity<ChatLineTokenProperty>().HasIndex(cltp => cltp.ChatLineTokenId);
+            modelBuilder.Entity<ChatLineTokenProperty>().HasKey(cltp => new { cltp.ChatLineId, cltp.TokenIndex, cltp.Property });
+            modelBuilder.Entity<ChatLineTokenProperty>().HasIndex(cltp => new { cltp.ChatLineId, cltp.TokenIndex });
 
             // auction
             modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.UpdatedAt });

@@ -96,6 +96,7 @@ namespace TunnelQuest.Web.Services
                         priceHistory.LifetimeMedian = itemAuctions.Median(auction => auction.Price.Value).Value;
 
                         priceHistory.UpdatedAt = DateTime.UtcNow;
+
                         context.SaveChanges();
                     }
                     catch (Exception ex)

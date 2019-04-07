@@ -16,8 +16,11 @@
                 isDebugMode: false
             };
         },
+
         beforeMount: function () {
-            this.isDebugMode = this.$route.query["debug"] == "true";
-        }
+            //this.isDebugMode = this.$route.query["debug"] == "true";
+            this.isDebugMode = window.location.href.endsWith("debug=true");
+        },
+
     });
 </script>

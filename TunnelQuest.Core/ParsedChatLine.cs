@@ -194,7 +194,8 @@ namespace TunnelQuest.Core
                     itemNameSegment.IsTokenized = true;
                     var itemToken = new ChatLineToken()
                     {
-                        TokenTypeCode = ChatLineTokenTypeCodes.Item
+                        TokenTypeCode = ChatLineTokenTypeCodes.Item,
+                        Index = Convert.ToByte(this.Tokens.Count)
                     };
                     itemToken.Properties.Add(new ChatLineTokenProperty()
                     {
@@ -273,7 +274,8 @@ namespace TunnelQuest.Core
                     {
                         var priceToken = new ChatLineToken()
                         {
-                            TokenTypeCode = ChatLineTokenTypeCodes.Price
+                            TokenTypeCode = ChatLineTokenTypeCodes.Price,
+                            Index = Convert.ToByte(this.Tokens.Count)
                         };
 
                         priceToken.Properties.Add(new ChatLineTokenProperty()

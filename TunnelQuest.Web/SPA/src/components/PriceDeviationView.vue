@@ -8,6 +8,10 @@
     .tqPriceDeviationBad {
         color: #ff0000;
     }
+    .tqPriceDeviationDebug {
+        background-color: #f5ffb7;
+        color: #000000;
+    }
 </style>
 
 <template>
@@ -21,6 +25,10 @@
         <span v-else :class="isBuying ? 'tqPriceDeviationGood' : 'tqPriceDeviationBad'">
             &#9650;{{medianPriceDifference}}
         </span>
+
+        <if-debug>
+            <span class="tqPriceDeviationDebug">[itemName="{{itemName}}" price="{{price}}" isBuying="{{isBuying}}"]</span>
+        </if-debug>
     </span>
 </template>
 
@@ -28,7 +36,10 @@
     import Vue from "vue";
 
     import TQGlobals from '../classes/TQGlobals';
+
     import PriceHistory from "../interfaces/PriceHistory";
+
+    import IfDebug from "./IfDebug.vue";
 
 
     export default Vue.extend({
@@ -78,6 +89,9 @@
             }
         },
 
+        components: {
+            IfDebug
+        }
 
     });
 </script>

@@ -26,11 +26,10 @@ namespace TunnelQuest.Web.Models.Api
             this.SentAtString = line.SentAt;
 
             this.Tokens = new ClientChatLineToken[line.Tokens.Count];
-            int i = 0;
             foreach (var lineToken in line.Tokens)
             {
-                this.Tokens[i] = new ClientChatLineToken(lineToken);
-                i++;
+                // make sure to use lineToken.Index here to ensure that the tokens are ordered correctly
+                this.Tokens[lineToken.Index] = new ClientChatLineToken(lineToken);
             }
         }
     }

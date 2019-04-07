@@ -25,8 +25,9 @@
     <div>
         <site-header>
             <connection-status-view :connection="connection"></connection-status-view>
-            <filters-link></filters-link>
         </site-header>
+
+        <filter-manager-view></filter-manager-view>
 
         <div class="tqNewspaperPageListDivider">Recent auctions:</div>
         <div class="tqNewspaperPageList">
@@ -51,7 +52,7 @@
     import LiveAuctionsPage from "../mixins/LiveAuctionsPage";
 
     import SiteHeader from "./SiteHeader.vue";
-    import FiltersLink from "./FiltersLink.vue";
+    import FilterManagerView from "./FilterManagerView.vue";
     import ConnectionStatusView from "./ConnectionStatusView.vue";
     import NewspaperAuctionView from "./NewspaperAuctionView.vue";
 
@@ -72,7 +73,7 @@
 
         components: {
             SiteHeader,
-            FiltersLink,
+            FilterManagerView,
             ConnectionStatusView,
             NewspaperAuctionView
         }

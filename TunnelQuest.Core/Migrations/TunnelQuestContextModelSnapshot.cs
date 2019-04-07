@@ -173,6 +173,9 @@ namespace TunnelQuest.Core.Migrations
                     b.Property<long>("ChatLineId")
                         .HasColumnName("chat_line_id");
 
+                    b.Property<byte>("Index")
+                        .HasColumnName("index");
+
                     b.Property<string>("TokenTypeCode")
                         .IsRequired()
                         .HasColumnName("token_type_code");

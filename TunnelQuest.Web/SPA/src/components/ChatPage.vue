@@ -14,8 +14,9 @@
     <div>
         <site-header>
             <connection-status-view :connection="connection"></connection-status-view>
-            <filters-link></filters-link>
         </site-header>
+
+        <filter-manager-view></filter-manager-view>
 
         <div class="tqChatPage">
             <transition-group :name="transitionName">
@@ -36,8 +37,8 @@
     import LivePage from "../mixins/LivePage";
 
     import SiteHeader from "./SiteHeader.vue";
-    import FiltersLink from "./FiltersLink.vue";
     import ConnectionStatusView from "./ConnectionStatusView.vue";
+    import FilterManagerView from "./FilterManagerView.vue";
     import ChatLineView from "./ChatLineView.vue";
 
     import TQGlobals from "../classes/TQGlobals";
@@ -146,7 +147,7 @@
 
         components: {
             SiteHeader,
-            FiltersLink,
+            FilterManagerView,
             ConnectionStatusView,
             ChatLineView
         },

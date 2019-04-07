@@ -72,11 +72,11 @@ namespace TunnelQuest.Core
 
             IQueryable<FilterItem> itemQuery = from item in context.Items
                                                where item.ItemName.StartsWith(startingWith)
-                                               select new FilterItem() { ItemName = item.ItemName, DisplayText = item.ItemName };
+                                               select new FilterItem() { ItemName = item.ItemName, DisplayText = item.ItemName, IsKnownItem = true };
 
             IQueryable<FilterItem> aliasQuery = from alias in context.Aliases
                                                 where alias.AliasText.StartsWith(startingWith)
-                                                select new FilterItem() { ItemName = alias.ItemName, DisplayText = alias.AliasText + " (aka " + alias.ItemName + ")" };
+                                                select new FilterItem() { ItemName = alias.ItemName, DisplayText = alias.AliasText + " (aka " + alias.ItemName + ")", IsKnownItem = true };
 
             var finalQuery = itemQuery.Union(aliasQuery);
 
@@ -91,7 +91,7 @@ namespace TunnelQuest.Core
                 // for performance it's important that this where-clause comes last, after the indexed columns
                 unknownItemQuery = unknownItemQuery.Where(unknownItem => unknownItem.ItemName.StartsWith(startingWith));
 
-                finalQuery = finalQuery.Union(unknownItemQuery.Select(unknownItem => new FilterItem(){ ItemName = unknownItem.ItemName, DisplayText = unknownItem.ItemName }));
+                finalQuery = finalQuery.Union(unknownItemQuery.Select(unknownItem => new FilterItem(){ ItemName = unknownItem.ItemName, DisplayText = unknownItem.ItemName, IsKnownItem = false }));
             }
 
             return finalQuery

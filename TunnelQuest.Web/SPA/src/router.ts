@@ -6,7 +6,7 @@ import ChatPage from './components/ChatPage.vue';
 import AuctionHousePage from './components/AuctionHousePage.vue';
 import NewspaperPage from './components/NewspaperPage.vue';
 import ItemPage from './components/ItemPage.vue';
-import FiltersPage from './components/FiltersPage.vue';
+import FilterPage from './components/FilterPage.vue';
 
 Vue.use(VueRouter);
 
@@ -51,9 +51,9 @@ export default new VueRouter({
         },
 
         {
-            path: '/filters',
-            name: 'Filters',
-            component: FiltersPage,
+            path: '/filter/:id',
+            name: 'Filter',
+            component: FilterPage,
         },
     ],
 

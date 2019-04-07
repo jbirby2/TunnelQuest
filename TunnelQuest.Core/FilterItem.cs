@@ -8,5 +8,6 @@ namespace TunnelQuest.Core
     {
         public string ItemName { get; set; }
         public string DisplayText { get; set; }
+        public bool IsKnownItem { get; set; }
     }
 }

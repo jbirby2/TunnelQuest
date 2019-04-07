@@ -110,9 +110,8 @@ namespace TunnelQuest.Core
 
                 ParsedChatLine parsedLine;
 
-                
-                string cacheKey = serverCode + logLine;
                 /* STUB disable incoming line caching for now
+                string cacheKey = serverCode + logLine;
                 var cachedLine = (CachedLine)MemoryCache.Default[cacheKey];
                 if (cachedLine == null)
                 {

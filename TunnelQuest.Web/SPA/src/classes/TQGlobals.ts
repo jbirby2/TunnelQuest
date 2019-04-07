@@ -1,11 +1,11 @@
 ﻿import axios from "axios";
 
 import Settings from "../interfaces/Settings";
-import Filters from "../interfaces/Filters";
 
 import ItemRepo from "../classes/ItemRepo";
 import SpellRepo from "../classes/SpellRepo";
 import PriceHistoryRepo from "../classes/PriceHistoryRepo";
+import FilterManager from "../classes/FilterManager";
 
 class TQGlobals {
 
@@ -14,10 +14,10 @@ class TQGlobals {
 
     static isInitialized: boolean = false;
     static settings: Settings;
-    static filters: Filters;
     static items: ItemRepo;
     static spells: SpellRepo;
     static priceHistories: PriceHistoryRepo;
+    static filterManager: FilterManager;
     static serverCode: string;
 
     static init(callback: Function) {
@@ -40,6 +40,7 @@ class TQGlobals {
                         this.spells = new SpellRepo();
                         this.items = new ItemRepo(this.spells);
                         this.priceHistories = new PriceHistoryRepo(this.serverCode);
+                        this.filterManager = new FilterManager();
 
                         // make sure all aliases are lowercase
                         let aliasesToFix = new Array<string>();
@@ -65,18 +66,6 @@ class TQGlobals {
                             this.settings.aliasesByItemName[itemName].push(aliasText);
                         }
 
-                        // attempt to load previous filter settings from localstorage
-                        let existingFiltersJson = localStorage.getItem("Filters");
-                        if (existingFiltersJson == null) {
-                            // no previously saved filter was found; use default filter values
-                            this.filters = {} as Filters;
-                            this.filters.matchAny = true;
-                            this.filters.itemNames = [];
-                        }
-                        else {
-                            this.filters = JSON.parse(existingFiltersJson);
-                        }
-
                         this.isInitializing = false;
                         this.isInitialized = true;
 
@@ -94,11 +83,6 @@ class TQGlobals {
         }
     }
 
-
-    static saveFilter() {
-        if (this.isInitialized)
-            localStorage.setItem("Filters", JSON.stringify(this.filters));
-    }
 
     // utility / helper functions
 

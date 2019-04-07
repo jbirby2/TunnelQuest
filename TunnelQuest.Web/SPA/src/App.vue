@@ -144,7 +144,7 @@
 <template>
     <div id="app">
         <div class="tqMainPanel">
-            <keep-alive exclude="ItemPage">
+            <keep-alive exclude="ItemPage,FilterPage">
                 <router-view />
             </keep-alive>
         </div>

@@ -11,6 +11,7 @@
         </select>
 
         <button v-if="!manager.selectedFilter.isSystem" @click="onEditClicked">Edit</button>
+        <button v-if="!manager.selectedFilter.isSystem" @click="onDeleteClicked">Delete</button>
         <button @click="onNewFilterClicked">New Filter</button>
     </div>
 </template>
@@ -80,6 +81,20 @@
                 if (this.manager == null)
                     return;
                 this.$router.push("/filter/" + this.manager.selectedFilter.id);
+            },
+
+            onDeleteClicked: function () {
+                if (this.manager == null)
+                    return;
+
+                let dropdown = this.$refs["dropdown"] as HTMLSelectElement;
+                let filterToDelete = this.manager.get(dropdown.options[dropdown.selectedIndex].value);
+
+                if (filterToDelete != null && confirm("Are you sure you want to delete " + filterToDelete.name + "?")) {
+                    if (this.manager.selectedFilter == filterToDelete)
+                        this.manager.setSelectedFilter(this.manager.filters[0]);
+                    this.manager.deleteFilter(filterToDelete);
+                }
             },
 
             onNewFilterClicked: function () {

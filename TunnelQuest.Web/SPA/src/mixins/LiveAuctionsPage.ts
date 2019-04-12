@@ -1,7 +1,6 @@
 ﻿
 import axios from "axios";
 import mixins from 'vue-typed-mixins';
-import * as _ from "lodash";
 import * as moment from "moment";
 
 import Auction from "../interfaces/Auction";

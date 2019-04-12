@@ -2,7 +2,20 @@
 
 <style>
     .tqFilterPage {
+        margin: auto auto;
+        max-width: 600px;
+        background-color: rgba(0,0,0,0.7);
     }
+
+    .tqFilterPageHeader {
+        background-color: #55a2c6;
+        color: #ffffff;
+        font-weight: bold;
+        font-size: 1.2em;
+        padding-left: 3px;
+    }
+
+    
 
 </style>
 
@@ -12,7 +25,13 @@
         <site-header></site-header>
 
         <div v-if="filter != null">
-            <input type="text" v-model="filter.name" />
+            <div class="tqFilterPageHeader">Filter Name</div>
+            <div>
+                <input type="text" v-model="filter.name" @change="onFilterNameChanged" />
+            </div>
+
+            <div class="tqFilterPageHeader">Specific Items</div>
+            <filter-items-view :filter="filter"></filter-items-view>
         </div>
     </div>
 </template>
@@ -27,6 +46,7 @@
     import TqPage from "../mixins/TqPage";
 
     import SiteHeader from "./SiteHeader.vue";
+    import FilterItemsView from "./filterSettings/FilterItemsView.vue";
 
 
     export default mixins(TqPage).extend({
@@ -46,13 +66,14 @@
         },
 
         methods: {
-            //saveFilterFunction: function () {
-            //    alert("STUB saveFilterFunction");
-            //}
+            onFilterNameChanged: function () {
+                TQGlobals.filterManager.saveUserFilters();
+            }
         },
 
         components: {
             SiteHeader,
+            FilterItemsView
         }
     });
 </script>

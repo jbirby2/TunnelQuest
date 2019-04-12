@@ -15,6 +15,8 @@
 
   <ItemGroup>
     <None Remove="Migrations\Data\EcTunnelChatLogs\eqlog_project1999_1.txt" />
+    <None Remove="Migrations\Data\EcTunnelChatLogs\eqlog_project1999_2.txt" />
+    <None Remove="Migrations\Data\EcTunnelChatLogs\eqlog_project1999_3.txt" />
     <None Remove="Migrations\Data\wiki.project1999.com_items_corrections.json" />
     <None Remove="Migrations\Data\wiki.project1999.com_items_scrape.json" />
     <None Remove="Migrations\Data\WikiScrapes\non_p99_content.json" />
@@ -25,6 +27,12 @@
 
   <ItemGroup>
     <Content Include="Migrations\Data\EcTunnelChatLogs\eqlog_project1999_1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Data\EcTunnelChatLogs\eqlog_project1999_2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Data\EcTunnelChatLogs\eqlog_project1999_3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Migrations\Data\WikiScrapes\items.json">

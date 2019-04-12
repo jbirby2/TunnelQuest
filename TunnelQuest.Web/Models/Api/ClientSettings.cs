@@ -19,6 +19,7 @@ namespace TunnelQuest.Web.Models.Api
         public string ChatToken { get; set; }
         public int MaxChatLines { get; set; }
         public int MaxAuctions { get; set; }
+        public int MinFilterItemNameLength { get; set; }
         public Dictionary<string, string> Classes { get; set; }
         public Dictionary<string, string> Races { get; set; }
         public Dictionary<string, string> Aliases { get; set; }
@@ -28,6 +29,7 @@ namespace TunnelQuest.Web.Models.Api
             this.ChatToken = ChatLogic.CHAT_TOKEN;
             this.MaxChatLines = ChatLogic.MAX_CHAT_LINES;
             this.MaxAuctions = AuctionLogic.MAX_AUCTIONS;
+            this.MinFilterItemNameLength = ItemLogic.MIN_FILTER_ITEMNAME_LENGTH;
 
             this.Classes = new Dictionary<string, string>();
             this.Classes.Add(ClassCodes.Bard, ClassNames.Bard);

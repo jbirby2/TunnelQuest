@@ -3,6 +3,7 @@ import Filter from "../interfaces/Filter";
 
 class FilterManager {
 
+    private readonly LOCALSTORAGE_KEY = "TQCustomFilters";
     private readonly FILTER_NAME_BASE = "Custom Filter ";
     private selectedFilterChangedCallbacks: Array<Function>;
 
@@ -21,7 +22,16 @@ class FilterManager {
         goodDealsFilter.settings.minGoodPriceDeviation = 1;
         this.filters.push(goodDealsFilter);
 
-        // set initial filter
+        // load previously saved custom filters
+        let existingCustomFiltersJsonString = localStorage.getItem(this.LOCALSTORAGE_KEY);
+        if (existingCustomFiltersJsonString != null) {
+            let existingCustomFilters = JSON.parse(existingCustomFiltersJsonString) as Array<Filter>;
+            for (let existingFilter of existingCustomFilters) {
+                this.filters.push(existingFilter);
+            }
+        }
+
+        // select the initial filter
         this.selectedFilter = this.filters[0];
     }
 
@@ -43,7 +53,16 @@ class FilterManager {
     public createNewUserFilter() {
         let newFilter = this.createEmptyFilter(this.generateName(), false);
         this.filters.push(newFilter);
+        this.saveUserFilters();
         return newFilter;
+    }
+
+    public deleteFilter(filter: Filter) {
+        let filterIndex = this.filters.indexOf(filter);
+        if (filterIndex >= 0) {
+            this.filters.splice(filterIndex, 1);
+            this.saveUserFilters();
+        }
     }
 
     public get(id: string) {
@@ -52,6 +71,19 @@ class FilterManager {
                 return filter;
         }
         return null;
+    }
+
+    public saveUserFilters() {
+        let customFilters = new Array<Filter>();
+        for (var filter of this.filters) {
+            if (!filter.isSystem)
+                customFilters.push(filter);
+        }
+
+        if (customFilters.length > 0)
+            localStorage.setItem(this.LOCALSTORAGE_KEY, JSON.stringify(customFilters));
+        else
+            localStorage.removeItem(this.LOCALSTORAGE_KEY);
     }
 
     // private

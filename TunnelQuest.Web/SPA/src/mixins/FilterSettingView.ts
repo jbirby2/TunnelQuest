@@ -10,10 +10,6 @@ export default Vue.extend({
         filter: {
             type: Object as () => Filter,
             required: true
-        },
-        saveFunction: {
-            type: Function,
-            required: true
         }
     },
 

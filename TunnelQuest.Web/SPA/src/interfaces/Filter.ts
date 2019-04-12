@@ -1,9 +1,5 @@
 ﻿
 interface Filter {
-
-    // STUB TODO delete this and its vue, etc
-    matchAny: boolean,
-
     id: string,
     isSystem: boolean,
     name: string,

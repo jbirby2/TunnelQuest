@@ -47,6 +47,7 @@
 	- make sure no auction is ever created for whitespace
 	
 - spend the time to make the "<<" top menu buttons do a javascript:back() when appropriate
+	** use localStorage.get("NavHistory")!  vue is already maintaining it for us!
 
 - create new migration for initial eq log files
 	- actually use timestamp for these
@@ -127,4 +128,4 @@
 
 		- on new hub lines, only save them if they match the filter; otherwise discard them completely
 
-
+- debounce scroll events (probably already listed above somewhere)

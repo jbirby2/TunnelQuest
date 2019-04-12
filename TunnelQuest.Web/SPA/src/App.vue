@@ -17,6 +17,20 @@
     .tqMainPanel {
     }
 
+    input[type=text] {
+        width: 100%;
+        border-style: none;
+        padding-left: 3px;
+    }
+
+    input[type=text]:focus, select:focus {
+        background-color: #f9ffd6;
+    }
+
+    label {
+        white-space: nowrap;
+    }
+
     @media screen and (min-width: 992px) {
         /* start of desktop styles */
         body {

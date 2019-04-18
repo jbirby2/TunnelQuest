@@ -65,7 +65,7 @@
 
     import Item from '../interfaces/Item';
     import Auction from '../interfaces/Auction';
-    import LinesAndAuctions from "../interfaces/LinesAndAuctions";
+    import ChatLinePayload from "../interfaces/ChatLinePayload";
 
     import TQGlobals from "../classes/TQGlobals";
     import SlidingList from "../classes/SlidingList";
@@ -87,10 +87,10 @@
                 item: null as Item | null,
 
                 auctions: new SlidingList<Auction>(function (a: Auction, b: Auction) {
-                    // sort descending updatedAtString
-                    if (a.updatedAtString < b.updatedAtString)
+                    // sort descending createdAtString
+                    if (a.createdAtString < b.createdAtString)
                         return 1;
-                    else if (a.updatedAtString > b.updatedAtString)
+                    else if (a.createdAtString > b.createdAtString)
                         return -1;
                     else {
                         // sort descending id
@@ -143,7 +143,7 @@
                     includeChatLine: true
                 })
                 .then(response => {
-                    let itemAuctions = response.data as LinesAndAuctions;
+                    let itemAuctions = response.data as ChatLinePayload;
                     this.onNewContent(itemAuctions, true);
                 })
                 .catch(err => {
@@ -165,7 +165,7 @@
                     includeChatLine: true
                 })
                 .then(response => {
-                    let itemAuctions = response.data as LinesAndAuctions;
+                    let itemAuctions = response.data as ChatLinePayload;
                     this.onNewContent(itemAuctions, false);
                 })
                 .catch(err => {
@@ -176,10 +176,13 @@
 
 
             // inherited from TqPage
-            onFilteredContent: function (itemAuctions: LinesAndAuctions, enforceMaxSize: boolean) {
-                for (let auctionId in itemAuctions.auctions) {
-                    let auction = itemAuctions.auctions[auctionId];
-                    this.auctions.add(auction);
+            onFilteredContent: function (chatLines: ChatLinePayload, enforceMaxSize: boolean) {
+                for (let chatLineId in chatLines.lines) {
+                    let chatLine = chatLines.lines[chatLineId];
+                    for (let auctionId in chatLine.auctions) {
+                        let auction = chatLine.auctions[auctionId];
+                        this.auctions.add(auction);
+                    }
                 }
 
                 if (enforceMaxSize)

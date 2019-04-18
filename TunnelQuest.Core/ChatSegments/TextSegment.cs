@@ -6,29 +6,36 @@ namespace TunnelQuest.Core.ChatSegments
 {
     internal class TextSegment
     {
-        public bool IsTokenized { get; set; }
-        public bool HasPrecedingSpace { get; private set; }
-        public ParsedChatLine ParentLine { get; private set; }
-        public string Text { get; protected set; }
+        // static helper methods
 
-        public TextSegment (ParsedChatLine parentLine, string text, bool hasPrecedingSpace)
+        protected static TextSegment GetNextSegment(List<TextSegment> segments, int index)
         {
-            if (parentLine == null)
-                throw new Exception("parentLine cannot be null");
+            int nextIndex = index + 1;
+            if (nextIndex < segments.Count)
+                return segments[nextIndex];
+            else
+                return null;
+        }
 
+        protected static TextSegment GetPrevSegment(List<TextSegment> segments, int index)
+        {
+            int prevIndex = index - 1;
+            if (prevIndex >= 0)
+                return segments[prevIndex];
+            else
+                return null;
+        }
+
+        // non-static stuff
+
+        public bool HasPrecedingSpace { get; private set; }
+        public virtual string Text { get; private set; }
+
+        public TextSegment (string text, bool hasPrecedingSpace)
+        {
             this.HasPrecedingSpace = hasPrecedingSpace;
-            this.ParentLine = parentLine;
             this.Text = text ?? "";
         }
 
-        public TextSegment NextSegment()
-        {
-            return ParentLine.NextSegment(this);
-        }
-
-        public TextSegment PrevSegment()
-        {
-            return ParentLine.PrevSegment(this);
-        }
     }
 }

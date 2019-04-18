@@ -8,7 +8,7 @@ namespace TunnelQuest.Core.ChatSegments
     {
         // static
 
-        public static SeparatorSegment TryParse(ParsedChatLine parentLine, TextSegment textSegment)
+        public static SeparatorSegment TryParse(TextSegment textSegment)
         {
             if (textSegment.Text == "")
                 return null;
@@ -25,7 +25,7 @@ namespace TunnelQuest.Core.ChatSegments
             }
 
             if (specialCount >= normalCount)
-                return new SeparatorSegment(parentLine, textSegment.Text, textSegment.HasPrecedingSpace);
+                return new SeparatorSegment(textSegment.Text, textSegment.HasPrecedingSpace);
             else
                 return null;
         }
@@ -35,8 +35,8 @@ namespace TunnelQuest.Core.ChatSegments
 
 
         // protected constructor so that these segments can only be created by calling TryParse()
-        protected SeparatorSegment(ParsedChatLine parentLine, string text, bool hasPrecedingSpace)
-            : base(parentLine, text, hasPrecedingSpace)
+        protected SeparatorSegment(string text, bool hasPrecedingSpace)
+            : base(text, hasPrecedingSpace)
         {
         }
     }

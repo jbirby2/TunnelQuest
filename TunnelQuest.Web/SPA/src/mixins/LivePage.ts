@@ -1,7 +1,7 @@
 ﻿
 import mixins from 'vue-typed-mixins';
 
-import LinesAndAuctions from "../interfaces/LinesAndAuctions";
+import ChatLinePayload from "../interfaces/ChatLinePayload";
 
 import TQGlobals from "../classes/TQGlobals";
 import ConnectionWrapper from "../classes/ConnectionWrapper";
@@ -90,7 +90,7 @@ export default mixins(TqPage).extend({
 
     methods: {
 
-        onNewLiveContent: function (newContent: LinesAndAuctions) {
+        onNewLiveContent: function (newContent: ChatLinePayload) {
             this.onNewContent(newContent, true);
         },
 

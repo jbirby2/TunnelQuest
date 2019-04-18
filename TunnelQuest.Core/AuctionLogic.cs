@@ -31,162 +31,57 @@ namespace TunnelQuest.Core
             this.context = _context;
         }
 
-        public Auction[] GetAuctions(AuctionsQuery criteria)
+        public void UpdateReplacedAuctions(Auction newAuction)
         {
-            IQueryable<Auction> auctionQuery;
-            if (criteria.IncludeChatLine)
+            
+
+            // Set the IsPermanent property of the previous auction to False, occasionally leaving it as True to create
+            // historical price history records.
+
+            var mostRecentPermanentAuctionsBySamePlayerForSameItem = (from auction in context.Auctions
+                                                                      where
+                                                                        auction.ServerCode == newAuction.ServerCode
+                                                                        && auction.ItemName == newAuction.ItemName
+                                                                        && auction.PlayerName == newAuction.PlayerName
+                                                                        && auction.IsPermanent == true
+                                                                      orderby auction.CreatedAt descending
+                                                                      select auction)
+                                                                        .Take(2)
+                                                                        .ToArray();
+
+            if (mostRecentPermanentAuctionsBySamePlayerForSameItem.Length > 0)
             {
-                auctionQuery = from auction in context.Auctions.Include(auction => auction.MostRecentChatLine)
-                                                                    .ThenInclude(chatLine => chatLine.Tokens)
-                                                                            .ThenInclude(chatLineToken => chatLineToken.Properties)
-                               where auction.ServerCode == criteria.ServerCode
-                               select auction;
-            }
-            else
-            {
-                auctionQuery = from auction in context.Auctions
-                               where auction.ServerCode == criteria.ServerCode
-                               select auction;
-            }
+                Auction mostRecentAuction = mostRecentPermanentAuctionsBySamePlayerForSameItem[0];
 
-            if (!String.IsNullOrWhiteSpace(criteria.ItemName))
-                auctionQuery = auctionQuery.Where(auction => auction.ItemName == criteria.ItemName);
-            if (!criteria.IncludeBuying)
-                auctionQuery = auctionQuery.Where(auction => auction.IsBuying == false);
-
-            if (!criteria.IncludeUnpriced)
-                auctionQuery = auctionQuery.Where(auction => auction.Price != null && auction.Price > 0);
-
-            if (criteria.MinimumUpdatedAt != null)
-                auctionQuery = auctionQuery.Where(auction => auction.UpdatedAt >= criteria.MinimumUpdatedAt.Value);
-
-            if (criteria.MaximumUpdatedAt != null)
-                auctionQuery = auctionQuery.Where(auction => auction.UpdatedAt <= criteria.MaximumUpdatedAt.Value);
-
-
-            // order by descending in the sql query, to make sure we get the most recent auctions if we hit the limit imposed by maxResults
-            auctionQuery = auctionQuery.OrderByDescending(auction => auction.UpdatedAt);
-
-            if (criteria.MaxResults != null)
-                auctionQuery = auctionQuery.Take(criteria.MaxResults.Value);
-
-            return auctionQuery
-                .ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
-                .OrderBy(auction => auction.UpdatedAt) // now that we've got the results from the database (possibly truncated by maxResults), re-order them correctly
-                .ToArray();
-        }
-
-        public Dictionary<string, Auction> GetNormalizedAuctions(string serverCode, string playerName, DateTime timestamp, Dictionary<string, Auction> pendingAuctions)
-        {
-            // It's possible that, for whatever reason, the same item will be listed in a chat line more than once.  When that happens,
-            // we'll apply some logic to decide which auction is more "correct", and make all the AuctionSegments point at that same Auction object.
-            var normalizedAuctions = new Dictionary<string, Auction>();
-            foreach (var pendingAuction in pendingAuctions.Values)
-            {
-                if (normalizedAuctions.ContainsKey(pendingAuction.ItemName))
-                    normalizedAuctions[pendingAuction.ItemName] = whichAuctionIsMoreComplete(pendingAuction, normalizedAuctions[pendingAuction.ItemName]);
+                // set secondMostRecentAuction
+                Auction secondMostRecentAuction;
+                if (mostRecentPermanentAuctionsBySamePlayerForSameItem.Length > 1)
+                    secondMostRecentAuction = mostRecentPermanentAuctionsBySamePlayerForSameItem[1];
                 else
-                    normalizedAuctions[pendingAuction.ItemName] = pendingAuction;
-            }
-
-            // For each auction that the player is advertising, check to see if it's a re-post of an
-            // existing auction.  This will be true 99% of the time.
-            foreach (var itemName in normalizedAuctions.Keys.ToArray())
-            {
-                var pendingNewAuction = normalizedAuctions[itemName];
-
-                // See if there's an existing auction we should reuse instead of posting this new one.
-
-                Auction lastAuctionBySamePlayerForSameItem = (from auction in context.Auctions
-                                                              where
-                                                                auction.ServerCode == serverCode
-                                                                && auction.ItemName == pendingNewAuction.ItemName
-                                                                && auction.PlayerName == playerName
-                                                              orderby auction.UpdatedAt descending
-                                                              select auction).FirstOrDefault();
-
-                if (lastAuctionBySamePlayerForSameItem != null)
                 {
-                    if (lastAuctionBySamePlayerForSameItem.Equals(pendingNewAuction))
-                    {
-                        // Player has auctioned this item before, and nothing has changed...
+                    // If there IS no second-most-recent permanent auction, then instead compare mostRecentAuction
+                    // to the very first auction the player ever posted for this item.  Note this means that if this is the
+                    // second time the player has ever auctioned this item, secondMostRecentAuction and mostRecentAuction 
+                    // could end up being the same auction.
+                    secondMostRecentAuction = (from auction in context.Auctions
+                                               where
+                                                  auction.ServerCode == newAuction.ServerCode
+                                                  && auction.ItemName == newAuction.ItemName
+                                                  && auction.PlayerName == newAuction.PlayerName
+                                               orderby auction.CreatedAt ascending
+                                               select auction)
+                                                .FirstOrDefault();
+                }
 
-                        DateTime createNewAuctionDate = lastAuctionBySamePlayerForSameItem.CreatedAt + MAX_NEW_AUCTION_THRESHOLD;
+                newAuction.ReplacesAuctionId = mostRecentAuction.AuctionId;
 
-                        if (timestamp < createNewAuctionDate)
-                        {
-                            // reuse the existing auction.
-                            lastAuctionBySamePlayerForSameItem.UpdatedAt = timestamp;
-                            normalizedAuctions[itemName] = lastAuctionBySamePlayerForSameItem;
-                        }
-                        else
-                        {
-                            // create a new auction (even though nothing has changed) so that the old auction
-                            // can become historical data for reporting
-                            pendingNewAuction.PreviousAuctionId = lastAuctionBySamePlayerForSameItem.AuctionId;
-                        }
-                    }
-                    else
-                    {
-                        // Player has auctioned this item before, and something HAS changed (price, etc)...
-
-                        DateTime createNewAuctionDate = lastAuctionBySamePlayerForSameItem.CreatedAt + MIN_NEW_AUCTION_THRESHOLD;
-
-                        if (timestamp < createNewAuctionDate)
-                        {
-                            // It hasn't been long enough since the last time this player created a new auction
-                            // for this item: update the existing auction with the new values.
-                            lastAuctionBySamePlayerForSameItem.CopyValuesFrom(pendingNewAuction);
-                            lastAuctionBySamePlayerForSameItem.UpdatedAt = timestamp;
-                            normalizedAuctions[itemName] = lastAuctionBySamePlayerForSameItem;
-                        }
-                        else
-                        {
-                            // It's been long enough since the last time this player created a new auction
-                            // for this item: create a new auction, and leave the old auction as a historical record.
-                            pendingNewAuction.PreviousAuctionId = lastAuctionBySamePlayerForSameItem.AuctionId;
-                        }
-                    }
+                var newAuctionThreshold = (newAuction.Equals(mostRecentAuction) ? MAX_NEW_AUCTION_THRESHOLD : MIN_NEW_AUCTION_THRESHOLD);
+                if (newAuction.CreatedAt - secondMostRecentAuction.CreatedAt < newAuctionThreshold)
+                {
+                    mostRecentAuction.IsPermanent = false;
+                    mostRecentAuction.UpdatedAt = newAuction.CreatedAt;
                 }
             }
-
-            return normalizedAuctions;
-        }
-
-
-        // private
-
-        private Auction whichAuctionIsMoreComplete(Auction auction1, Auction auction2)
-        {
-            int a1Score = 0;
-            int a2Score = 0;
-
-            if (auction1.IsAcceptingTrades == true && auction2.IsAcceptingTrades == false)
-                a1Score++;
-            else if (auction1.IsAcceptingTrades == false && auction2.IsAcceptingTrades == true)
-                a2Score++;
-
-            if (auction1.IsOrBestOffer == true && auction2.IsOrBestOffer == false)
-                a1Score++;
-            else if (auction1.IsOrBestOffer == false && auction2.IsOrBestOffer == true)
-                a2Score++;
-
-            if (auction1.Price != null && auction2.Price == null)
-                a1Score++;
-            else if (auction1.Price == null && auction2.Price != null)
-                a2Score++;
-            else if (auction1.Price != null && auction2.Price != null)
-            {
-                if (auction1.Price > 0 && auction2.Price <= 0)
-                    a1Score++;
-                else if (auction1.Price <= 0 && auction2.Price > 0)
-                    a2Score++;
-            }
-
-            if (a2Score > a1Score)
-                return auction2;
-            else
-                return auction1;
         }
 
     }

@@ -4,7 +4,7 @@ import mixins from 'vue-typed-mixins';
 import * as moment from "moment";
 
 import Auction from "../interfaces/Auction";
-import LinesAndAuctions from "../interfaces/LinesAndAuctions";
+import ChatLinePayload from "../interfaces/ChatLinePayload";
 
 import LivePage from "../mixins/LivePage";
 
@@ -17,10 +17,10 @@ export default mixins(LivePage).extend({
     data: function () {
         return {
             auctions: new SlidingList<Auction>(function (a: Auction, b: Auction) {
-                // sort ascending updatedAtString
-                if (a.updatedAtString < b.updatedAtString)
+                // sort ascending createdAtString
+                if (a.createdAtString < b.createdAtString)
                     return -1;
-                else if (a.updatedAtString > b.updatedAtString)
+                else if (a.createdAtString > b.createdAtString)
                     return 1;
                 else {
                     // sort ascending id
@@ -41,10 +41,10 @@ export default mixins(LivePage).extend({
                 .filter(function (auction: Auction, index: number) {
                     // avoid temporarily showing "duplicate" auctions when a new auction is created to replace an older auction
                     // by immediately hiding the older auction in the recentlyUpdatedAuctions panel
-                    return !auction.isPreviousAuction;
+                    return !auction.isReplaced;
                 })
                 .filter(function (auction: Auction, index: number) {
-                    return moment.duration(moment.default().diff(auction.updatedAtMoment)).asMinutes() <= 15;
+                    return moment.duration(moment.default().diff(auction.createdAtMoment)).asMinutes() <= 15;
                 })
                 .sort(function (a: Auction, b: Auction) {
                     // sort descending firstSeenDate
@@ -67,13 +67,13 @@ export default mixins(LivePage).extend({
         notRecentlyUpdatedAuctions: function () {
             return this.auctions.array
                 .filter(function (auction: Auction, index: number) {
-                    return moment.duration(moment.default().diff(auction.updatedAtMoment)).asMinutes() > 15;
+                    return moment.duration(moment.default().diff(auction.createdAtMoment)).asMinutes() > 15;
                 })
                 .sort(function (a: Auction, b: Auction) {
-                    // sort descending updatedAtString
-                    if (a.updatedAtString < b.updatedAtString)
+                    // sort descending createdAtString
+                    if (a.createdAtString < b.createdAtString)
                         return 1;
-                    else if (a.updatedAtString > b.updatedAtString)
+                    else if (a.createdAtString > b.createdAtString)
                         return -1;
                     else {
                         // sort descending id
@@ -93,7 +93,7 @@ export default mixins(LivePage).extend({
         // inherited from LivePage
         getHubUrl: function () {
             // STUB hard-coded
-            return "/blue_auction_hub";
+            return "/blue_chat_hub";
         },
 
         // inherited from LivePage
@@ -105,20 +105,16 @@ export default mixins(LivePage).extend({
 
         // inherited from TqPage
         getLatestContent: function () {
-            let minUpdatedAt: moment.Moment | null = null;
-            if (this.auctions.array.length > 0) {
-                minUpdatedAt = moment.utc(this.auctions.array[this.auctions.array.length - 1].updatedAtString);
-                // add 1 ms so we don't always get one auction that we already know about in the results
-                minUpdatedAt.add(1, "seconds");
-            }
+            let minId: number | null = null;
+            if (this.auctions.array.length > 0)
+                minId = this.auctions.array[this.auctions.array.length - 1].chatLine.id + 1;
 
-            axios.post('/api/auction_query', {
+            axios.post('/api/chat_query', {
                 serverCode: TQGlobals.serverCode,
-                minimumUpdatedAt: (minUpdatedAt == null ? null : minUpdatedAt.toISOString()),
-                includeChatLine: true
+                minimumId: minId
             })
             .then(response => {
-                let result = response.data as LinesAndAuctions;
+                let result = response.data as ChatLinePayload;
                 this.onNewContent(result, true);
             })
             .catch(err => {
@@ -129,20 +125,16 @@ export default mixins(LivePage).extend({
 
         // inherited from TqPage
         getEarlierContent: function () {
-            let maxUpdatedAt: moment.Moment | null = null;
-            if (this.auctions.array.length > 0) {
-                maxUpdatedAt = moment.utc(this.auctions.array[0].updatedAtString)
-                // subtract 1 ms so we don't always get one auction that we already know about in the results
-                maxUpdatedAt.subtract(1, "seconds");
-            }
+            let maxId: number | null = null;
+            if (this.auctions.array.length > 0)
+                maxId = this.auctions.array[0].chatLine.id - 1;
 
-            axios.post('/api/auction_query', {
+            axios.post('/api/chat_query', {
                 serverCode: TQGlobals.serverCode,
-                maximumUpdatedAt: (maxUpdatedAt == null ? null : maxUpdatedAt.toISOString()),
-                includeChatLine: true
+                maximumId: maxId
             })
             .then(response => {
-                let result = response.data as LinesAndAuctions;
+                let result = response.data as ChatLinePayload;
                 this.onNewContent(result, false);
             })
             .catch(err => {
@@ -152,37 +144,42 @@ export default mixins(LivePage).extend({
         },
 
         // inherited from TqPage
-        onFilteredContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
+        onFilteredContent: function (chatLines: ChatLinePayload, enforceMaxSize: boolean) {
             // stub
             console.log("LiveAuctionsPage.onFilteredContent():");
-            console.log(newContent);
+            console.log(chatLines);
 
             // manually set some properties on the auction objects
 
-            for (let auctionId in newContent.auctions) {
-                let auction = newContent.auctions[auctionId];
-                auction.updatedAtMoment = moment.utc(auction.updatedAtString).local();
+            for (let chatLineId in chatLines.lines) {
+                let chatLine = chatLines.lines[chatLineId];
 
-                // if necessary, update the previous auction object
-                if (auction.previousAuctionId != null) {
-                    let prevAuction = this.auctions.dict.get(auction.previousAuctionId);
-                    if (prevAuction) {
-                        prevAuction.isPreviousAuction = true;
-                        // also copy over the firstSeenDate from the previous auction so that the new auction will 
-                        // take the previous auction's place in the sort order, instead of appearing at the top
-                        auction.firstSeenDate = prevAuction.firstSeenDate;
+                for (let auctionId in chatLine.auctions) {
+                    let auction = chatLine.auctions[auctionId];
+
+                    auction.createdAtMoment = moment.utc(auction.createdAtString).local();
+
+                    // if necessary, update the previous auction object
+                    if (auction.replacesAuctionId != null) {
+                        let prevAuction = this.auctions.dict.get(auction.replacesAuctionId);
+                        if (prevAuction) {
+                            prevAuction.isReplaced = true;
+                            // also copy over the firstSeenDate from the previous auction so that the new auction will 
+                            // take the previous auction's place in the sort order, instead of appearing at the top
+                            auction.firstSeenDate = prevAuction.firstSeenDate;
+                        }
                     }
-                }
-                
-                // transfer the firstSeenMoment from the previously existing entry, if it exists
-                let existingEntry = this.auctions.dict.get(auction.id);
-                if (existingEntry)
-                    auction.firstSeenDate = existingEntry.firstSeenDate;
-                else
-                    auction.firstSeenDate = new Date();
 
-                this.onNewAuction(auction); // this has to happen FIRST so that auction.item is set BEFORE the auction is added to the SlidingList, or else Vue won't detect when auction.item's properties are filled in by ajax later
-                this.auctions.add(auction);
+                    // transfer the firstSeenMoment from the previously existing entry, if it exists
+                    let existingEntry = this.auctions.dict.get(auction.id);
+                    if (existingEntry)
+                        auction.firstSeenDate = existingEntry.firstSeenDate;
+                    else
+                        auction.firstSeenDate = new Date();
+
+                    this.onNewAuction(auction); // this has to happen FIRST so that auction.item is set BEFORE the auction is added to the SlidingList, or else Vue won't detect when auction.item's properties are filled in by ajax later
+                    this.auctions.add(auction);
+                }
             }
 
             if (enforceMaxSize)

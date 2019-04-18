@@ -129,3 +129,32 @@
 		- on new hub lines, only save them if they match the filter; otherwise discard them completely
 
 - debounce scroll events (probably already listed above somewhere)
+
+
+
+- PROBLEMO: we can't just join chatlines to auctions for filtering because auctions can get updated by later chatlines.  solution: big refactor
+	- do away with the concept of chat line token tables; instead EVERY chatline creates its own auctions
+		* re-implement parent-child relationship between chat_line and auction
+
+	- new column auction.is_permanent that gets set by the same AuctionLogic code which currently creates new auctions
+		- the purge code will delete chat_lines (and their child auctions) older than __ where is_permanent == false
+		- update certain queries to use is_permanent = true
+			- redo indexes accordingly
+			- affected queries:
+				- live auction pages
+				- item page
+
+
+* from now on no more LinesAndAuctions; Auctions are always nested under ChatLines in client objects
+	- we can finally get away with this now because auctions never get re-sent anymore; always new auction ids coming down with the new chat_line_ids
+	- get chat view working first, then convert other views
+	- delete all other hubs / controllers
+	- item page will also just query chat lines
+
+
+* NEXT STEPS:
+	- carefully test adding new auctions (mess with thresholds to simulate historical breakpoints)
+	- get chat view working
+	- refactor auction views to work again using chat queries and chat hub
+	- fix item page
+

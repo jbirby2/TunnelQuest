@@ -1,11 +1,11 @@
 ﻿
-import ChatLineToken from "./ChatLineToken";
+import Auction from "./Auction";
 
 interface ChatLine {
     id: number,
     playerName: string,
     text: string,
-    tokens: Array<ChatLineToken>,
+    auctions: {[auctionId:number]:Auction},
     sentAtString: string
 }
 

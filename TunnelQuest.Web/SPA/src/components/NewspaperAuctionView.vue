@@ -114,7 +114,7 @@
                 </span>
             </span>
 
-            <time-stamp :timeString="auction.updatedAtString" cssClass="tqNewspaperAuctionTimeStamp"></time-stamp>
+            <time-stamp :timeString="auction.createdAtString" cssClass="tqNewspaperAuctionTimeStamp"></time-stamp>
         </span>
 
         <span>

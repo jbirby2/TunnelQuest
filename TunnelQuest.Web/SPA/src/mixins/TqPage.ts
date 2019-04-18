@@ -1,7 +1,7 @@
 ﻿
 import Vue from "vue";
 
-import LinesAndAuctions from "../interfaces/LinesAndAuctions";
+import ChatLinePayload from "../interfaces/ChatLinePayload";
 
 import TQGlobals from "../classes/TQGlobals";
 
@@ -42,28 +42,28 @@ export default Vue.extend({
 
     methods: {
 
-        onNewContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
-
-            // fetch all price histories at once
+        onNewContent: function (newContent: ChatLinePayload, enforceMaxSize: boolean) {
 
             if (newContent.lines) {
                 for (let chatLineId in newContent.lines) {
                     let chatLine = newContent.lines[chatLineId];
 
-                    for (let token of chatLine.tokens) {
-                        if (token.type == "ITEM") {
-                            TQGlobals.priceHistories.get(token.properties["itemName"], false);
-                        }
+                    for (let auctionId in chatLine.auctions) {
+                        let auction = chatLine.auctions[auctionId];
+
+                        // give each auction a reference back to its own chat line
+                        auction.chatLine = chatLine;
+
+                        // for convenience, so we can always just use aliasText throughout the SPA instead of constantly checking if it's null
+                        if (auction.aliasText == null)
+                            auction.aliasText = auction.itemName;
+
+                        TQGlobals.priceHistories.get(auction.itemName, false);
                     }
                 }
             }
-            if (newContent.auctions) {
-                for (let auctionId in newContent.auctions) {
-                    let auction = newContent.auctions[auctionId];
-                    auction.chatLine = newContent.lines[auction.chatLineId];
-                    TQGlobals.priceHistories.get(auction.itemName, false);
-                }
-            }
+
+            // fetch all price histories at once
             TQGlobals.priceHistories.fetchPendingPriceHistories();
 
 
@@ -109,7 +109,7 @@ export default Vue.extend({
             // overridden by extending components
         },
 
-        onFilteredContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
+        onFilteredContent: function (newContent: ChatLinePayload, enforceMaxSize: boolean) {
             // overridden by extending components
         },
     }

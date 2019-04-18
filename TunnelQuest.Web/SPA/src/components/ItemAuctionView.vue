@@ -93,7 +93,7 @@
             </span>
         </if-debug>
 
-        <time-stamp :timeString="auction.updatedAtString" cssClass="tqItemAuctionTimeStamp"></time-stamp>
+        <time-stamp :timeString="auction.createdAtString" cssClass="tqItemAuctionTimeStamp"></time-stamp>
 
         <span>{{ auction.chatLine.playerName }}</span>
 
@@ -101,7 +101,7 @@
         <span v-else>WTS</span>
 
         <span :class="'tqItemAuctionItemName ' + (auction.isKnownItem ? 'tqItemAuctionKnownItem' : 'tqItemAuctionUnknownItem')">
-            {{ playerTypedItemName }}
+            {{ auction.aliasText }}
         </span>
 
         <span class="tqItemAuctionPrice">
@@ -136,18 +136,6 @@
         },
 
         computed: {
-            playerTypedItemName: function () {
-                if (!this.auction)
-                    return null;
-
-                for (let chatToken of this.auction.chatLine.tokens) {
-                    if (chatToken.type == "ITEM" && chatToken.properties["itemName"] == this.auction.itemName)
-                        return chatToken.properties["text"];
-                }
-
-                // this shouldn't really happen, but we couldn't find the token for this item in the chat line for some reason
-                return this.auction.itemName;
-            },
 
             urlEncodedItemName: function () {
                 return encodeURIComponent(this.auction.itemName);

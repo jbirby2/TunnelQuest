@@ -24,13 +24,13 @@ namespace TunnelQuest.Web.Controllers.Api
 
         // POST api/chat_query
         [HttpPost]
-        public LinesAndAuctions Get([FromBody]ChatLinesQuery query)
+        public ClientChatLinePayload Get([FromBody]ChatLinesQuery query)
         {
             if (query.MaxResults == null)
                 query.MaxResults = ChatLogic.MAX_CHAT_LINES;
 
             var chatLines = new ChatLogic(context).GetLines(query);
-            return new LinesAndAuctions(chatLines);
+            return new ClientChatLinePayload(chatLines);
         }
 
     }

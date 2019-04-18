@@ -11,6 +11,9 @@ namespace TunnelQuest.Core.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            //Console.WriteLine("STUB DID NOT INSERT ANY CHAT LINES STUB");
+            //return;
+
             try
             {
                 Console.WriteLine("Inserting data from in-game chat logs.  This will take a long time...  be patient and don't exit early!");

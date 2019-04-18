@@ -32,7 +32,7 @@
     import * as _ from "lodash";
 
     import ChatLine from "../interfaces/ChatLine";
-    import LinesAndAuctions from "../interfaces/LinesAndAuctions";
+    import ChatLinePayload from "../interfaces/ChatLinePayload";
 
     import LivePage from "../mixins/LivePage";
 
@@ -94,7 +94,7 @@
                     minimumId: minId
                 })
                 .then(response => {
-                    let result = response.data as LinesAndAuctions;
+                    let result = response.data as ChatLinePayload;
                     this.onNewContent(result, true);
                 })
                 .catch(err => {
@@ -114,7 +114,7 @@
                     maximumId: maxId
                 })
                 .then(response => {
-                    let result = response.data as LinesAndAuctions;
+                    let result = response.data as ChatLinePayload;
                     this.onNewContent(result, false);
                 })
                 .catch(err => {
@@ -124,7 +124,7 @@
             },
 
             // inherited from TqPage
-            onFilteredContent: function (newContent: LinesAndAuctions, enforceMaxSize: boolean) {
+            onFilteredContent: function (newContent: ChatLinePayload, enforceMaxSize: boolean) {
                 // stub
                 console.log("ChatPage.onNewContent():");
                 console.log(newContent);

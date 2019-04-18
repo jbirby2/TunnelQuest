@@ -8,8 +8,10 @@ namespace TunnelQuest.Core.ChatSegments
     {
         // static
 
-        public static PriceSegment TryParse(ParsedChatLine parentLine, TextSegment textSegment)
+        public static PriceSegment TryParse(List<TextSegment> segments, int textSegmentIndex)
         {
+            var textSegment = segments[textSegmentIndex];
+
             // assume a price starts with numbers, then ends with non-numeric characters (e.g. "200p", "10k", "10k!!!!!!!!~~~", etc)
             string numberString = "";
             bool foundDecimalPoint = false;
@@ -41,12 +43,14 @@ namespace TunnelQuest.Core.ChatSegments
                 }
                 else
                 {
+                    // STUB rewrite using segments and textSegmentIndex
+
                     // This is a pure number with no characters at the end; make sure that neither the previous
                     // nor next segments are the text "x", such as in "WTS 12 x Goblin Ear" or "WTS Goblin Ear x 12"
-                    var nextSegment = textSegment.NextSegment();
+                    var nextSegment = GetNextSegment(segments, textSegmentIndex);
                     if (nextSegment != null && nextSegment.GetType() == typeof(TextSegment) && nextSegment.Text.Equals("x", StringComparison.InvariantCultureIgnoreCase))
                         return null;
-                    var prevSegment = textSegment.PrevSegment();
+                    var prevSegment = GetPrevSegment(segments, textSegmentIndex);
                     if (prevSegment != null && prevSegment.GetType() == typeof(TextSegment) && prevSegment.Text.Equals("x", StringComparison.InvariantCultureIgnoreCase))
                         return null;
                 }
@@ -55,7 +59,7 @@ namespace TunnelQuest.Core.ChatSegments
                 if (price <= 0)
                     return null;
                 else
-                    return new PriceSegment(parentLine, textSegment.Text, Convert.ToInt32(price), textSegment.HasPrecedingSpace);
+                    return new PriceSegment(textSegment.Text, Convert.ToInt32(price), textSegment.HasPrecedingSpace);
             }
             else
                 return null;
@@ -66,8 +70,8 @@ namespace TunnelQuest.Core.ChatSegments
         public int Price { get; private set; }
 
         // protected constructor so that these segments can only be created by calling TryParse()
-        protected PriceSegment(ParsedChatLine parentLine, string text, int price, bool hasPrecedingSpace)
-            : base(parentLine, text, hasPrecedingSpace)
+        protected PriceSegment(string text, int price, bool hasPrecedingSpace)
+            : base(text, hasPrecedingSpace)
         {
             this.Price = price;
         }

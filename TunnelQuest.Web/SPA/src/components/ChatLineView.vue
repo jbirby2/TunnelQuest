@@ -131,10 +131,8 @@
 
                 textSpan.appendChild(document.createTextNode("'"));
 
-                let indexedItemNames = new Array<string>(); // used when adding PriceDeviationComponents
                 let unparsedText = this.chatLine.text;
                 let textSoFar = ""
-                let nextTokenIndex = 0;
                 while (unparsedText.length > 0) {
 
                     if (unparsedText.substring(0, TQGlobals.settings.chatToken.length) === TQGlobals.settings.chatToken) {
@@ -146,83 +144,55 @@
                         textSpan.appendChild(playerTextSpan);
                         textSoFar = ""; // reset textSoFar for the next iteration after the token
 
-                        let token = this.chatLine.tokens[nextTokenIndex];
-                        nextTokenIndex++;
+                        let closingTokenIndex = unparsedText.indexOf(TQGlobals.settings.chatToken, TQGlobals.settings.chatToken.length);
+                        let auctionId = parseInt(unparsedText.substring(TQGlobals.settings.chatToken.length, closingTokenIndex));
+                        let auction = this.chatLine.auctions[auctionId];
+                        let urlEncodedItemName = encodeURIComponent(auction.itemName);
 
-                        if (token.type == "ITEM") {
-                            // item name token
+                        if (this.itemNameLinks) {
+                            // make the item name a clickable link
+                            let linkElem = document.createElement("a") as HTMLAnchorElement;
 
-                            let isKnownItem = (token.properties["isKnown"] == "1");
-                            let itemName = token.properties["itemName"];
-                            let text = token.properties["text"];
-                            let urlEncodedItemName = encodeURIComponent(itemName);
+                            linkElem.classList.add(auction.isKnownItem ? "tqKnownItemLink" : "tqUnknownItemLink");
+                            if (this.itemNameToHighlight == auction.itemName)
+                                linkElem.classList.add("tqHighlightedItemLink");
 
-                            indexedItemNames.push(itemName);
-
-                            if (this.itemNameLinks) {
-                                // make the item name a clickable link
-                                let linkElem = document.createElement("a") as HTMLAnchorElement;
-
-                                linkElem.classList.add(isKnownItem ? "tqKnownItemLink" : "tqUnknownItemLink");
-                                if (this.itemNameToHighlight == itemName)
-                                    linkElem.classList.add("tqHighlightedItemLink");
-
-                                linkElem.href = "/item/" + urlEncodedItemName;
-                                let thisComponent = this;
-                                linkElem.addEventListener("click", function (e) {
-                                    e.preventDefault();
-                                    thisComponent.$router.push("/item/" + urlEncodedItemName);
-                                });
-                                linkElem.text = text;
-                                textSpan.appendChild(linkElem);
-                            }
-                            else if (this.itemNameToHighlight == itemName) {
-                                // highlight the item name without making it a clickable link
-                                let spanElem = document.createElement("span") as HTMLSpanElement;
-                                spanElem.classList.add(isKnownItem ? "tqKnownItemLink" : "tqUnknownItemLink");
-                                spanElem.innerHTML = this.htmlEncode(text);
-                                textSpan.appendChild(spanElem);
-                            }
-                            else {
-                                textSoFar += text;
-                            }
-
+                            linkElem.href = "/item/" + urlEncodedItemName;
+                            let thisComponent = this;
+                            linkElem.addEventListener("click", function (e) {
+                                e.preventDefault();
+                                thisComponent.$router.push("/item/" + urlEncodedItemName);
+                            });
+                            linkElem.text = auction.aliasText;
+                            textSpan.appendChild(linkElem);
                         }
-                        else if (token.type == "PRICE") {
-                            // price token
-
-                            let isBuying = (token.properties["isBuying"] == "1");
-                            let price = parseInt(token.properties["price"]);
-                            let itemIndexes = token.properties["items"].split(',');
-                            let playerTypedPriceText = token.properties["text"];
-
-                            // render the text that the player actually typed in chat
-                            let priceElem = document.createElement("span") as HTMLSpanElement;
-                            priceElem.innerHTML = this.htmlEncode(playerTypedPriceText);
-                            textSpan.appendChild(priceElem);
-
-                            // now create a PriceDeviationView for each item associated with this price
-                            for (let itemNameIndexString of itemIndexes) {
-                                let itemName = indexedItemNames[parseInt(itemNameIndexString)];
-                                let priceDeviationElem = document.createElement("span") as HTMLSpanElement;
-                                textSpan.appendChild(priceDeviationElem);
-                                let priceDeviationView = new PriceDeviationView({
-                                    propsData: {
-                                        itemName: itemName,
-                                        price: price,
-                                        isBuying: isBuying
-                                    }
-                                });
-                                priceDeviationView.$mount(priceDeviationElem);
-                            }
+                        else if (this.itemNameToHighlight == auction.itemName) {
+                            // highlight the item name without making it a clickable link
+                            let spanElem = document.createElement("span") as HTMLSpanElement;
+                            spanElem.classList.add(auction.isKnownItem ? "tqKnownItemLink" : "tqUnknownItemLink");
+                            spanElem.innerHTML = this.htmlEncode(auction.aliasText);
+                            textSpan.appendChild(spanElem);
                         }
                         else {
-                            // unrecognized token
-                            throw new Error("Unrecognized chat token type: " + token.type);
+                            textSoFar += auction.aliasText;
                         }
 
+                        // create a PriceDeviationView for this auction
+                        if (auction.price != null) {
+                            let priceDeviationElem = document.createElement("span") as HTMLSpanElement;
+                            textSpan.appendChild(priceDeviationElem);
+                            let priceDeviationView = new PriceDeviationView({
+                                propsData: {
+                                    itemName: auction.itemName,
+                                    price: auction.price,
+                                    isBuying: auction.isBuying
+                                }
+                            });
+                            priceDeviationView.$mount(priceDeviationElem);
+                        }
+                        
                         // update unparsedText
-                        let nextIndex = TQGlobals.settings.chatToken.length;
+                        let nextIndex = closingTokenIndex + TQGlobals.settings.chatToken.length;
                         if (nextIndex < unparsedText.length)
                             unparsedText = unparsedText.substring(nextIndex);
                         else

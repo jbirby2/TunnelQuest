@@ -30,6 +30,7 @@ namespace TunnelQuest.Web.Services
                 var allItemNames = (from auction in context.Auctions
                                     where
                                        auction.ServerCode == serverCode
+                                       && auction.IsPermanent == true
                                        && auction.IsBuying == false
                                        && auction.Price != null
                                        && auction.Price > 0
@@ -42,17 +43,16 @@ namespace TunnelQuest.Web.Services
 
                     try
                     {
-                        Auction[] itemAuctions = auctionLogic.GetAuctions(new AuctionsQuery()
-                        {
-                            ServerCode = serverCode,
-                            ItemName = itemName,
-                            IncludeChatLine = false,
-                            IncludeBuying = false,
-                            IncludeUnpriced = false,
-                            MaxResults = null
-                        });
+                        var itemAuctions = from auction in context.Auctions
+                                           where 
+                                                auction.ServerCode == serverCode
+                                                && auction.ItemName == itemName
+                                                && auction.IsPermanent == true
+                                                && auction.Price != null
+                                                && auction.Price > 0
+                                           select auction;
 
-                        DateTime? oldestAuctionDate = itemAuctions.Max(auction => auction.CreatedAt);
+                        DateTime? oldestAuctionDate = itemAuctions.Min(auction => auction.CreatedAt);
 
                         var priceHistory = context.PriceHistories.Where(pHistory => pHistory.ItemName == itemName).FirstOrDefault();
                         if (priceHistory == null)
@@ -67,28 +67,28 @@ namespace TunnelQuest.Web.Services
                         // 1 month median
                         DateTime oneMonthAgo = DateTime.UtcNow.AddMonths(-1);
                         if (oldestAuctionDate <= oneMonthAgo)
-                            priceHistory.OneMonthMedian = itemAuctions.Where(auction => auction.UpdatedAt >= oneMonthAgo).Median(auction => auction.Price.Value);
+                            priceHistory.OneMonthMedian = itemAuctions.Where(auction => auction.CreatedAt >= oneMonthAgo).Median(auction => auction.Price.Value);
                         else
                             priceHistory.OneMonthMedian = null;
 
                         // 3 month median
                         DateTime threeMonthsAgo = DateTime.UtcNow.AddMonths(-3);
                         if (oldestAuctionDate <= threeMonthsAgo)
-                            priceHistory.ThreeMonthMedian = itemAuctions.Where(auction => auction.UpdatedAt >= threeMonthsAgo).Median(auction => auction.Price.Value);
+                            priceHistory.ThreeMonthMedian = itemAuctions.Where(auction => auction.CreatedAt >= threeMonthsAgo).Median(auction => auction.Price.Value);
                         else
                             priceHistory.ThreeMonthMedian = null;
 
                         // 6 month median
                         DateTime sixMonthsAgo = DateTime.UtcNow.AddMonths(-6);
                         if (oldestAuctionDate <= sixMonthsAgo)
-                            priceHistory.SixMonthMedian = itemAuctions.Where(auction => auction.UpdatedAt >= sixMonthsAgo).Median(auction => auction.Price.Value);
+                            priceHistory.SixMonthMedian = itemAuctions.Where(auction => auction.CreatedAt >= sixMonthsAgo).Median(auction => auction.Price.Value);
                         else
                             priceHistory.SixMonthMedian = null;
 
                         // 12 month median
                         DateTime twelveMonthsAgo = DateTime.UtcNow.AddMonths(-12);
                         if (oldestAuctionDate <= twelveMonthsAgo)
-                            priceHistory.TwelveMonthMedian = itemAuctions.Where(auction => auction.UpdatedAt >= twelveMonthsAgo).Median(auction => auction.Price.Value);
+                            priceHistory.TwelveMonthMedian = itemAuctions.Where(auction => auction.CreatedAt >= twelveMonthsAgo).Median(auction => auction.Price.Value);
                         else
                             priceHistory.TwelveMonthMedian = null;
 

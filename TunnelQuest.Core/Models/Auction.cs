@@ -26,21 +26,25 @@ namespace TunnelQuest.Core.Models
         [Column("player_name")]
         public string PlayerName { get; set; }
 
-        [ForeignKey("PreviousAuction")]
-        [Column("previous_auction_id")]
-        public long? PreviousAuctionId { get; set; }
-        public Auction PreviousAuction { get; set; }
+        [ForeignKey("ReplacesAuction")]
+        [Column("replaces_auction_id")]
+        public long? ReplacesAuctionId { get; set; }
+        public Auction ReplacesAuction { get; set; }
 
-        [ForeignKey("MostRecentChatLine")]
-        [Column("most_recent_chat_line_id")]
-        public long MostRecentChatLineId { get; set; }
-        public ChatLine MostRecentChatLine { get; set; }
+        [ForeignKey("ChatLine")]
+        [Column("chat_line_id")]
+        public long ChatLineId { get; set; }
+        public ChatLine ChatLine { get; set; }
 
         // ItemName is intentionally NOT declared a ForeignKey here, because ItemName
         // might also be a text string that matches no known item (e.g. "jboots mq")
         [Required]
         [Column("item_name")]
         public string ItemName { get; set; }
+
+        // contains the actual text the player typed in if it was not the exact item name; otherwise null
+        [Column("alias_text")]
+        public string AliasText { get; set; }
 
         [Column("is_known_item")]
         public bool IsKnownItem { get; set; }
@@ -57,11 +61,14 @@ namespace TunnelQuest.Core.Models
         [Column("is_accepting_trades")]
         public bool IsAcceptingTrades { get; set; } // "WTT", "WTTF"
 
+        [Column("is_permanent")]
+        public bool IsPermanent { get; set; }
+
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
 
         [Column("updated_at")]
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
 
         public Auction()

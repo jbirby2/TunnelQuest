@@ -93,7 +93,7 @@
             </span>
         </if-debug>
 
-        <time-stamp :timeString="auction.updatedAtString" cssClass="tqAuctionHouseAuctionTimeStamp"></time-stamp>
+        <time-stamp :timeString="auction.createdAtString" cssClass="tqAuctionHouseAuctionTimeStamp"></time-stamp>
 
         <span>{{ auction.chatLine.playerName }}</span>
 

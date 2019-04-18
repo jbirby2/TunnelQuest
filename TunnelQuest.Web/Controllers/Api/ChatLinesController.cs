@@ -16,22 +16,14 @@ namespace TunnelQuest.Web.Controllers.Api
     public class ChatLinesController : ControllerBase
     {
         private IHubContext<BlueChatHub> blueChatHub;
-        private IHubContext<BlueAuctionHub> blueAuctionHub;
         private IHubContext<RedChatHub> redChatHub;
-        private IHubContext<RedAuctionHub> redAuctionHub;
         private TunnelQuestContext context;
 
-        public ChatLinesController(TunnelQuestContext _context, 
-            IHubContext<BlueChatHub> _blueChatHub,
-            IHubContext<BlueAuctionHub> _blueAuctionHub,
-            IHubContext<RedChatHub> _redChatHub,
-            IHubContext<RedAuctionHub> _redAuctionHub)
+        public ChatLinesController(TunnelQuestContext _context, IHubContext<BlueChatHub> _blueChatHub, IHubContext<RedChatHub> _redChatHub)
         {
             this.context = _context;
             this.blueChatHub = _blueChatHub;
-            this.blueAuctionHub = _blueAuctionHub;
             this.redChatHub = _redChatHub;
-            this.redAuctionHub = _redAuctionHub;
         }
 
         // POST api/chat_lines
@@ -62,13 +54,9 @@ namespace TunnelQuest.Web.Controllers.Api
                 {
                     try
                     {
-                        var results = chatLogic.ProcessLogLine(authToken, payload.ServerCode, line, DateTime.UtcNow);
-
-                        if (results != null)
-                        {
-                            addedLines.Add(results.NewLine);
-                            addedAuctions.AddRange(results.NewAuctions);
-                        }
+                        var newLine = chatLogic.ProcessLogLine(authToken, payload.ServerCode, line, DateTime.UtcNow);
+                        addedLines.Add(newLine);
+                        addedAuctions.AddRange(newLine.Auctions);
                     }
                     catch (InvalidAuthTokenException)
                     {
@@ -83,34 +71,15 @@ namespace TunnelQuest.Web.Controllers.Api
                 // send new chat lines to chat hub clients
                 if (addedLines.Count > 0)
                 {
-                    var newChatContent = new LinesAndAuctions(addedLines.ToArray());
+                    var clientPayload = new ClientChatLinePayload(addedLines);
                     switch (payload.ServerCode)
                     {
                         case ServerCodes.Blue:
-                            await blueChatHub.Clients.All.SendAsync("NewContent", newChatContent);
+                            await blueChatHub.Clients.All.SendAsync("NewContent", clientPayload);
                             break;
 
                         case ServerCodes.Red:
-                            await redChatHub.Clients.All.SendAsync("NewContent", newChatContent);
-                            break;
-
-                        default:
-                            throw new Exception("Unrecognized serverCode '" + payload.ServerCode + "'");
-                    }
-                }
-
-                // send new auctions to auction hub clients
-                if (addedAuctions.Count > 0)
-                {
-                    var newAuctionContent = new LinesAndAuctions(addedAuctions.ToArray());
-                    switch (payload.ServerCode)
-                    {
-                        case ServerCodes.Blue:
-                            await blueAuctionHub.Clients.All.SendAsync("NewContent", newAuctionContent);
-                            break;
-
-                        case ServerCodes.Red:
-                            await redAuctionHub.Clients.All.SendAsync("NewContent", newAuctionContent);
+                            await redChatHub.Clients.All.SendAsync("NewContent", clientPayload);
                             break;
 
                         default:

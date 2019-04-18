@@ -9,7 +9,7 @@ using TunnelQuest.Core.Models;
 namespace TunnelQuest.Core.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    [Migration("20190407171715_CreateTables")]
+    [Migration("20190417024455_CreateTables")]
     partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,6 +45,12 @@ namespace TunnelQuest.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("auction_id");
 
+                    b.Property<string>("AliasText")
+                        .HasColumnName("alias_text");
+
+                    b.Property<long>("ChatLineId")
+                        .HasColumnName("chat_line_id");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnName("created_at");
 
@@ -60,39 +66,41 @@ namespace TunnelQuest.Core.Migrations
                     b.Property<bool>("IsOrBestOffer")
                         .HasColumnName("is_or_best_offer");
 
+                    b.Property<bool>("IsPermanent")
+                        .HasColumnName("is_permanent");
+
                     b.Property<string>("ItemName")
                         .IsRequired()
                         .HasColumnName("item_name");
-
-                    b.Property<long>("MostRecentChatLineId")
-                        .HasColumnName("most_recent_chat_line_id");
 
                     b.Property<string>("PlayerName")
                         .IsRequired()
                         .HasColumnName("player_name");
 
-                    b.Property<long?>("PreviousAuctionId")
-                        .HasColumnName("previous_auction_id");
-
                     b.Property<int?>("Price")
                         .HasColumnName("price");
+
+                    b.Property<long?>("ReplacesAuctionId")
+                        .HasColumnName("replaces_auction_id");
 
                     b.Property<string>("ServerCode")
                         .IsRequired()
                         .HasColumnName("server_code");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnName("updated_at");
 
                     b.HasKey("AuctionId");
 
-                    b.HasIndex("MostRecentChatLineId");
+                    b.HasIndex("ChatLineId");
 
-                    b.HasIndex("PreviousAuctionId");
+                    b.HasIndex("ReplacesAuctionId");
 
-                    b.HasIndex("ServerCode", "UpdatedAt");
+                    b.HasIndex("ServerCode", "ItemName", "IsPermanent");
 
-                    b.HasIndex("ServerCode", "ItemName", "PlayerName", "UpdatedAt");
+                    b.HasIndex("ServerCode", "IsPermanent", "IsBuying", "Price", "ItemName");
+
+                    b.HasIndex("ServerCode", "ItemName", "PlayerName", "IsPermanent", "CreatedAt");
 
                     b.ToTable("auction");
                 });
@@ -164,60 +172,6 @@ namespace TunnelQuest.Core.Migrations
                     b.HasIndex("ServerCode", "ChatLineId");
 
                     b.ToTable("chat_line");
-                });
-
-            modelBuilder.Entity("TunnelQuest.Core.Models.ChatLineToken", b =>
-                {
-                    b.Property<long>("ChatLineId")
-                        .HasColumnName("chat_line_id");
-
-                    b.Property<byte>("TokenIndex")
-                        .HasColumnName("token_index");
-
-                    b.Property<string>("TokenTypeCode")
-                        .IsRequired()
-                        .HasColumnName("token_type_code");
-
-                    b.HasKey("ChatLineId", "TokenIndex");
-
-                    b.HasIndex("ChatLineId");
-
-                    b.HasIndex("TokenTypeCode");
-
-                    b.ToTable("chat_line_token");
-                });
-
-            modelBuilder.Entity("TunnelQuest.Core.Models.ChatLineTokenProperty", b =>
-                {
-                    b.Property<long>("ChatLineId")
-                        .HasColumnName("chat_line_id");
-
-                    b.Property<byte>("TokenIndex")
-                        .HasColumnName("token_index");
-
-                    b.Property<string>("Property")
-                        .HasColumnName("property");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnName("value");
-
-                    b.HasKey("ChatLineId", "TokenIndex", "Property");
-
-                    b.HasIndex("ChatLineId", "TokenIndex");
-
-                    b.ToTable("chat_line_token_property");
-                });
-
-            modelBuilder.Entity("TunnelQuest.Core.Models.ChatLineTokenType", b =>
-                {
-                    b.Property<string>("TokenTypeCode")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("token_type_code");
-
-                    b.HasKey("TokenTypeCode");
-
-                    b.ToTable("chat_line_token_type");
                 });
 
             modelBuilder.Entity("TunnelQuest.Core.Models.Class", b =>
@@ -710,14 +664,14 @@ namespace TunnelQuest.Core.Migrations
 
             modelBuilder.Entity("TunnelQuest.Core.Models.Auction", b =>
                 {
-                    b.HasOne("TunnelQuest.Core.Models.ChatLine", "MostRecentChatLine")
-                        .WithMany()
-                        .HasForeignKey("MostRecentChatLineId")
+                    b.HasOne("TunnelQuest.Core.Models.ChatLine", "ChatLine")
+                        .WithMany("Auctions")
+                        .HasForeignKey("ChatLineId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("TunnelQuest.Core.Models.Auction", "PreviousAuction")
+                    b.HasOne("TunnelQuest.Core.Models.Auction", "ReplacesAuction")
                         .WithMany()
-                        .HasForeignKey("PreviousAuctionId");
+                        .HasForeignKey("ReplacesAuctionId");
 
                     b.HasOne("TunnelQuest.Core.Models.Server", "Server")
                         .WithMany()
@@ -743,32 +697,6 @@ namespace TunnelQuest.Core.Migrations
                     b.HasOne("TunnelQuest.Core.Models.Server", "Server")
                         .WithMany()
                         .HasForeignKey("ServerCode")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("TunnelQuest.Core.Models.ChatLineToken", b =>
-                {
-                    b.HasOne("TunnelQuest.Core.Models.ChatLine", "ChatLine")
-                        .WithMany("Tokens")
-                        .HasForeignKey("ChatLineId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("TunnelQuest.Core.Models.ChatLineTokenType", "TokenType")
-                        .WithMany()
-                        .HasForeignKey("TokenTypeCode")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("TunnelQuest.Core.Models.ChatLineTokenProperty", b =>
-                {
-                    b.HasOne("TunnelQuest.Core.Models.ChatLine", "ChatLine")
-                        .WithMany()
-                        .HasForeignKey("ChatLineId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("TunnelQuest.Core.Models.ChatLineToken")
-                        .WithMany("Properties")
-                        .HasForeignKey("ChatLineId", "TokenIndex")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

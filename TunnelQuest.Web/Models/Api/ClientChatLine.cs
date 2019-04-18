@@ -11,7 +11,7 @@ namespace TunnelQuest.Web.Models.Api
         public long Id { get; set; }
         public string PlayerName { get; set; }
         public string Text { get; set; }
-        public ClientChatLineToken[] Tokens { get; set; }
+        public Dictionary<long, ClientAuction> Auctions { get; set; }
         public DateTime SentAtString { get; set; } // named String even though it's a DateTime in C# because it will be serialized as a string in javascript
 
         public ClientChatLine()
@@ -25,11 +25,10 @@ namespace TunnelQuest.Web.Models.Api
             this.Text = line.Text;
             this.SentAtString = line.SentAt;
 
-            this.Tokens = new ClientChatLineToken[line.Tokens.Count];
-            foreach (var lineToken in line.Tokens)
+            this.Auctions = new Dictionary<long, ClientAuction>();
+            foreach (var auction in line.Auctions)
             {
-                // make sure to use lineToken.Index here to ensure that the tokens are ordered correctly
-                this.Tokens[lineToken.TokenIndex] = new ClientChatLineToken(lineToken);
+                this.Auctions[auction.AuctionId] = new ClientAuction(auction);
             }
         }
     }

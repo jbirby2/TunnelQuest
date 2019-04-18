@@ -16,7 +16,6 @@ namespace TunnelQuest.Core.Migrations
             using (var context = new TunnelQuestContext())
             {
                 insertAliases(context);
-                insertChatLineTokenTypes(context);
                 insertServers(context);
                 insertAuthTokenStatuses(context);
                 insertAuthTokens(context);
@@ -37,7 +36,6 @@ namespace TunnelQuest.Core.Migrations
             using (var context = new TunnelQuestContext())
             {
                 deleteAliases(context);
-                deleteChatLineTokenTypes(context);
                 deleteServers(context);
                 deleteAuthTokens(context);
                 deleteAuthTokenStatuses(context);
@@ -99,30 +97,6 @@ namespace TunnelQuest.Core.Migrations
                     AliasText = "ot hammer",
                     ItemName = "Worker Sledgemallet",
                     CreatedAt = DateTime.UtcNow
-                },
-            };
-        }
-        #endregion
-
-        #region chatLineTokenType
-        private void insertChatLineTokenTypes(TunnelQuestContext context)
-        {
-            context.AddRange(getChatLineTokenTypes());
-        }
-
-        private void deleteChatLineTokenTypes(TunnelQuestContext context)
-        {
-            context.RemoveRange(getChatLineTokenTypes());
-        }
-
-        private IEnumerable<ChatLineTokenType> getChatLineTokenTypes()
-        {
-            return new ChatLineTokenType[] {
-                new ChatLineTokenType() {
-                    TokenTypeCode = ChatLineTokenTypeCodes.Item
-                },
-                new ChatLineTokenType() {
-                    TokenTypeCode = ChatLineTokenTypeCodes.Price
                 },
             };
         }

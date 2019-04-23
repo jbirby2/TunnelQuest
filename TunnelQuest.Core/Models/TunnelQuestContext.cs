@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using System.IO;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace TunnelQuest.Core.Models
 {
@@ -50,7 +51,8 @@ namespace TunnelQuest.Core.Models
             IConfigurationRoot configuration = builder.Build();
 
             optionsBuilder
-                .UseMySql(configuration.GetConnectionString("TunnelQuest"));
+                .UseMySql(configuration.GetConnectionString("TunnelQuest"))
+                .ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning)); // do NOT ignore "LINQ expression could not be translated and will be evaluated locally" errors
                 //.EnableSensitiveDataLogging(true);
                 //.UseLoggerFactory(consoleLoggerFactory);
         }

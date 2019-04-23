@@ -111,10 +111,8 @@ namespace TunnelQuest.Core
             var chatQuery = auctionQuery
                 .Select(auction => auction.ChatLine)
                 .Include(chatLine => chatLine.Auctions)
+                .OrderByDescending(line => line.ChatLineId) // order by descending in the sql query, to make sure we get the most recent lines if we hit the limit imposed by maxResults
                 .Distinct();
-
-            // order by descending in the sql query, to make sure we get the most recent lines if we hit the limit imposed by maxResults
-            chatQuery = chatQuery.OrderByDescending(line => line.ChatLineId);
 
             if (criteria.MaxResults != null)
                 chatQuery = chatQuery.Take(criteria.MaxResults.Value);

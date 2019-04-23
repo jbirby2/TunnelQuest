@@ -4,19 +4,72 @@ import mixins from 'vue-typed-mixins';
 import * as moment from "moment";
 
 import Auction from "../interfaces/Auction";
-import ChatLinePayload from "../interfaces/ChatLinePayload";
+import ChatLine from "../interfaces/ChatLine";
 
 import LivePage from "../mixins/LivePage";
 
 import TQGlobals from "../classes/TQGlobals";
-import SlidingList from "../classes/SlidingList";
 
 
 export default mixins(LivePage).extend({
 
     data: function () {
         return {
-            auctions: new SlidingList<Auction>(function (a: Auction, b: Auction) {
+            auctions: new Array<Auction>(),
+            auctionsDict: new Map<number, Auction>(),
+            recentlyUpdatedAuctions: new Array<Auction>(),
+            notRecentlyUpdatedAuctions: new Array<Auction>(),
+        };
+    },
+
+    beforeDestroy: function () {
+        this.auctionsDict.clear();
+        this.recentlyUpdatedAuctions = new Array<Auction>();
+        this.notRecentlyUpdatedAuctions = new Array<Auction>();
+    },
+
+    methods: {
+
+        // inherited from TqPage
+        onChatLinesLoaded: function (newChatLines: Array<ChatLine>) {
+            // stub
+            console.log("LiveAuctionsPage.onChatLinesLoaded():");
+            console.log(newChatLines);
+
+            // manually set some properties on the auction objects
+            let auctionsArray = new Array<Auction>();
+            for (let chatLine of newChatLines) {
+                for (let auctionId in chatLine.auctions) {
+                    let auction = chatLine.auctions[auctionId];
+
+                    this.auctions.push(auction);
+                    this.auctionsDict.set(auction.id, auction);
+
+                    auction.createdAtMoment = moment.utc(auction.createdAtString).local();
+
+                    // if necessary, update the previous auction object
+                    if (auction.replacesAuctionId != null) {
+                        let prevAuction = this.auctionsDict.get(auction.replacesAuctionId);
+                        if (prevAuction) {
+                            prevAuction.isReplaced = true;
+                            // also copy over the firstSeenDate from the previous auction so that the new auction will 
+                            // take the previous auction's place in the sort order, instead of appearing at the top
+                            auction.firstSeenDate = prevAuction.firstSeenDate;
+                        }
+                    }
+
+                    // transfer the firstSeenMoment from the previously existing entry, if it exists
+                    let existingEntry = this.auctionsDict.get(auction.id);
+                    if (existingEntry)
+                        auction.firstSeenDate = existingEntry.firstSeenDate;
+                    else
+                        auction.firstSeenDate = new Date();
+
+                    auctionsArray.push(auction);
+                }                
+            }
+
+            this.auctions.sort(function (a: Auction, b: Auction) {
                 // sort ascending createdAtString
                 if (a.createdAtString < b.createdAtString)
                     return -1;
@@ -31,13 +84,40 @@ export default mixins(LivePage).extend({
                     else
                         return 0;
                 }
-            })
-        };
-    },
+            });
 
-    computed: {
-        recentlyUpdatedAuctions: function () {
-            return this.auctions.array
+            // pass along to extending components
+            if (auctionsArray.length > 0)
+                this.onAuctionsLoaded(auctionsArray);
+
+            this.rebuildAuctionArrays();
+        },
+
+        // inherited from TqPage
+        onChatLinesUnloaded: function (removedLines: Array<ChatLine>) {
+            let unloadedAuctions = new Array<Auction>();
+
+            for (let chatLine of removedLines) {
+                for (let auctionId in chatLine.auctions) {
+                    let auction = chatLine.auctions[auctionId];
+
+                    this.auctionsDict.delete(auction.id);
+                    this.auctions.splice(this.auctions.indexOf(auction), 1);
+
+                    unloadedAuctions.push(auction);
+                }
+            }
+
+            // pass along to extending components
+            this.onAuctionsUnloaded(unloadedAuctions);
+
+            this.rebuildAuctionArrays();
+        },
+
+        rebuildAuctionArrays: function () {
+
+            // build recentlyUpdatedAuctions
+            this.recentlyUpdatedAuctions = this.auctions
                 .filter(function (auction: Auction, index: number) {
                     // avoid temporarily showing "duplicate" auctions when a new auction is created to replace an older auction
                     // by immediately hiding the older auction in the recentlyUpdatedAuctions panel
@@ -62,10 +142,9 @@ export default mixins(LivePage).extend({
                             return 0;
                     }
                 });
-        },
 
-        notRecentlyUpdatedAuctions: function () {
-            return this.auctions.array
+            // build notRecentlyUpdatedAuctions
+            this.notRecentlyUpdatedAuctions = this.auctions
                 .filter(function (auction: Auction, index: number) {
                     return moment.duration(moment.default().diff(auction.createdAtMoment)).asMinutes() > 15;
                 })
@@ -85,118 +164,13 @@ export default mixins(LivePage).extend({
                             return 0;
                     }
                 });
-        }
-    },
-
-    methods: {
-
-        // inherited from LivePage
-        getHubUrl: function () {
-            // STUB hard-coded
-            return "/blue_chat_hub";
         },
 
-        // inherited from LivePage
-        onInitialized: function () {
-            console.log("stub LiveAuctionsPage.onInitialized");
-
-            this.auctions.maxSize = TQGlobals.settings.maxAuctions;
+        onAuctionsLoaded: function (newAuctions: Array<Auction>) {
+            // overridden by extending components
         },
 
-        // inherited from TqPage
-        getLatestContent: function () {
-            let minId: number | null = null;
-            if (this.auctions.array.length > 0)
-                minId = this.auctions.array[this.auctions.array.length - 1].chatLine.id + 1;
-
-            axios.post('/api/chat_query', {
-                serverCode: TQGlobals.serverCode,
-                minimumId: minId
-            })
-            .then(response => {
-                let result = response.data as ChatLinePayload;
-                this.onNewContent(result, true);
-            })
-            .catch(err => {
-                // stub
-                console.log(err);
-            });
-        },
-
-        // inherited from TqPage
-        getEarlierContent: function () {
-            let maxId: number | null = null;
-            if (this.auctions.array.length > 0)
-                maxId = this.auctions.array[0].chatLine.id - 1;
-
-            axios.post('/api/chat_query', {
-                serverCode: TQGlobals.serverCode,
-                maximumId: maxId
-            })
-            .then(response => {
-                let result = response.data as ChatLinePayload;
-                this.onNewContent(result, false);
-            })
-            .catch(err => {
-                // stub
-                console.log(err);
-            });
-        },
-
-        // inherited from TqPage
-        onFilteredContent: function (chatLines: ChatLinePayload, enforceMaxSize: boolean) {
-            // stub
-            console.log("LiveAuctionsPage.onFilteredContent():");
-            console.log(chatLines);
-
-            // manually set some properties on the auction objects
-
-            for (let chatLineId in chatLines.lines) {
-                let chatLine = chatLines.lines[chatLineId];
-
-                for (let auctionId in chatLine.auctions) {
-                    let auction = chatLine.auctions[auctionId];
-
-                    auction.createdAtMoment = moment.utc(auction.createdAtString).local();
-
-                    // if necessary, update the previous auction object
-                    if (auction.replacesAuctionId != null) {
-                        let prevAuction = this.auctions.dict.get(auction.replacesAuctionId);
-                        if (prevAuction) {
-                            prevAuction.isReplaced = true;
-                            // also copy over the firstSeenDate from the previous auction so that the new auction will 
-                            // take the previous auction's place in the sort order, instead of appearing at the top
-                            auction.firstSeenDate = prevAuction.firstSeenDate;
-                        }
-                    }
-
-                    // transfer the firstSeenMoment from the previously existing entry, if it exists
-                    let existingEntry = this.auctions.dict.get(auction.id);
-                    if (existingEntry)
-                        auction.firstSeenDate = existingEntry.firstSeenDate;
-                    else
-                        auction.firstSeenDate = new Date();
-
-                    this.onNewAuction(auction); // this has to happen FIRST so that auction.item is set BEFORE the auction is added to the SlidingList, or else Vue won't detect when auction.item's properties are filled in by ajax later
-                    this.auctions.add(auction);
-                }
-            }
-
-            if (enforceMaxSize)
-                this.auctions.enforceMaxSize();
-            this.auctions.sort();
-
-            // call this last to fetch all items and simultaneously (because it's far more efficient than making an ajax call for every individual item)
-            TQGlobals.items.fetchPendingItems();
-        },
-
-        // inherited from LivePage
-        onDestroying: function () {
-            this.auctions.clear();
-        },
-
-
-        onNewAuction: function (auction: Auction) {
+        onAuctionsUnloaded: function (removedAuctions: Array<Auction>) {
             // overridden by extending components
         },
     }

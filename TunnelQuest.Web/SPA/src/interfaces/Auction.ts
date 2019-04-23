@@ -13,8 +13,8 @@ interface Auction {
     price: number | null,
     isOrBestOffer: boolean,
     isAcceptingTrades: boolean,
+    isPermanent: boolean,
     createdAtString: string,
-    chatLineId: number,
 
     chatLine: ChatLine,                 // not actually passed in from server, but set in client code
     item: Item,                         // not actually passed in from server, but set in client code

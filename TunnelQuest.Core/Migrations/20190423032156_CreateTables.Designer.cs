@@ -9,7 +9,7 @@ using TunnelQuest.Core.Models;
 namespace TunnelQuest.Core.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    [Migration("20190417024455_CreateTables")]
+    [Migration("20190423032156_CreateTables")]
     partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,6 +98,12 @@ namespace TunnelQuest.Core.Migrations
 
                     b.HasIndex("ServerCode", "ItemName", "IsPermanent");
 
+                    b.HasIndex("ServerCode", "ChatLineId", "ItemName", "IsPermanent");
+
+                    b.HasIndex("ServerCode", "ItemName", "IsBuying", "PlayerName");
+
+                    b.HasIndex("ServerCode", "ChatLineId", "ItemName", "IsBuying", "PlayerName");
+
                     b.HasIndex("ServerCode", "IsPermanent", "IsBuying", "Price", "ItemName");
 
                     b.HasIndex("ServerCode", "ItemName", "PlayerName", "IsPermanent", "CreatedAt");
@@ -169,7 +175,7 @@ namespace TunnelQuest.Core.Migrations
 
                     b.HasIndex("AuthTokenId");
 
-                    b.HasIndex("ServerCode", "ChatLineId");
+                    b.HasIndex("ServerCode", "ChatLineId", "PlayerName");
 
                     b.ToTable("chat_line");
                 });

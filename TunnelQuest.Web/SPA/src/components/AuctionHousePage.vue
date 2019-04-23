@@ -64,7 +64,11 @@
 
         methods: {
             // inherited from LiveAuctionsPage
-            onNewAuction: function (auction: Auction) {
+            onAuctionsLoaded: function (newAuctions: Array<Auction>) {
+            },
+
+            // inherited from LiveAuctionsPage
+            onAuctionsUnloaded: function (removedAuctions: Array<Auction>) {
             },
         },
 

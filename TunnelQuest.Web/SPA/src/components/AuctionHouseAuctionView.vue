@@ -89,7 +89,7 @@
     <div :class="'tqAuctionHouseAuctionView ' + backgroundCssClass">
         <if-debug>
             <span class="tqAuctionHouseAuctionId">
-                [A{{auction.id}}]
+                [C{{auction.chatLine.id}} A{{auction.id}}]
             </span>
         </if-debug>
 

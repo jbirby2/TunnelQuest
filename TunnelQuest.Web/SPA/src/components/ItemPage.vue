@@ -53,22 +53,20 @@
                 Auction History
             </div>
             <div>
-                <item-auction-view v-for="auction in auctions.array" :key="auction.id" :auction="auction" :cssClass="auction.isBuying ? 'tqItemAuctionWtb' : 'tqItemAuctionWts'"></item-auction-view>
+                <item-auction-view v-for="auction in auctions" :key="auction.id" :auction="auction" :cssClass="auction.isBuying ? 'tqItemAuctionWtb' : 'tqItemAuctionWts'"></item-auction-view>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import axios from "axios";
     import mixins from 'vue-typed-mixins';
 
     import Item from '../interfaces/Item';
     import Auction from '../interfaces/Auction';
-    import ChatLinePayload from "../interfaces/ChatLinePayload";
+    import ChatLine from "../interfaces/ChatLine";
 
     import TQGlobals from "../classes/TQGlobals";
-    import SlidingList from "../classes/SlidingList";
 
     import TqPage from "../mixins/TqPage";
 
@@ -85,8 +83,55 @@
         data: function () {
             return {
                 item: null as Item | null,
+                auctions: new Array<Auction>(),
+            };
+        },
 
-                auctions: new SlidingList<Auction>(function (a: Auction, b: Auction) {
+        beforeDestroy: function () {
+            this.auctions = new Array<Auction>();
+        },
+
+        watch: {
+            // so that we can navigate from one item page to another, and everything will update
+            $route (to, from) {
+                this.item = TQGlobals.items.get(this.$route.params.itemName);
+                this.loadLatestFilteredChatLines();
+            }
+        },
+
+        methods: {
+            // inherited from TqPage
+            onInitialized: function () {
+                let aliasedItemName = TQGlobals.resolveItemAlias(this.$route.params.itemName);
+                if (aliasedItemName != this.$route.params.itemName) {
+                    this.$router.replace("/item/" + encodeURIComponent(aliasedItemName));
+                }
+                else {
+                    this.item = TQGlobals.items.get(this.$route.params.itemName);
+                    this.loadLatestFilteredChatLines();
+                }
+            },
+
+            // inherited from TqPage
+            getChatFilterSettings: function () {
+                return {
+                    isPermanent: true,
+                    itemNames: [ (this.item as Item).itemName ]
+                };
+            },
+
+            // inherited from TqPage
+            onChatLinesLoaded: function (newChatLines: Array<ChatLine>) {
+                for (let chatLine of newChatLines) {
+                    for (let auctionId in chatLine.auctions) {
+                        let auction = chatLine.auctions[auctionId];
+
+                        if (auction.itemName == (this.item as Item).itemName)
+                            this.auctions.push(auction);
+                    }
+                }
+
+                this.auctions.sort(function (a: Auction, b: Auction) {
                     // sort descending createdAtString
                     if (a.createdAtString < b.createdAtString)
                         return 1;
@@ -101,94 +146,7 @@
                         else
                             return 0;
                     }
-                })
-            };
-        },
-
-        mounted: function () {
-            window.addEventListener("scroll", this.onScroll);
-
-            TQGlobals.init(() => {
-                let aliasedItemName = TQGlobals.resolveItemAlias(this.$route.params.itemName);
-                if (aliasedItemName != this.$route.params.itemName) {
-                    this.$router.replace("/item/" + encodeURIComponent(aliasedItemName));
-                }
-                else {
-                    this.item = TQGlobals.items.get(this.$route.params.itemName);
-                    this.getLatestContent();
-                }
-            });
-        },
-
-        watch: {
-            // so that we can navigate from one item page to another, and everything will update
-            $route (to, from) {
-                this.item = TQGlobals.items.get(this.$route.params.itemName);
-                this.getLatestContent();
-            }
-        },
-
-        beforeDestroy: function () {
-            window.removeEventListener("scroll", this.onScroll);
-        },
-
-        methods: {
-            // inherited from TqPage
-            getLatestContent: function () {
-                this.auctions.clear();
-
-                axios.post('/api/auction_query', {
-                    serverCode: TQGlobals.serverCode,
-                    itemName: this.$route.params.itemName,
-                    includeChatLine: true
-                })
-                .then(response => {
-                    let itemAuctions = response.data as ChatLinePayload;
-                    this.onNewContent(itemAuctions, true);
-                })
-                .catch(err => {
-                    // stub
-                    console.log(err);
                 });
-            },
-
-            // inherited from TqPage
-            getEarlierContent: function () {
-                let maxId: number | null = null;
-                if (this.auctions.array.length > 0)
-                    maxId = this.auctions.array[this.auctions.array.length - 1].id - 1;
-
-                axios.post('/api/auction_query', {
-                    serverCode: TQGlobals.serverCode,
-                    itemName: this.$route.params.itemName,
-                    maximumId: maxId,
-                    includeChatLine: true
-                })
-                .then(response => {
-                    let itemAuctions = response.data as ChatLinePayload;
-                    this.onNewContent(itemAuctions, false);
-                })
-                .catch(err => {
-                    // stub
-                    console.log(err);
-                });
-            },
-
-
-            // inherited from TqPage
-            onFilteredContent: function (chatLines: ChatLinePayload, enforceMaxSize: boolean) {
-                for (let chatLineId in chatLines.lines) {
-                    let chatLine = chatLines.lines[chatLineId];
-                    for (let auctionId in chatLine.auctions) {
-                        let auction = chatLine.auctions[auctionId];
-                        this.auctions.add(auction);
-                    }
-                }
-
-                if (enforceMaxSize)
-                    this.auctions.enforceMaxSize();
-
-                this.auctions.sort();
             }
         },
 

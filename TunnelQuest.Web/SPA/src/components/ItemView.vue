@@ -304,9 +304,6 @@
             },
 
             aliasesString: function () {
-                console.log("STUB");
-                console.log();
-
                 if (TQGlobals.settings.aliasesByItemName[this.item.itemName]) {
                     let str = "";
                     for (let alias of TQGlobals.settings.aliasesByItemName[this.item.itemName]) {

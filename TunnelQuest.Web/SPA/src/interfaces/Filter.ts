@@ -4,6 +4,7 @@ interface Filter {
     isSystem: boolean,
     name: string,
     settings: {
+        isPermanent: boolean | null,
         itemNames: Array<string>,
         playerName: string | null,
         isBuying: boolean | null,
@@ -11,7 +12,6 @@ interface Filter {
         maxPrice: number | null,
         minGoodPriceDeviation: number | null,
         maxBadPriceDeviation: number | null,
-        // stub add more filters
     }
 }
 

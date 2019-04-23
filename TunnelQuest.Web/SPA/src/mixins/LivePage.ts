@@ -15,9 +15,9 @@ export default mixins(TqPage).extend({
 
     data: function () {
         return {
-            isInitialized: false,
+            isActive: true,
             transitionName: "slidedown",
-            connection: new ConnectionWrapper()
+            connection: new ConnectionWrapper(),
         };
     },
 
@@ -35,25 +35,8 @@ export default mixins(TqPage).extend({
         next();
     },
 
-    mounted: function () {
-        //stub
-        //console.log("LivePage.mounted");
-
-        TQGlobals.init(() => {
-            // create connection
-            this.connection.setHubUrl(this.getHubUrl());
-            this.connection.on("NewContent", this.onNewLiveContent);
-            this.connection.onConnected(this.onConnected);
-            this.connection.onDisconnected(this.onDisconnected);
-            this.connection.connect();
-
-            this.isInitialized = true;
-            this.onInitialized();
-        });
-    },
-
     activated: function () {
-        window.addEventListener("scroll", this.onScroll);
+        this.isActive = true;
 
         // I don't think VueRouter provides an event hook for after it restores the saved scroll position,
         // so a hacky workaround seems to be adding a tiny delay after activated.  Otherwise, if we run
@@ -66,7 +49,7 @@ export default mixins(TqPage).extend({
     },
 
     deactivated: function () {
-        window.removeEventListener("scroll", this.onScroll);
+        this.isActive = false;
 
         if (this.isInitialized && this.connection.isConnected())
             this.connection.disconnect();
@@ -76,37 +59,50 @@ export default mixins(TqPage).extend({
         //stub
         console.log("LivePage.beforeDestroy()");
 
-        // unwire event handlers
-        if (this.isInitialized) {
-            this.connection.off("NewContent", this.onNewLiveContent);
-            this.connection.offConnected(this.onConnected);
-            this.connection.offDisconnected(this.onDisconnected);
-            if (this.connection.isConnected())
-                this.connection.disconnect();
-
-            this.onDestroying();
-        }
+        this.connection.off("NewContent", this.onNewLiveContent);
+        this.connection.offConnected(this.onConnected);
+        //this.connection.offDisconnected(this.onDisconnected);
+        if (this.connection.isConnected())
+            this.connection.disconnect();
     },
-
+    
     methods: {
 
+        getHubUrl: function () {
+            // STUB hard-coded
+            return "/blue_chat_hub";
+        },
+
+        // inherited from TqPage
+        onInitialized: function () {
+            // create connection
+            this.connection.setHubUrl(this.getHubUrl());
+            this.connection.on("NewContent", this.onNewLiveContent);
+            this.connection.onConnected(this.onConnected);
+            //this.connection.onDisconnected(this.onDisconnected);
+            this.connection.connect();
+        },
+
         onNewLiveContent: function (newContent: ChatLinePayload) {
-            this.onNewContent(newContent, true);
+            this.addChatLines(newContent, true);
         },
 
         onConnected: function () {
-            this.getLatestContent();
+            //stub
+            console.log("LivePage.onConnected()");
+
+            this.loadLatestFilteredChatLines();
         },
 
-        onDisconnected: function () {
-        },
+        //onDisconnected: function () {
+        //},
 
 
         // inherited from TqPage
         onScrolled: function () {
-            //console.log("stub onScrolled");
+            //console.log("stub LivePage.onScrolled");
 
-            if (this.isInitialized == false)
+            if (this.isInitialized == false || this.isActive == false)
                 return;
 
             if (this.isScrolledToTop()) {
@@ -123,18 +119,10 @@ export default mixins(TqPage).extend({
             }
         },
 
-
-        getHubUrl: function () {
-            // overridden by extending components
-            return "";
+        // inherited from TqPage
+        getChatFilterSettings: function () {
+            return TQGlobals.filterManager.selectedFilter.settings;
         },
 
-        onInitialized: function () {
-            // overridden by extending components
-        },
-
-        onDestroying: function () {
-            // overridden by extending components
-        },
     }
 });

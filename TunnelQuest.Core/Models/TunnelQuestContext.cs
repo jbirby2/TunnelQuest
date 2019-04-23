@@ -97,12 +97,19 @@ namespace TunnelQuest.Core.Models
 
 
             // chat_line
-            modelBuilder.Entity<ChatLine>().HasIndex(line => new { line.ServerCode, line.ChatLineId });
+            modelBuilder.Entity<ChatLine>().HasIndex(line => new { line.ServerCode, line.ChatLineId, line.PlayerName });
 
             // auction
-            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ItemName, auction.PlayerName, auction.IsPermanent, auction.CreatedAt }); // used in AuctionLogic
-            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.IsPermanent, auction.IsBuying, auction.Price, auction.ItemName }); // used in PriceHistoryService
-            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ItemName, auction.IsPermanent }); // used in PriceHistoryService
+            // used in AuctionLogic
+            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ItemName, auction.PlayerName, auction.IsPermanent, auction.CreatedAt });
+            // used in PriceHistoryService
+            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.IsPermanent, auction.IsBuying, auction.Price, auction.ItemName });
+            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ItemName, auction.IsPermanent });
+            // used in ChatLogic
+            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ItemName, auction.IsBuying, auction.PlayerName });
+            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ChatLineId, auction.ItemName, auction.IsBuying, auction.PlayerName });
+            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ItemName, auction.IsPermanent }); // for ItemPage history query
+            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ChatLineId, auction.ItemName, auction.IsPermanent }); // for ItemPage history query
 
             // price_history
             modelBuilder.Entity<PriceHistory>().HasIndex(priceHistory => new { priceHistory.ServerCode, priceHistory.ItemName });

@@ -79,23 +79,47 @@ namespace TunnelQuest.Core
 
         public ChatLine[] GetLines(ChatLinesQuery criteria)
         {
-            var query = context.ChatLines
-                .Include(chatLine => chatLine.Auctions)
-                .Where(line => line.ServerCode == criteria.ServerCode);
+            // Only reference columns from the auction table in our .Where() clauses so that auction table indexes will be used.
+            // Also remember that the order of the where clauses has to match the order of the columns in the index.
+
+            var auctionQuery = context.Auctions
+                .Where(auction => auction.ServerCode == criteria.ServerCode);
 
             if (criteria.MinimumId != null)
-                query = query.Where(line => line.ChatLineId >= criteria.MinimumId.Value);
+                auctionQuery = auctionQuery.Where(auction => auction.ChatLineId >= criteria.MinimumId.Value);
 
             if (criteria.MaximumId != null)
-                query = query.Where(line => line.ChatLineId <= criteria.MaximumId.Value);
+                auctionQuery = auctionQuery.Where(auction => auction.ChatLineId <= criteria.MaximumId.Value);
+
+            if (criteria.FilterSettings != null)
+            {
+                if (criteria.FilterSettings.ItemNames != null && criteria.FilterSettings.ItemNames.Length > 0)
+                    auctionQuery = auctionQuery.Where(auction => criteria.FilterSettings.ItemNames.Contains(auction.ItemName));
+
+                if (criteria.FilterSettings.IsBuying != null)
+                    auctionQuery = auctionQuery.Where(auction => auction.IsBuying == criteria.FilterSettings.IsBuying.Value);
+
+                if (criteria.FilterSettings.PlayerName != null)
+                    auctionQuery = auctionQuery.Where(auction => auction.PlayerName == criteria.FilterSettings.PlayerName);
+
+                if (criteria.FilterSettings.IsPermanent != null)
+                    auctionQuery = auctionQuery.Where(auction => auction.IsPermanent == criteria.FilterSettings.IsPermanent.Value);
+
+                // STUB TODO - price filtering and price deviation filtering
+            }
+
+            var chatQuery = auctionQuery
+                .Select(auction => auction.ChatLine)
+                .Include(chatLine => chatLine.Auctions)
+                .Distinct();
 
             // order by descending in the sql query, to make sure we get the most recent lines if we hit the limit imposed by maxResults
-            query = query.OrderByDescending(line => line.ChatLineId);
+            chatQuery = chatQuery.OrderByDescending(line => line.ChatLineId);
 
             if (criteria.MaxResults != null)
-                query = query.Take(criteria.MaxResults.Value);
+                chatQuery = chatQuery.Take(criteria.MaxResults.Value);
 
-            return query.ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
+            return chatQuery.ToArray() // call .ToArray() to force entity framework to execute the query and get the results from the database
                 .OrderBy(line => line.ChatLineId) // now that we've got the results from the database (possibly truncated by maxResults), re-order them correctly
                 .ToArray();
         }

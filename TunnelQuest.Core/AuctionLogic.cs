@@ -10,9 +10,6 @@ namespace TunnelQuest.Core
 {
     public class AuctionLogic
     {
-        public const int MAX_AUCTIONS = 100;
-
-
         // static stuff
 
         private static readonly TimeSpan MIN_NEW_AUCTION_THRESHOLD = TimeSpan.FromHours(1);

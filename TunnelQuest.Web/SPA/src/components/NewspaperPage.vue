@@ -65,9 +65,15 @@
 
         methods: {
             // inherited from LiveAuctionsPage
-            onNewAuction: function (auction: Auction) {
-                // false to prevent it from immediately making an ajax call to fetch this one item
-                auction.item = TQGlobals.items.get(auction.itemName, false);
+            onAuctionsLoaded: function (newAuctions: Array<Auction>) {
+                for (let auction of newAuctions) {
+                    auction.item = TQGlobals.items.get(auction.itemName, false);
+                }
+                TQGlobals.items.fetchPendingItems();
+            },
+
+            // inherited from LiveAuctionsPage
+            onAuctionsUnloaded: function (removedAuctions: Array<Auction>) {
             },
         },
 

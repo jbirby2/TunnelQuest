@@ -20,7 +20,7 @@
 
         <div class="tqChatPage">
             <transition-group :name="transitionName">
-                <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :chatLine="chatLine" :showTimestamp="true" :itemNameLinks="true"></chat-line-view>
+                <chat-line-view v-for="chatLine in viewLines" :key="chatLine.id" :chatLine="chatLine" :showTimestamp="true"></chat-line-view>
             </transition-group>
         </div>
     </div>

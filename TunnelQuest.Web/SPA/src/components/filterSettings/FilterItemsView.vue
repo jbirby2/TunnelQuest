@@ -16,7 +16,11 @@
             <input type="text" ref="itemNameBox" @keyup="doSearch" placeholder="Start typing an item name here" />
         </div>
         <div>
-            <filter-items-search-result-view v-for="result in results" :result="result"></filter-items-search-result-view>
+            <filter-items-search-result-view v-for="result in results" :key="result.itemName" :result="result" :filter="filter"></filter-items-search-result-view>
+        </div>
+        <div>
+            <div>Items in filter:</div>
+            <filter-items-record-view v-for="itemName in filter.settings.itemNames" :filter="filter" :itemName="itemName"></filter-items-record-view>
         </div>
     </div>
 </template>
@@ -27,6 +31,7 @@
 
     import mixins from 'vue-typed-mixins';
 
+    import Filter from "../../interfaces/Filter";
     import FilterItemSearchResult from "../../interfaces/FilterItemSearchResult";
 
     import FilterSettingView from "../../mixins/FilterSettingView";
@@ -34,9 +39,17 @@
     import TQGlobals from "../../classes/TQGlobals";
 
     import FilterItemsSearchResultView from "./FilterItemsSearchResultView.vue";
+    import FilterItemsRecordView from "./FilterItemsRecordView.vue";
 
 
     export default mixins(FilterSettingView).extend({
+
+        props: {
+            filter: {
+                type: Object as () => Filter,
+                required: true
+            },
+        },
 
         data: function () {
             return {
@@ -84,7 +97,8 @@
         }, // end methods
 
         components: {
-            FilterItemsSearchResultView
+            FilterItemsSearchResultView,
+            FilterItemsRecordView
         }
     });
 </script>

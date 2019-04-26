@@ -84,6 +84,16 @@ namespace TunnelQuest.Core.Migrations
                     CreatedAt = DateTime.UtcNow
                 },
                 new Alias() {
+                    AliasText = "fungi",
+                    ItemName = "Fungus Covered Scale Tunic",
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Alias() {
+                    AliasText = "fungi tunic",
+                    ItemName = "Fungus Covered Scale Tunic",
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Alias() {
                     AliasText = "jboot",
                     ItemName = "Journeyman's Boots",
                     CreatedAt = DateTime.UtcNow

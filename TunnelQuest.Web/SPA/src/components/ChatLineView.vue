@@ -16,20 +16,6 @@
     .tqChatLineView_PlayerText {
     }
 
-    .tqKnownItemLink {
-        color: #e049ff;
-        text-decoration: none;
-    }
-
-    .tqUnknownItemLink {
-        color: #f7d8ff;
-        text-decoration: none;
-    }
-
-    .tqHighlightedItemLink {
-        font-weight: bold;
-    }
-
     .tqChatLineTimeStamp {
         font-family: Courier New, Courier, monospace;
         color: #c9c9c9;
@@ -86,6 +72,7 @@
 
     import IfDebug from "./IfDebug.vue";
     import TimeStamp from "./TimeStamp.vue";
+    import ItemLink from "./ItemLink.vue";
     import PriceDeviationView from "./PriceDeviationView.vue";
 
     export default Vue.extend({
@@ -97,14 +84,6 @@
             showTimestamp: {
                 type: Boolean,
                 required: true
-            },
-            itemNameLinks: {
-                type: Boolean,
-                required: true
-            },
-            itemNameToHighlight: {
-                type: String,
-                required: false
             },
             cssClass: {
                 type: String,
@@ -147,36 +126,20 @@
                         let closingTokenIndex = unparsedText.indexOf(TQGlobals.settings.chatToken, TQGlobals.settings.chatToken.length);
                         let auctionId = parseInt(unparsedText.substring(TQGlobals.settings.chatToken.length, closingTokenIndex));
                         let auction = this.chatLine.auctions[auctionId];
-                        let urlEncodedItemName = encodeURIComponent(auction.itemName);
 
-                        if (this.itemNameLinks) {
-                            // make the item name a clickable link
-                            let linkElem = document.createElement("a") as HTMLAnchorElement;
-
-                            linkElem.classList.add(auction.isKnownItem ? "tqKnownItemLink" : "tqUnknownItemLink");
-                            if (this.itemNameToHighlight == auction.itemName)
-                                linkElem.classList.add("tqHighlightedItemLink");
-
-                            linkElem.href = "/item/" + urlEncodedItemName;
-                            let thisComponent = this;
-                            linkElem.addEventListener("click", function (e) {
-                                e.preventDefault();
-                                thisComponent.$router.push("/item/" + urlEncodedItemName);
-                            });
-                            linkElem.text = auction.aliasText;
-                            textSpan.appendChild(linkElem);
-                        }
-                        else if (this.itemNameToHighlight == auction.itemName) {
-                            // highlight the item name without making it a clickable link
-                            let spanElem = document.createElement("span") as HTMLSpanElement;
-                            spanElem.classList.add(auction.isKnownItem ? "tqKnownItemLink" : "tqUnknownItemLink");
-                            spanElem.innerHTML = this.htmlEncode(auction.aliasText);
-                            textSpan.appendChild(spanElem);
-                        }
-                        else {
-                            textSoFar += auction.aliasText;
-                        }
-
+                        // create an ItemLink for this auction
+                        let itemLinkElem = document.createElement("span") as HTMLSpanElement;
+                        textSpan.appendChild(itemLinkElem);
+                        let itemLink = new ItemLink({
+                            propsData: {
+                                itemName: auction.itemName,
+                                aliasText: auction.aliasText,
+                                isKnown: auction.isKnownItem,
+                                router: this.$router
+                            }
+                        });
+                        itemLink.$mount(itemLinkElem);
+                        
                         // create a PriceDeviationView for this auction
                         if (auction.price != null) {
                             let priceDeviationElem = document.createElement("span") as HTMLSpanElement;

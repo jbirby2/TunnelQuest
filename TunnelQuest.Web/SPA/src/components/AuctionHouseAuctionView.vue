@@ -35,16 +35,6 @@
         width: 100%;
     }
 
-    .tqAuctionHouseAuctionKnownItemLink {
-        color: #e049ff;
-        text-decoration: none;
-    }
-
-    .tqAuctionHouseAuctionUnknownItemLink {
-        color: #f7d8ff;
-        text-decoration: none;
-    }
-
     .tqAuctionHouseAuctionPrice {
         text-align: right !important;
     }
@@ -100,13 +90,9 @@
         <span v-if="auction.isBuying">WTB</span>
         <span v-else>WTS</span>
 
-
-
         <span class="tqAuctionHouseAuctionItemName">
-            <a :class="(auction.isKnownItem ? 'tqAuctionHouseAuctionKnownItemLink' : 'tqAuctionHouseAuctionUnknownItemLink')" :href="'/item/' + this.urlEncodedItemName" @click="onItemNameClick">{{auction.itemName}}</a>
+            <item-link :itemName="auction.itemName" :isKnown="auction.isKnownItem"></item-link>
         </span>
-
-
 
         <span class="tqAuctionHouseAuctionPrice">
             <span v-if="this.auction.price != null">{{ formattedPrice }}</span>
@@ -127,6 +113,7 @@
 
     import IfDebug from "./IfDebug.vue";
     import TimeStamp from "./TimeStamp.vue";
+    import ItemLink from "./ItemLink.vue";
     import PriceDeviationView from "./PriceDeviationView.vue";
 
 
@@ -140,10 +127,6 @@
         },
 
         computed: {
-            urlEncodedItemName: function () {
-                return encodeURIComponent(this.auction.itemName);
-            },
-
             formattedPrice: function () {
                 if (this.auction.price == null)
                     return null;
@@ -156,16 +139,10 @@
             },
         },
 
-        methods: {
-            onItemNameClick: function (e: any) {
-                e.preventDefault();
-                this.$router.push("/item/" + this.urlEncodedItemName);
-            }
-        },
-
         components: {
             IfDebug,
             TimeStamp,
+            ItemLink,
             PriceDeviationView
         }
     });

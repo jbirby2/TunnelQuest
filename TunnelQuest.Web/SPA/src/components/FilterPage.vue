@@ -1,7 +1,7 @@
 ﻿
 
 <style>
-    .tqFilterPage {
+    .tqFilterPageSettings {
         margin: auto auto;
         max-width: 600px;
         background-color: rgba(0,0,0,0.7);
@@ -15,16 +15,13 @@
         padding-left: 3px;
     }
 
-    
-
 </style>
 
-
 <template>
-    <div class="tqFilterPage">
+    <div>
         <site-header></site-header>
 
-        <div v-if="filter != null">
+        <div v-if="filter != null" class="tqFilterPageSettings">
             <div class="tqFilterPageHeader">Filter Name</div>
             <div>
                 <input type="text" v-model="filter.name" @change="onFilterNameChanged" />

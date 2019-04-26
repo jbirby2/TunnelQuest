@@ -2,7 +2,7 @@
 
 interface FilterItemSearchResult {
     itemName: string,
-    displayText: string,
+    aliasText: string,
     isKnownItem: boolean
 }
 

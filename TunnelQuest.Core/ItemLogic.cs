@@ -70,15 +70,21 @@ namespace TunnelQuest.Core
             if (startingWith.Trim().Length < MIN_FILTER_ITEMNAME_LENGTH)
                 return new FilterItem[0];
 
-            IQueryable<FilterItem> itemQuery = from item in context.Items
-                                               where item.ItemName.StartsWith(startingWith)
-                                               select new FilterItem() { ItemName = item.ItemName, DisplayText = item.ItemName, IsKnownItem = true };
+            var itemMatches = (from item in context.Items
+                               where item.ItemName.StartsWith(startingWith)
+                               select new FilterItem() { ItemName = item.ItemName, AliasText = null, IsKnownItem = true })
+                               .Take(MAX_FILTER_ITEMNAME_RESULTS)
+                               .ToArray();
 
-            IQueryable<FilterItem> aliasQuery = from alias in context.Aliases
-                                                where alias.AliasText.StartsWith(startingWith)
-                                                select new FilterItem() { ItemName = alias.ItemName, DisplayText = alias.AliasText + " (aka " + alias.ItemName + ")", IsKnownItem = true };
+            var aliasMatches = (from alias in context.Aliases
+                                where alias.AliasText.StartsWith(startingWith)
+                                select new FilterItem() { ItemName = alias.ItemName, AliasText = alias.AliasText, IsKnownItem = true })
+                                .Take(MAX_FILTER_ITEMNAME_RESULTS)
+                                .ToArray();
 
-            var finalQuery = itemQuery.Union(aliasQuery);
+            var finalResults = new List<FilterItem>();
+            finalResults.AddRange(itemMatches);
+            finalResults.AddRange(aliasMatches);
 
             if (includeUnknownItems)
             {
@@ -91,11 +97,12 @@ namespace TunnelQuest.Core
                 // for performance it's important that this where-clause comes last, after the indexed columns
                 unknownItemQuery = unknownItemQuery.Where(unknownItem => unknownItem.ItemName.StartsWith(startingWith));
 
-                finalQuery = finalQuery.Union(unknownItemQuery.Select(unknownItem => new FilterItem(){ ItemName = unknownItem.ItemName, DisplayText = unknownItem.ItemName, IsKnownItem = false }));
+                var unknownMatches = unknownItemQuery.Select(unknownItem => new FilterItem() { ItemName = unknownItem.ItemName, AliasText = null, IsKnownItem = false });
+                finalResults.AddRange(unknownMatches);
             }
 
-            return finalQuery
-                    .OrderBy(filterItem => filterItem.DisplayText)
+            return finalResults
+                    .OrderBy(filterItem => filterItem.ItemName)
                     .Take(MAX_FILTER_ITEMNAME_RESULTS)
                     .ToArray();
         }

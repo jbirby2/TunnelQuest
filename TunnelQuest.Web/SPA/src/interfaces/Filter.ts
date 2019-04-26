@@ -3,6 +3,9 @@ interface Filter {
     id: string,
     isSystem: boolean,
     name: string,
+    metaData: {
+        itemIsKnown: { [itemName: string]: boolean }
+    },
     settings: {
         isPermanent: boolean | null,
         itemNames: Array<string>,

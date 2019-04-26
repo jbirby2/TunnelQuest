@@ -93,6 +93,9 @@ class FilterManager {
             id: this.generateId(),
             name: name,
             isSystem: isSystem,
+            metaData: {
+                itemIsKnown: {}
+            },
             settings: {
                 itemNames: new Array<string>()
             }

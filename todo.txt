@@ -138,20 +138,4 @@
 
 - quick search system filter
 
-
-*** PROBLEM of initial auctions pull being more than the limit:
-	- refactor so that chatLines SlidingList is in LivePage
-	- Delete SlidingList class; make chatLines a simple array of chatLine objects in LivePage.
-	  This is needed because we want to set a watch on chatLines, and setting a watch on a custom class
-	  (i.e. SlidingList) doesn't fire the watch function
-		* (it's ok because we only use .dict in one place and I'm sure we can find another way to do that)
-	- move over the code to enforce limits from SlidingList
-	- get rid of the computed properties; create empty array objects in the data block with their same names
-	- set a watch on the new chatLines array
-	- every time the watch fires:
-		- add the new chatLines to the array
-		- enforce max size if not a downscroll
-		- completely rebuild the two arrays recentAuctions and nonRecentAuctions by looping through
-		  the chatlines after enforcing size
-
-
+- do a hover info window for ItemLink

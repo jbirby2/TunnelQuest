@@ -94,7 +94,8 @@
         watch: {
             // so that we can navigate from one item page to another, and everything will update
             $route (to, from) {
-                this.item = TQGlobals.items.get(this.$route.params.itemName);
+                this.item = TQGlobals.items.queue(this.$route.params.itemName);
+                TQGlobals.items.fetchQueuedItems();
                 this.loadLatestFilteredChatLines();
             }
         },
@@ -107,7 +108,8 @@
                     this.$router.replace("/item/" + encodeURIComponent(aliasedItemName));
                 }
                 else {
-                    this.item = TQGlobals.items.get(this.$route.params.itemName);
+                    this.item = TQGlobals.items.queue(this.$route.params.itemName);
+                    TQGlobals.items.fetchQueuedItems();
                     this.loadLatestFilteredChatLines();
                 }
             },
@@ -121,12 +123,16 @@
             },
 
             // inherited from TqPage
+            beforeChatLinesLoaded: function (newLines: Array<ChatLine>) {
+            },
+
+            // inherited from TqPage
             onChatLinesLoaded: function (newChatLines: Array<ChatLine>) {
                 for (let chatLine of newChatLines) {
                     for (let auctionId in chatLine.auctions) {
                         let auction = chatLine.auctions[auctionId];
 
-                        if (auction.itemName == (this.item as Item).itemName)
+                        if (auction.passesFilter)
                             this.auctions.push(auction);
                     }
                 }

@@ -127,6 +127,10 @@ class ConnectionWrapper {
                 console.log(err);
             });
     }
+
+    public destroy() {
+        this.connection = null;
+    }
 }
 
 export default ConnectionWrapper;

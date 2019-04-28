@@ -109,7 +109,6 @@
 
 <template>
     <span class="tqItem">
-
         <span :class="'tqItemLine tqItemName ' + (item.isFetched ? 'tqKnownItemName' : 'tqUnknownItemName')">
             {{item.itemName}}
         </span>

@@ -52,9 +52,22 @@
 
         methods: {
             // inherited from TqPage
-            onChatLinesLoaded: function (newLines: Array<ChatLine>) {
-                this.viewLines = _.clone(this.chatLines).reverse();
+            beforeChatLinesLoaded: function (newLines: Array<ChatLine>) {
             },
+
+            // inherited from TqPage
+            onChatLinesLoaded: function (newLines: Array<ChatLine>) {
+                this.refreshViewLines();
+            },
+
+            // inherited from TqPage
+            onChatLinesUnloaded: function (newLines: Array<ChatLine>) {
+                this.refreshViewLines();
+            },
+
+            refreshViewLines: function () {
+                this.viewLines = _.clone(this.chatLines).reverse();
+            }
         },
 
         components: {

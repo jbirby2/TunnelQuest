@@ -16,7 +16,7 @@ class ItemRepo {
         this.spellRepo = spells;
     }
 
-    public get(itemName: string, fetchImmediately: boolean = true) {
+    public queue(itemName: string) {
         let item = this.items[itemName];
 
         if (item)
@@ -108,21 +108,22 @@ class ItemRepo {
             this.items[itemName] = blankItem;
             this.pendingItemNames.push(itemName);
 
-            if (fetchImmediately)
-                this.fetchPendingItems();
-
             return blankItem;
         }
     }
 
 
-    public fetchPendingItems() {
-        if (this.pendingItemNames.length == 0)
-            return;
-
+    public fetchQueuedItems(callback: Function | null = null) {
         // stub
-        console.log("ItemRepo.fetchPendingItems()");
-        
+        console.log("ItemRepo.fetchQueuedItems()");
+
+        if (this.pendingItemNames.length == 0) {
+            if (callback != null)
+                callback();
+            else
+                return;
+        }
+
         axios.post('/api/items', { itemNames: this.pendingItemNames.splice(0) }) // splice clears the array here
             .then(response => {
                 let result = response.data as Array<Item>;
@@ -208,7 +209,7 @@ class ItemRepo {
 
                         // if the item is a spell scroll, then also go ahead and pull its spell
                         if (blankItem.effectSpellName != null && blankItem.effectTypeCode == "LearnSpell")
-                            blankItem.effectSpell = this.spellRepo.get(blankItem.effectSpellName, false);
+                            blankItem.effectSpell = this.spellRepo.queue(blankItem.effectSpellName);
 
                         blankItem.isFetched = true;
                     }
@@ -217,7 +218,7 @@ class ItemRepo {
                     }
                 } // end foreach (item)
 
-                this.spellRepo.fetchPendingSpells();
+                this.spellRepo.fetchQueuedSpells(callback);
             })
             .catch(err => {
                 // stub

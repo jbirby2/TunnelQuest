@@ -2,25 +2,42 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TunnelQuest.Core;
 using TunnelQuest.Core.Models;
 
 namespace TunnelQuest.Web.Models.Api
 {
     public class ClientChatLinePayload
     {
-        public Dictionary<long, ClientChatLine> Lines { get; set; }
+        public ClientChatLine[] Lines { get; set; }
 
         public ClientChatLinePayload()
         {
         }
 
-        public ClientChatLinePayload(IEnumerable<ChatLine> lines)
+        // used for payloads sent through the live connection hub
+        public ClientChatLinePayload(List<ChatLine> chatLines)
         {
-            this.Lines = new Dictionary<long, ClientChatLine>();
+            this.Lines = new ClientChatLine[chatLines.Count];
 
-            foreach (var line in lines)
+            int i = 0;
+            foreach (var line in chatLines)
             {
-                this.Lines[line.ChatLineId] = new ClientChatLine(line);
+                this.Lines[i] = new ClientChatLine(line, null);
+                i++;
+            }
+        }
+
+        // used for payloads returned by API queries
+        public ClientChatLinePayload(ChatLinesQueryResult queryResult)
+        {
+            this.Lines = new ClientChatLine[queryResult.ChatLines.Length];
+
+            int i = 0;
+            foreach (var line in queryResult.ChatLines)
+            {
+                this.Lines[i] = new ClientChatLine(line, queryResult.FilteredAuctionIds);
+                i++;
             }
         }
     }

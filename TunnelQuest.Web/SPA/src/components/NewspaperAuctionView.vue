@@ -133,7 +133,6 @@
     import Vue from "vue";
 
     import Auction from "../interfaces/Auction";
-    import ChatLine from "../interfaces/ChatLine";
 
     import TQGlobals from '../classes/TQGlobals';
 
@@ -149,10 +148,6 @@
         props: {
             auction: {
                 type: Object as () => Auction,
-                required: true
-            },
-            chatLine: {
-                type: Object as () => ChatLine,
                 required: true
             }
         },

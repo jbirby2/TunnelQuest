@@ -65,11 +65,15 @@
 
         methods: {
             // inherited from LiveAuctionsPage
-            onAuctionsLoaded: function (newAuctions: Array<Auction>) {
+            beforeAuctionsLoaded: function (newAuctions: Array<Auction>) {
                 for (let auction of newAuctions) {
-                    auction.item = TQGlobals.items.get(auction.itemName, false);
+                    auction.item = TQGlobals.items.queue(auction.itemName);
                 }
-                TQGlobals.items.fetchPendingItems();
+                TQGlobals.items.fetchQueuedItems();
+            },
+
+            // inherited from LiveAuctionsPage
+            onAuctionsLoaded: function (newAuctions: Array<Auction>) {
             },
 
             // inherited from LiveAuctionsPage

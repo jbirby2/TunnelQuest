@@ -15,6 +15,7 @@ interface Auction {
     isAcceptingTrades: boolean,
     isPermanent: boolean,
     createdAtString: string,
+    passesFilter: boolean,
 
     chatLine: ChatLine,                 // not actually passed in from server, but set in client code
     item: Item,                         // not actually passed in from server, but set in client code

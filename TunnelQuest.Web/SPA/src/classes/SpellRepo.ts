@@ -11,7 +11,7 @@ class SpellRepo {
     constructor() {
     }
 
-    public get(spellName: string, fetchImmediately: boolean = true) {
+    public queue(spellName: string) {
         let spell = this.spells[spellName];
 
         if (spell)
@@ -31,20 +31,21 @@ class SpellRepo {
             this.spells[spellName] = blankSpell;
             this.pendingSpellNames.push(spellName);
 
-            if (fetchImmediately)
-                this.fetchPendingSpells();
-
             return blankSpell;
         }
     }
 
 
-    public fetchPendingSpells() {
-        if (this.pendingSpellNames.length == 0)
-            return;
-
+    public fetchQueuedSpells(callback: Function | null = null) {
         // stub
         console.log("SpellRepo.fetchPendingSpells()");
+
+        if (this.pendingSpellNames.length == 0) {
+            if (callback != null)
+                callback();
+            else
+                return;
+        }
 
         axios.post('/api/spells', { spellNames: this.pendingSpellNames.splice(0) }) // splice clears the array here
             .then(response => {
@@ -68,6 +69,9 @@ class SpellRepo {
                         console.log("ERROR got back unexpected spell.spellName: " + spell.spellName);
                     }
                 }
+
+                if (callback != null)
+                    callback();
             })
             .catch(err => {
                 // stub

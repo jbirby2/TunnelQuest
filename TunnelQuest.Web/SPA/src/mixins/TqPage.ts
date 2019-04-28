@@ -60,37 +60,38 @@ export default Vue.extend({
 
         // Called in this component to add the results of API queries (from scrolling), and also called by
         // LivePage to add the results of new lines from the live hub feed.
-        addChatLines: function (newLines: ChatLinePayload, enforceMaxSize: boolean) {
+        addChatLines: function (newLines: Array<ChatLine>, enforceMaxSize: boolean) {
 
             //stub
             console.log("TqPage.addChatLines()");
             console.log(newLines);
 
             let newLinesArray = new Array<ChatLine>();
-            if (newLines.lines) {
-                for (let chatLineId in newLines.lines) {
-                    let chatLine = newLines.lines[chatLineId];
+            for (let chatLine of newLines) {
+                // avoid adding duplicate chat lines
+                if (!this.chatLinesDict.has(chatLine.id)) {
+                    for (let auctionId in chatLine.auctions) {
+                        let auction = chatLine.auctions[auctionId];
 
-                    // avoid adding duplicate chat lines
-                    if (!this.chatLinesDict.has(chatLine.id)) {
-                        for (let auctionId in chatLine.auctions) {
-                            let auction = chatLine.auctions[auctionId];
+                        // give each auction a reference back to its own chat line
+                        auction.chatLine = chatLine;
 
-                            // give each auction a reference back to its own chat line
-                            auction.chatLine = chatLine;
+                        // for convenience, so we can always just use aliasText throughout the SPA instead of constantly checking if it's null
+                        if (auction.aliasText == null)
+                            auction.aliasText = auction.itemName;
 
-                            // for convenience, so we can always just use aliasText throughout the SPA instead of constantly checking if it's null
-                            if (auction.aliasText == null)
-                                auction.aliasText = auction.itemName;
-
-                            TQGlobals.priceHistories.get(auction.itemName, false);
-                        }
-
-                        newLinesArray.push(chatLine);
-                        this.chatLines.push(chatLine);
-                        this.chatLinesDict.set(chatLine.id, chatLine);
+                        TQGlobals.priceHistories.get(auction.itemName, false);
                     }
+
+                    newLinesArray.push(chatLine);
                 }
+            }
+
+            this.beforeChatLinesLoaded(newLinesArray);
+
+            for (let chatLine of newLinesArray) {
+                this.chatLines.push(chatLine);
+                this.chatLinesDict.set(chatLine.id, chatLine);
             }
 
             this.chatLines.sort(function (a: ChatLine, b: ChatLine) {
@@ -103,25 +104,12 @@ export default Vue.extend({
                     return 0;
             });
 
-            // pass along to extending components
-            if (newLinesArray.length > 0)
-                this.onChatLinesLoaded(newLinesArray);
+            this.onChatLinesLoaded(newLinesArray);
+
+            if (enforceMaxSize)
+                this.trimChatLines(TQGlobals.settings.maxChatLines);
 
             // (no need to re-sort after enforcing max size because trimming from the start of the array won't change the sort order)
-            if (enforceMaxSize) {
-                let removedLines = new Array<ChatLine>();
-                while (this.chatLines.length > TQGlobals.settings.maxChatLines) {
-                    let removedLine = this.chatLines.shift();
-                    if (removedLine) {
-                        this.chatLinesDict.delete(removedLine.id);
-                        removedLines.push(removedLine);
-                    }
-                }
-
-                // pass along to extending components
-                if (removedLines.length > 0)
-                    this.onChatLinesUnloaded(removedLines);
-            }
 
             // fetch all price histories at once
             TQGlobals.priceHistories.fetchPendingPriceHistories();
@@ -151,18 +139,18 @@ export default Vue.extend({
 
         // called by extending components
         loadLatestFilteredChatLines: function () {
-            let minId: number | null = null;
-            if (this.chatLines.length > 0)
-                minId = this.chatLines[this.chatLines.length - 1].id + 1;
+            //let minId: number | null = null;
+            //if (this.chatLines.length > 0)
+            //    minId = this.chatLines[this.chatLines.length - 1].id + 1;
 
             axios.post('/api/chat_query', {
                 serverCode: TQGlobals.serverCode,
-                minimumId: minId,
+                //minimumId: minId,
                 filterSettings: this.getChatFilterSettings()
             })
             .then(response => {
                 let result = response.data as ChatLinePayload;
-                this.addChatLines(result, true);
+                this.addChatLines(result.lines, true);
             })
             .catch(err => {
                 // stub
@@ -183,12 +171,27 @@ export default Vue.extend({
             })
             .then(response => {
                 let result = response.data as ChatLinePayload;
-                this.addChatLines(result, false);
+                this.addChatLines(result.lines, false);
             })
             .catch(err => {
                 // stub
                 console.log(err);
             });
+        },
+
+        trimChatLines(numberToLeave: number) {
+            let removedLines = new Array<ChatLine>();
+            while (this.chatLines.length > numberToLeave) {
+                let removedLine = this.chatLines.shift();
+                if (removedLine) {
+                    this.chatLinesDict.delete(removedLine.id);
+                    removedLines.push(removedLine);
+                }
+            }
+
+            // pass along to extending components
+            if (removedLines.length > 0)
+                this.onChatLinesUnloaded(removedLines);
         },
 
         onInitialized: function () {
@@ -203,6 +206,10 @@ export default Vue.extend({
             // overridden by extending components
         },
 
+        beforeChatLinesLoaded: function (newLines: Array<ChatLine>) {
+            // overridden by extending components
+        },
+
         onChatLinesLoaded: function (newLines: Array<ChatLine>) {
             // overridden by extending components
         },
@@ -210,5 +217,6 @@ export default Vue.extend({
         onChatLinesUnloaded: function (removedLines: Array<ChatLine>) {
             // overridden by extending components
         },
+
     }
 });

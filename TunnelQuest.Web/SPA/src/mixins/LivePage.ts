@@ -1,6 +1,7 @@
-﻿
-import mixins from 'vue-typed-mixins';
+﻿import mixins from 'vue-typed-mixins';
 
+import ChatLine from "../interfaces/ChatLine";
+import Auction from "../interfaces/Auction";
 import ChatLinePayload from "../interfaces/ChatLinePayload";
 
 import TQGlobals from "../classes/TQGlobals";
@@ -56,14 +57,17 @@ export default mixins(TqPage).extend({
     },
 
     beforeDestroy: function () {
-        //stub
-        console.log("LivePage.beforeDestroy()");
+        // unwire from global events
+        TQGlobals.filterManager.offSelectedFilterChanged(this.onSelectedFilterChangedOrEdited);
+        TQGlobals.filterManager.offSelectedFilterEdited(this.onSelectedFilterChangedOrEdited);
 
-        this.connection.off("NewContent", this.onNewLiveContent);
+        // shut down the connection
+        this.connection.off("NewContent", this.onNewLiveChat);
         this.connection.offConnected(this.onConnected);
         //this.connection.offDisconnected(this.onDisconnected);
         if (this.connection.isConnected())
             this.connection.disconnect();
+        this.connection.destroy();
     },
     
     methods: {
@@ -75,16 +79,31 @@ export default mixins(TqPage).extend({
 
         // inherited from TqPage
         onInitialized: function () {
+            // wire up to global events
+            TQGlobals.filterManager.onSelectedFilterChanged(this.onSelectedFilterChangedOrEdited);
+            TQGlobals.filterManager.onSelectedFilterEdited(this.onSelectedFilterChangedOrEdited);
+
             // create connection
             this.connection.setHubUrl(this.getHubUrl());
-            this.connection.on("NewContent", this.onNewLiveContent);
+            this.connection.on("NewContent", this.onNewLiveChat);
             this.connection.onConnected(this.onConnected);
             //this.connection.onDisconnected(this.onDisconnected);
             this.connection.connect();
         },
 
-        onNewLiveContent: function (newContent: ChatLinePayload) {
-            this.addChatLines(newContent, true);
+        onSelectedFilterChangedOrEdited: function () {
+            // stub
+            console.log("LivePage.onSelectedFilterChangedOrEdited");
+
+            // clear out all previous chat lines
+            this.trimChatLines(0);
+
+            if (this.isActive)
+                this.loadLatestFilteredChatLines();
+        },
+
+        onNewLiveChat: function (liveChatLines: ChatLinePayload) {
+            this.filterAndAddLinesAsync(liveChatLines);
         },
 
         onConnected: function () {
@@ -124,5 +143,69 @@ export default mixins(TqPage).extend({
             return TQGlobals.filterManager.selectedFilter.settings;
         },
 
+        filterAndAddLinesAsync: function (liveChatLines: ChatLinePayload) {
+            // fetch any missing item data that will be necessary to apply the filter logic
+            this.fetchNecessaryItemsAsync(liveChatLines.lines, () => {
+                // fetch any missing price history data that will be necessary to apply the filter logic
+                this.fetchNecessaryPriceHistoryAsync(liveChatLines.lines, () => {
+                    // now we've got all the data necessary to evaluate the filter loaded into the repos,
+                    // and we can do the filtering logic
+
+                    let filteredChatLines = new Array<ChatLine>();
+
+                    for (let chatLine of liveChatLines.lines) {
+                        // the chatLine passes the filter if any of its auctions pass the filter
+                        let anyAuctionPassedFilter = false;
+                        for (let auctionId in chatLine.auctions) {
+                            let auction = chatLine.auctions[auctionId];
+                            // Auctions coming in from the live hub feed will NOT already have their
+                            // "passesFilter" property set by the server like the API query results do,
+                            // so we need to evaluate all the filtering logic here in the client script
+                            // to set auction.passesFilter for these auctions.
+                            auction.passesFilter = this.doesAuctionPassFilter(auction);
+
+                            anyAuctionPassedFilter = anyAuctionPassedFilter || auction.passesFilter;
+                        }
+                        if (anyAuctionPassedFilter)
+                            filteredChatLines.push(chatLine);
+                    }
+
+                    this.addChatLines(filteredChatLines, true);
+                });
+            });
+        },
+
+        doesAuctionPassFilter(auction: Auction) {
+            // default to true, and then check each filter setting one-by-one to see if the auction
+            // fails any of them
+            let passesFilter = true;
+
+            if (TQGlobals.filterManager.selectedFilter.settings.itemNames.length > 0 && TQGlobals.filterManager.selectedFilter.settings.itemNames.indexOf(auction.itemName) < 0)
+                passesFilter = false;
+
+            // STUB TODO more filter conditions
+
+            return passesFilter;
+        },
+
+        fetchNecessaryItemsAsync: function (liveChatLines: Array<ChatLine>, callback: Function) {
+            //STUB
+            console.log("LivePage.fetchNecessaryItemsAsync()");
+            console.log(liveChatLines);
+
+            // STUB fetch logic goes here
+
+            callback();
+        },
+
+        fetchNecessaryPriceHistoryAsync: function (liveChatLines: Array<ChatLine>, callback: Function) {
+            //STUB
+            console.log("LivePage.fetchNecessaryPriceHistoryAsync()");
+            console.log(liveChatLines);
+
+            // STUB fetch logic goes here
+
+            callback();
+        }
     }
 });

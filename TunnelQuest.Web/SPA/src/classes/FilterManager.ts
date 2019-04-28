@@ -6,6 +6,7 @@ class FilterManager {
     private readonly LOCALSTORAGE_KEY = "TQCustomFilters";
     private readonly FILTER_NAME_BASE = "Custom Filter ";
     private selectedFilterChangedCallbacks: Array<Function>;
+    private selectedFilterEditedCallbacks: Array<Function>;
 
     public filters: Array<Filter>;
     public selectedFilter: Filter; // everybody is on scout's honor to use setSelectedFilter() instead of setting this directly; exposed so FilterManagerView can bind to it
@@ -13,6 +14,7 @@ class FilterManager {
     constructor() {
         this.filters = new Array<Filter>();
         this.selectedFilterChangedCallbacks = new Array<Function>();
+        this.selectedFilterEditedCallbacks = new Array<Function>();
 
         // create system filters
 
@@ -50,6 +52,23 @@ class FilterManager {
             this.selectedFilterChangedCallbacks.push(callback);
     }
 
+    public offSelectedFilterChanged(callback: Function) {
+        let index = this.selectedFilterChangedCallbacks.indexOf(callback);
+        if (index >= 0)
+            this.selectedFilterChangedCallbacks.splice(index, 1);
+    }
+
+    public onSelectedFilterEdited(callback: Function) {
+        if (this.selectedFilterEditedCallbacks.indexOf(callback) < 0)
+            this.selectedFilterEditedCallbacks.push(callback);
+    }
+
+    public offSelectedFilterEdited(callback: Function) {
+        let index = this.selectedFilterEditedCallbacks.indexOf(callback);
+        if (index >= 0)
+            this.selectedFilterEditedCallbacks.splice(index, 1);
+    }
+
     public createNewUserFilter() {
         let newFilter = this.createEmptyFilter(this.generateName(), false);
         this.filters.push(newFilter);
@@ -84,6 +103,10 @@ class FilterManager {
             localStorage.setItem(this.LOCALSTORAGE_KEY, JSON.stringify(customFilters));
         else
             localStorage.removeItem(this.LOCALSTORAGE_KEY);
+
+        for (let callback of this.selectedFilterEditedCallbacks) {
+            callback();
+        }
     }
 
     // private

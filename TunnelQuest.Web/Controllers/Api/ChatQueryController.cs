@@ -29,8 +29,8 @@ namespace TunnelQuest.Web.Controllers.Api
             if (query.MaxResults == null)
                 query.MaxResults = ChatLogic.MAX_CHAT_LINES;
 
-            var chatLines = new ChatLogic(context).GetLines(query);
-            return new ClientChatLinePayload(chatLines);
+            var queryResult = new ChatLogic(context).GetLines(query);
+            return new ClientChatLinePayload(queryResult);
         }
 
     }

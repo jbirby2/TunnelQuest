@@ -18,7 +18,7 @@ namespace TunnelQuest.Web.Models.Api
         {
         }
 
-        public ClientChatLine (ChatLine line)
+        public ClientChatLine (ChatLine line, HashSet<long> filteredAuctionIds)
         {
             this.Id = line.ChatLineId;
             this.PlayerName = line.PlayerName;
@@ -28,7 +28,7 @@ namespace TunnelQuest.Web.Models.Api
             this.Auctions = new Dictionary<long, ClientAuction>();
             foreach (var auction in line.Auctions)
             {
-                this.Auctions[auction.AuctionId] = new ClientAuction(auction);
+                this.Auctions[auction.AuctionId] = new ClientAuction(auction, filteredAuctionIds == null ? false : filteredAuctionIds.Contains(auction.AuctionId));
             }
         }
     }

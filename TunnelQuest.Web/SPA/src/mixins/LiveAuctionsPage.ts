@@ -31,6 +31,19 @@ export default mixins(LivePage).extend({
     methods: {
 
         // inherited from TqPage
+        beforeChatLinesLoaded: function (newChatLines: Array<ChatLine>) {
+            let auctionsArray = new Array<Auction>();
+            for (let chatLine of newChatLines) {
+                for (let auctionId in chatLine.auctions) {
+                    if (chatLine.auctions[auctionId].passesFilter)
+                        auctionsArray.push(chatLine.auctions[auctionId]);
+                }
+            }
+
+            this.beforeAuctionsLoaded(auctionsArray);
+        },
+
+        // inherited from TqPage
         onChatLinesLoaded: function (newChatLines: Array<ChatLine>) {
             // stub
             console.log("LiveAuctionsPage.onChatLinesLoaded():");
@@ -42,30 +55,31 @@ export default mixins(LivePage).extend({
                 for (let auctionId in chatLine.auctions) {
                     let auction = chatLine.auctions[auctionId];
 
-                    this.auctions.push(auction);
-                    this.auctionsDict.set(auction.id, auction);
+                    if (auction.passesFilter) {
+                        auction.createdAtMoment = moment.utc(auction.createdAtString).local();
 
-                    auction.createdAtMoment = moment.utc(auction.createdAtString).local();
-
-                    // if necessary, update the previous auction object
-                    if (auction.replacesAuctionId != null) {
-                        let prevAuction = this.auctionsDict.get(auction.replacesAuctionId);
-                        if (prevAuction) {
-                            prevAuction.isReplaced = true;
-                            // also copy over the firstSeenDate from the previous auction so that the new auction will 
-                            // take the previous auction's place in the sort order, instead of appearing at the top
-                            auction.firstSeenDate = prevAuction.firstSeenDate;
+                        // if necessary, update the previous auction object
+                        if (auction.replacesAuctionId != null) {
+                            let prevAuction = this.auctionsDict.get(auction.replacesAuctionId);
+                            if (prevAuction) {
+                                prevAuction.isReplaced = true;
+                                // also copy over the firstSeenDate from the previous auction so that the new auction will 
+                                // take the previous auction's place in the sort order, instead of appearing at the top
+                                auction.firstSeenDate = prevAuction.firstSeenDate;
+                            }
                         }
+
+                        // transfer the firstSeenMoment from the previously existing entry, if it exists
+                        let existingEntry = this.auctionsDict.get(auction.id);
+                        if (existingEntry)
+                            auction.firstSeenDate = existingEntry.firstSeenDate;
+                        else
+                            auction.firstSeenDate = new Date();
+
+                        auctionsArray.push(auction);
+                        this.auctions.push(auction);
+                        this.auctionsDict.set(auction.id, auction);
                     }
-
-                    // transfer the firstSeenMoment from the previously existing entry, if it exists
-                    let existingEntry = this.auctionsDict.get(auction.id);
-                    if (existingEntry)
-                        auction.firstSeenDate = existingEntry.firstSeenDate;
-                    else
-                        auction.firstSeenDate = new Date();
-
-                    auctionsArray.push(auction);
                 }                
             }
 
@@ -86,9 +100,7 @@ export default mixins(LivePage).extend({
                 }
             });
 
-            // pass along to extending components
-            if (auctionsArray.length > 0)
-                this.onAuctionsLoaded(auctionsArray);
+            this.onAuctionsLoaded(auctionsArray);
 
             this.rebuildAuctionArrays();
         },
@@ -99,12 +111,14 @@ export default mixins(LivePage).extend({
 
             for (let chatLine of removedLines) {
                 for (let auctionId in chatLine.auctions) {
-                    let auction = chatLine.auctions[auctionId];
+                    if (this.auctionsDict.has(chatLine.auctions[auctionId].id)) {
+                        let auction = chatLine.auctions[auctionId];
 
-                    this.auctionsDict.delete(auction.id);
-                    this.auctions.splice(this.auctions.indexOf(auction), 1);
+                        this.auctionsDict.delete(auction.id);
+                        this.auctions.splice(this.auctions.indexOf(auction), 1);
 
-                    unloadedAuctions.push(auction);
+                        unloadedAuctions.push(auction);
+                    }
                 }
             }
 
@@ -164,6 +178,10 @@ export default mixins(LivePage).extend({
                             return 0;
                     }
                 });
+        },
+
+        beforeAuctionsLoaded: function (newAuctions: Array<Auction>) {
+            // overridden by extending components
         },
 
         onAuctionsLoaded: function (newAuctions: Array<Auction>) {

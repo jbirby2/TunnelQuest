@@ -47,21 +47,9 @@
 	- make sure no auction is ever created for whitespace
 	
 - spend the time to make the "<<" top menu buttons do a javascript:back() when appropriate
-	** use localStorage.get("NavHistory")!  vue is already maintaining it for us!
-
-- create new migration for initial eq log files
-	- actually use timestamp for these
+	* also make back link from item page to actual previous page if possible (i.e. filter page)
 
 - special ChatPurge marker in the chat ui to make it clear to users at what point the spam got trimmed
-
-- i think Auction House view is getting the chat lines even though it doesn't use them
-	- refactor so that there's one hub per server, and each hub uses groups to determine which payload to send
-		- "ChatGroup", "AuctionGroup", "ChatAndAuctionGroup"
-		- https://docs.microsoft.com/en-us/aspnet/core/signalr/hubs?view=aspnetcore-2.2
-		- https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-2.2
-	- make client invoke a method on the hub to join one of the groups immediately after connect
-		* also after reconnect
-	** ALSO refactor so that the controller reuses the ClientChatLine and ClientAuction objects as much as possible
 
 - create item_alias table to manually associate common player-typed unknown item names with known item names (i.e. "jboots mq" might be an alias for "Journeyman's Boots" strong name)
 	- Alias (PK because logically it can only be an alias for ONE thing)
@@ -130,8 +118,6 @@
 
 - debounce scroll events (probably already listed above somewhere)
 
-- fix item page
-
 - in client script, remove auction.isReplace and do it differently because I don't think it's gonna work like it is
 	- we only want it to happen for NEW auctions, not when scrolling down
 	* maybe it's ok??  re-assess and think about it...
@@ -139,3 +125,27 @@
 - quick search system filter
 
 - do a hover info window for ItemLink
+
+- convert client-side filtering into an async process
+	- start off by converting price history fetch to take a callback, because we call it for every chatline anyway
+		- its callback then evaluates if the filter requires item data
+			- if so, fetch item, pass it a callback which finally evaluates everything and calls addLines() with the final filtered results
+			- if not, run the callback above immediately to evaluate everything and call addLines() with the final filtered results
+
+- implement client-side filtering for auctions
+	* apply it to ItemPage somehow instead of current itemname comparison
+
+- optimize so that if no filter is defined, a null is passed up, and vice versa "passesFilter" is also null
+  coming back down.
+	- also set passesFilter = null for payloads sent down the hub
+
+- changing filters on newspaper page is laggy, even on pc
+	- other pages are fine thank god
+	- same filter loads instantly if already selected when newspaper page first loads.
+	  definitely the unloading that's causing the lag.
+	- probably because emptying the arrays as a separate operation?  or rebuilding view arrays twice as often as necessary?
+
+- i don't think replaced chat lines are being filtered out correctly (see custom filter 1)
+
+
+

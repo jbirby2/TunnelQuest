@@ -120,8 +120,7 @@ class ItemRepo {
         if (this.pendingItemNames.length == 0) {
             if (callback != null)
                 callback();
-            else
-                return;
+            return;
         }
 
         axios.post('/api/items', { itemNames: this.pendingItemNames.splice(0) }) // splice clears the array here
@@ -129,83 +128,84 @@ class ItemRepo {
                 let result = response.data as Array<Item>;
 
                 // stub
+                console.log("ItemRepo.fetchQueuedItems() result:");
                 console.log(result);
 
                 for (var item of result) {
                     // update the blank .items[] object with the actual data
                     let blankItem = this.items[item.itemName];
                     if (blankItem) {
-                        blankItem.iconFileName = item.iconFileName;
-                        blankItem.isMagic = item.isMagic;
-                        blankItem.isLore = item.isLore;
-                        blankItem.isNoDrop = item.isNoDrop;
-                        blankItem.isNoTrade = item.isNoTrade;
-                        blankItem.isTemporary = item.isTemporary;
-                        blankItem.isQuestItem = item.isQuestItem;
-                        blankItem.isArtifact = item.isArtifact;
-                        blankItem.requiredLevel = item.requiredLevel;
-                        blankItem.weight = item.weight;
-                        blankItem.sizeCode = item.sizeCode;
+                        blankItem.iconFileName = item.iconFileName || null;
+                        blankItem.isMagic = item.isMagic || false;
+                        blankItem.isLore = item.isLore || false;
+                        blankItem.isNoDrop = item.isNoDrop || false;
+                        blankItem.isNoTrade = item.isNoTrade || false;
+                        blankItem.isTemporary = item.isTemporary || false;
+                        blankItem.isQuestItem = item.isQuestItem || false;
+                        blankItem.isArtifact = item.isArtifact || false;
+                        blankItem.requiredLevel = item.requiredLevel || null;
+                        blankItem.weight = item.weight || 0;
+                        blankItem.sizeCode = item.sizeCode || null;
 
                         // stats
 
-                        blankItem.strength = item.strength;
-                        blankItem.stamina = item.stamina;
-                        blankItem.agility = item.agility;
-                        blankItem.dexterity = item.dexterity;
-                        blankItem.wisdom = item.wisdom;
-                        blankItem.intelligence = item.intelligence;
-                        blankItem.charisma = item.charisma;
-                        blankItem.hitPoints = item.hitPoints;
-                        blankItem.mana = item.mana;
-                        blankItem.armorClass = item.armorClass;
-                        blankItem.magicResist = item.magicResist;
-                        blankItem.poisonResist = item.poisonResist;
-                        blankItem.diseaseResist = item.diseaseResist;
-                        blankItem.fireResist = item.fireResist;
-                        blankItem.coldResist = item.coldResist;
-                        blankItem.haste = item.haste;
+                        blankItem.strength = item.strength || null;
+                        blankItem.stamina = item.stamina || null;
+                        blankItem.agility = item.agility || null;
+                        blankItem.dexterity = item.dexterity || null;
+                        blankItem.wisdom = item.wisdom || null;
+                        blankItem.intelligence = item.intelligence || null;
+                        blankItem.charisma = item.charisma || null;
+                        blankItem.hitPoints = item.hitPoints || null;
+                        blankItem.mana = item.mana || null;
+                        blankItem.armorClass = item.armorClass || null;
+                        blankItem.magicResist = item.magicResist || null;
+                        blankItem.poisonResist = item.poisonResist || null;
+                        blankItem.diseaseResist = item.diseaseResist || null;
+                        blankItem.fireResist = item.fireResist || null;
+                        blankItem.coldResist = item.coldResist || null;
+                        blankItem.haste = item.haste || null;
 
                         // bard instruments
 
-                        blankItem.singingModifier = item.singingModifier;
-                        blankItem.percussionModifier = item.percussionModifier;
-                        blankItem.stringedModifier = item.stringedModifier;
-                        blankItem.brassModifier = item.brassModifier;
-                        blankItem.windModifier = item.windModifier;
+                        blankItem.singingModifier = item.singingModifier || null;
+                        blankItem.percussionModifier = item.percussionModifier || null;
+                        blankItem.stringedModifier = item.stringedModifier || null;
+                        blankItem.brassModifier = item.brassModifier || null;
+                        blankItem.windModifier = item.windModifier || null;
 
                         // spell effect
 
-                        blankItem.effectSpellName = item.effectSpellName;
-                        blankItem.effectTypeCode = item.effectTypeCode;
-                        blankItem.effectMinimumLevel = item.effectMinimumLevel;
-                        blankItem.effectCastingTime = item.effectCastingTime;
+                        blankItem.effectSpellName = item.effectSpellName || null;
+                        blankItem.effectTypeCode = item.effectTypeCode || null;
+                        blankItem.effectMinimumLevel = item.effectMinimumLevel || null;
+                        blankItem.effectCastingTime = item.effectCastingTime || null;
 
                         // weapons
 
-                        blankItem.weaponSkillCode = item.weaponSkillCode;
-                        blankItem.attackDamage = item.attackDamage;
-                        blankItem.attackDelay = item.attackDelay;
-                        blankItem.range = item.range;
+                        blankItem.weaponSkillCode = item.weaponSkillCode || null;
+                        blankItem.attackDamage = item.attackDamage || null;
+                        blankItem.attackDelay = item.attackDelay || null;
+                        blankItem.range = item.range || null;
 
                         // containers
 
-                        blankItem.capacity = item.capacity;
-                        blankItem.capacitySizeCode = item.capacitySizeCode;
-                        blankItem.weightReduction = item.weightReduction;
+                        blankItem.capacity = item.capacity || null;
+                        blankItem.capacitySizeCode = item.capacitySizeCode || null;
+                        blankItem.weightReduction = item.weightReduction || null;
 
                         // consumables
 
-                        blankItem.isExpendable = item.isExpendable;
-                        blankItem.maxCharges = item.maxCharges;
+                        blankItem.isExpendable = item.isExpendable || null;
+                        blankItem.maxCharges = item.maxCharges || null;
 
                         // relationships
 
-                        blankItem.races = item.races;
-                        blankItem.classes = item.classes;
-                        blankItem.slots = item.slots;
-                        blankItem.deities = item.deities;
-                        blankItem.info = item.info;
+                        blankItem.races = item.races || [];
+                        blankItem.classes = item.classes || [];
+                        blankItem.slots = item.slots || [];
+                        blankItem.deities = item.deities || [];
+                        blankItem.info = item.info || [];
 
                         // if the item is a spell scroll, then also go ahead and pull its spell
                         if (blankItem.effectSpellName != null && blankItem.effectTypeCode == "LearnSpell")

@@ -1,28 +1,65 @@
 ﻿<style>
+    .tqFilterItemsView {
+    }
+
+    .tqFilterItemsViewSearchPanel {
+        display: table-row;
+    }
+
+    .tqFilterItemsViewSearchPanel > span {
+        display: table-cell;
+    }
+
+    .tqFilterItemsViewSearchPanel > span:nth-child(1) {
+        width: 100%;
+    }
+
+    .tqFilterItemsViewSearchOptions {
+        color: #999999;
+    }
+
+    .tqFilterItemsViewListSeparator {
+        background-color: rgba(120, 120, 120, 0.7);
+        color: #efefef;
+    }
 </style>
 
 <template>
     <div>
-        <div>
+        <div class="tqFilterItemsViewSearchPanel">
+            <span>
+                <input type="text" v-model="searchText" @keyup="doSearch" placeholder="Start typing an item name here" />
+            </span>
+            <span>
+                <input type="button" @click="onToggleSearchOptionsClicked" :value="showSearchOptions ? 'Hide Options' : 'Show Options'" />
+            </span>
+        </div>
+        <div v-if="showSearchOptions" class="tqFilterItemsViewSearchOptions">
             <label>
-                <input type="checkbox" ref="includeWtbCheckbox" @change="doSearch" checked />include unknown WTB
+                <input type="checkbox" v-model="includeUnknownWtb" @change="doSearch" />include unknown WTB
             </label>
             &nbsp;
             <label>
-                <input type="checkbox" ref="includeWtsCheckbox" @change="doSearch" checked />include unknown WTS
+                <input type="checkbox" v-model="includeUnknownWts" @change="doSearch" />include unknown WTS
             </label>
         </div>
         <div>
-            <input type="text" ref="itemNameBox" @keyup="doSearch" placeholder="Start typing an item name here" />
-        </div>
-        <div>
-            <filter-items-search-result-view v-for="result in results" :key="result.itemName" :result="result" :filter="filter"></filter-items-search-result-view>
-        </div>
-        <div>
-            <div>Items in filter:</div>
+            <div v-if="lastSearchedText.length > 0 || results.length > 0" class="tqFilterItemsViewListSeparator">
+                Search Results
+            </div>
+            <div v-if="results.length == 0 && lastSearchedText.length > 0">
+                There are no item names starting with "{{lastSearchedText}}"
+            </div>
+            <div v-else>
+                <filter-items-search-result-view v-for="result in results" :key="result.itemName" :result="result" :filter="filter" @item-added-to-filter="onItemAddedToFilter"></filter-items-search-result-view>
+            </div>
+            <div v-if="lastSearchedText.length > 0 || results.length > 0" class="tqFilterItemsViewListSeparator">
+                Items in Filter
+            </div>
             <filter-items-record-view v-for="itemName in filter.settings.itemNames" :filter="filter" :itemName="itemName"></filter-items-record-view>
+
         </div>
-    </div>
+        </div>
 </template>
 
 <script lang="ts">
@@ -53,39 +90,50 @@
 
         data: function () {
             return {
-                results: [] as Array<FilterItemSearchResult>
+                searchText: "",
+                lastSearchedText: "",
+                showSearchOptions: false,
+                includeUnknownWtb: true,
+                includeUnknownWts: true,
+                results: [] as Array<FilterItemSearchResult>,
             }
         },
 
         mounted: function () {
-            //let itemNameBox = this.$refs.itemNameBox as HTMLInputElement;
-            //stub
         },
 
         methods: {
-            doSearch: _.debounce(function (this: any) {
-                let startingWith = (this.$refs.itemNameBox as HTMLInputElement).value.trim();
+            onToggleSearchOptionsClicked: function() {
+                this.showSearchOptions = !this.showSearchOptions;
+            },
 
-                if (startingWith.length == 0)
+            onItemAddedToFilter: function () {
+                // reset the search box & results
+                this.searchText = "";
+                this.lastSearchedText = "";
+                this.results = [];
+            },
+
+            doSearch: _.debounce(function (this: any) {
+                this.searchText = (this.searchText as string).trim();
+
+                if (this.searchText.length == 0)
                     this.results = [];
-                else if (startingWith.length < TQGlobals.settings.minFilterItemNameLength)
+                else if (this.searchText.length < TQGlobals.settings.minFilterItemNameLength)
                     return;
 
-                let includeBuying = (this.$refs.includeWtbCheckbox as HTMLInputElement).checked;
-                let includeSelling = (this.$refs.includeWtsCheckbox as HTMLInputElement).checked;
-                let includeUnknownItems = includeBuying || includeSelling;
-                
                 axios.get('/api/filter_items', {
                     params: {
                         serverCode: TQGlobals.serverCode,
-                        startingWith: startingWith,
-                        includeUnknownItems: includeUnknownItems,
-                        includeBuying: includeBuying,
-                        includeSelling: includeSelling
+                        startingWith: this.searchText,
+                        includeUnknownItems: (this.includeUnknownWtb || this.includeUnknownWts),
+                        includeBuying: this.includeUnknownWtb,
+                        includeSelling: this.includeUnknownWts
                     }
                 })
                 .then(response => {
                     this.results = response.data as Array<FilterItemSearchResult>;
+                    this.lastSearchedText = this.searchText;
                 })
                 .catch(err => {
                     // stub

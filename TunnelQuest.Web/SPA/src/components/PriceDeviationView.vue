@@ -66,7 +66,7 @@
         },
 
         mounted: function () {
-            this.priceHistory = TQGlobals.priceHistories.get(this.itemName, false);
+            this.priceHistory = TQGlobals.priceHistories.queue(this.itemName);
         },
 
         computed: {

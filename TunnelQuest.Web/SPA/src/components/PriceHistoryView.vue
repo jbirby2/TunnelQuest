@@ -125,13 +125,15 @@
 
         watch: {
             itemName(newName, oldName) {
-                this.priceHistory = TQGlobals.priceHistories.get(newName, true);
+                this.priceHistory = TQGlobals.priceHistories.queue(newName);
+                TQGlobals.priceHistories.fetchQueuedPriceHistories();
             }
         },
 
         methods: {
             onInit: function () {
-                this.priceHistory = TQGlobals.priceHistories.get(this.itemName, true);
+                this.priceHistory = TQGlobals.priceHistories.queue(this.itemName);
+                TQGlobals.priceHistories.fetchQueuedPriceHistories();
             },
 
             formatPrice: function (price:number) {

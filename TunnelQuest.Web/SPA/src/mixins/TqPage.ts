@@ -80,7 +80,7 @@ export default Vue.extend({
                         if (auction.aliasText == null)
                             auction.aliasText = auction.itemName;
 
-                        TQGlobals.priceHistories.get(auction.itemName, false);
+                        TQGlobals.priceHistories.queue(auction.itemName);
                     }
 
                     newLinesArray.push(chatLine);
@@ -112,7 +112,7 @@ export default Vue.extend({
             // (no need to re-sort after enforcing max size because trimming from the start of the array won't change the sort order)
 
             // fetch all price histories at once
-            TQGlobals.priceHistories.fetchPendingPriceHistories();
+            TQGlobals.priceHistories.fetchQueuedPriceHistories();
         },
 
         onScroll: function () {
@@ -143,10 +143,14 @@ export default Vue.extend({
             //if (this.chatLines.length > 0)
             //    minId = this.chatLines[this.chatLines.length - 1].id + 1;
 
+            // JOESTUB
+            var joestub = this.getChatFilterSettings();
+            joestub.minStrength = 6;
+
             axios.post('/api/chat_query', {
                 serverCode: TQGlobals.serverCode,
                 //minimumId: minId,
-                filterSettings: this.getChatFilterSettings()
+                filterSettings: joestub//this.getChatFilterSettings()
             })
             .then(response => {
                 let result = response.data as ChatLinePayload;
@@ -204,6 +208,7 @@ export default Vue.extend({
 
         getChatFilterSettings: function () {
             // overridden by extending components
+            return {} as any;
         },
 
         beforeChatLinesLoaded: function (newLines: Array<ChatLine>) {

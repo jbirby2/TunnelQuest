@@ -133,7 +133,6 @@
 			- if not, run the callback above immediately to evaluate everything and call addLines() with the final filtered results
 
 - implement client-side filtering for auctions
-	* apply it to ItemPage somehow instead of current itemname comparison
 
 - optimize so that if no filter is defined, a null is passed up, and vice versa "passesFilter" is also null
   coming back down.
@@ -147,5 +146,9 @@
 
 - i don't think replaced chat lines are being filtered out correctly (see custom filter 1)
 
+- include source (i.e. who drops it) in item info, just like we do for spells
+	- will have to scrape wiki again
+	- will have to create new child table like i did with spells
+		- refactor so spells and items use the same table
 
-
+- include wiki links on item pages

@@ -1,15 +1,31 @@
 ﻿<style>
+    .tqFilterItemsSearchResultView {
+        display: table-row;
+    }
+
+    .tqFilterItemsSearchResultView > span {
+        display: table-cell;
+    }
+
+    .tqFilterItemsSearchResultView > span:nth-child(2) {
+        text-align: center;
+    }
+
 </style>
 
 <template>
-    <div>
-        <item-link :itemName="result.itemName" :aliasText="result.aliasText" :isKnown="result.isKnownItem"></item-link>
-        <span v-if="result.aliasText">
-            (aka <item-link :itemName="result.itemName" :isKnown="result.isKnownItem"></item-link>)
+    <div class="tqFilterItemsSearchResultView">
+        <span>
+            <item-link :itemName="result.itemName" :aliasText="result.aliasText" :isKnown="result.isKnownItem"></item-link>
         </span>
         <span>
-            <input type="button" v-if="showAddButton" value="Add to Filter" @click="onAddClicked" />
-            <input type="button" v-if="!showAddButton" value="Remove from Filter" @click="onRemoveClicked" />
+            <span v-if="result.aliasText">
+                (aka <item-link :itemName="result.itemName" :isKnown="result.isKnownItem"></item-link>)
+            </span>
+            <span>
+                <input type="button" v-if="showAddButton" value="Add to Filter" @click="onAddClicked" />
+                <input type="button" v-if="!showAddButton" value="Remove from Filter" @click="onRemoveClicked" />
+            </span>
         </span>
     </div>
 </template>
@@ -60,6 +76,7 @@
                     this.filter.settings.itemNames.push(this.result.itemName);
                     this.filter.metaData.itemIsKnown[this.result.itemName] = this.result.isKnownItem;
                     TQGlobals.filterManager.saveUserFilters();
+                    this.$emit("item-added-to-filter")
                 }
             },
 

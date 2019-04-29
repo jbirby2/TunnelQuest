@@ -1,7 +1,7 @@
 ﻿
 <style>
     .tqAuctionHousePageListDivider {
-        background-color: #55a2c6;
+        background-color: #4485a3;
         color: #ffffff;
         font-weight: bold;
         margin-bottom: 10px;

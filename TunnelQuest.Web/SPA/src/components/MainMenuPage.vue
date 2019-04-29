@@ -17,7 +17,7 @@
     }
 
     .tqMainMenuPage > a:hover {
-        background-color: #ce9000;
+        background-color: #a87500;
     }
 
 </style>

@@ -180,7 +180,12 @@ export default mixins(TqPage).extend({
             // fails any of them
             let passesFilter = true;
 
-            if (TQGlobals.filterManager.selectedFilter.settings.itemNames.length > 0 && TQGlobals.filterManager.selectedFilter.settings.itemNames.indexOf(auction.itemName) < 0)
+            let fs = TQGlobals.filterManager.selectedFilter.settings; // shortcut
+
+            if (fs.itemNames.length > 0 && fs.itemNames.indexOf(auction.itemName) < 0)
+                passesFilter = false;
+
+            if (fs.minStrength != null && (auction.item.strength == null || fs.minStrength > auction.item.strength))
                 passesFilter = false;
 
             // STUB TODO more filter conditions
@@ -193,9 +198,21 @@ export default mixins(TqPage).extend({
             console.log("LivePage.fetchNecessaryItemsAsync()");
             console.log(liveChatLines);
 
-            // STUB fetch logic goes here
+            let fs = TQGlobals.filterManager.selectedFilter.settings; // shortcut
 
-            callback();
+            if (fs.minStrength != null) { // STUB TODO add lots more ||'s here
+                for (let chatLine of liveChatLines) {
+                    for (let auctionId in chatLine.auctions) {
+                        let auction = chatLine.auctions[auctionId];
+                        auction.item = TQGlobals.items.queue(auction.itemName);
+                    }
+                }
+
+                TQGlobals.items.fetchQueuedItems(callback);
+            }
+            else {
+                callback();
+            }
         },
 
         fetchNecessaryPriceHistoryAsync: function (liveChatLines: Array<ChatLine>, callback: Function) {

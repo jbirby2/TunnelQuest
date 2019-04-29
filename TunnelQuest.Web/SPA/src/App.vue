@@ -23,8 +23,27 @@
         padding-left: 3px;
     }
 
+    input[type=text], select {
+        background-color: #f2f2f2;
+        border: solid 1px #000;
+        color: #000;
+    }
+
     input[type=text]:focus, select:focus {
-        background-color: #f9ffd6;
+        background-color: #edfeff;
+        color: #000000;
+    }
+
+    input[type=button], button {
+        background-color: #415d8c;
+        border: solid 1px #000;
+        color: #efefef;
+        margin-left: 4px;
+    }
+
+    input[type=button]:active, button:active {
+        background-color: #edfeff;
+        color: #000000;
     }
 
     label {

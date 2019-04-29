@@ -1,11 +1,24 @@
 ﻿<style>
+    .tqFilterItemsRecordView {
+        display: table-row;
+    }
+
+    .tqFilterItemsRecordView > span {
+        display: table-cell;
+    }
+
+    .tqFilterItemsRecordView > span:nth-child(2) {
+        text-align: center;
+    }
 </style>
 
 <template>
-    <div>
-        <item-link :itemName="itemName" :isKnown="isKnown"></item-link>
+    <div class="tqFilterItemsRecordView">
         <span>
-            <input type="button" value="Remove" @click="onRemoveClicked" />
+            <item-link :itemName="itemName" :isKnown="isKnown"></item-link>
+        </span>
+        <span>
+            <input type="button" value="Remove from Filter" @click="onRemoveClicked" />
         </span>
     </div>
 </template>

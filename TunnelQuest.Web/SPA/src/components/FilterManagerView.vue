@@ -1,6 +1,6 @@
 ﻿<style>
     .tqFilterManagerView {
-        background-color: red; /* stub */
+        background-color: #f2a800;
     }
 </style>
 

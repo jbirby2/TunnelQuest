@@ -1,7 +1,7 @@
 ﻿
 <style>
     .tqNewspaperPageListDivider {
-        background-color: #55a2c6;
+        background-color: #4485a3;
         color: #ffffff;
         font-weight: bold;
         margin-bottom: 10px;
@@ -67,7 +67,8 @@
             // inherited from LiveAuctionsPage
             beforeAuctionsLoaded: function (newAuctions: Array<Auction>) {
                 for (let auction of newAuctions) {
-                    auction.item = TQGlobals.items.queue(auction.itemName);
+                    if (!auction.item)
+                        auction.item = TQGlobals.items.queue(auction.itemName);
                 }
                 TQGlobals.items.fetchQueuedItems();
             },

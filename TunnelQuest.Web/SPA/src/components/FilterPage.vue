@@ -4,15 +4,14 @@
     .tqFilterPageSettings {
         margin: auto auto;
         max-width: 600px;
-        background-color: rgba(0,0,0,0.7);
+        
     }
 
-    .tqFilterPageHeader {
-        background-color: #55a2c6;
+    .tqFilterPageSettings fieldset {
+        background-color: rgba(0,0,0,0.7);
         color: #ffffff;
-        font-weight: bold;
         font-size: 1.2em;
-        padding-left: 3px;
+        margin-bottom: 20px;
     }
 
 </style>
@@ -22,13 +21,15 @@
         <site-header></site-header>
 
         <div v-if="filter != null" class="tqFilterPageSettings">
-            <div class="tqFilterPageHeader">Filter Name</div>
-            <div>
+            <fieldset>
+                <legend>Filter Name</legend>
                 <input type="text" v-model="filter.name" @change="onFilterNameChanged" />
-            </div>
+            </fieldset>
 
-            <div class="tqFilterPageHeader">Specific Items</div>
-            <filter-items-view :filter="filter"></filter-items-view>
+            <fieldset>
+                <legend>Items</legend>
+                <filter-items-view :filter="filter"></filter-items-view>
+            </fieldset>
         </div>
     </div>
 </template>

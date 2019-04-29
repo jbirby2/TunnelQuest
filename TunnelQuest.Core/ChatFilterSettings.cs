@@ -11,6 +11,9 @@ namespace TunnelQuest.Core
         public string[] ItemNames { get; set; } = null;
         public string PlayerName { get; set; } = null;
         public bool? IsBuying { get; set; } = null;
+
+        public int? MinStrength { get; set; } = null;
+
         public int? MinPrice { get; set; } = null;
         public int? MaxPrice { get; set; } = null;
         public int? MinGoodPriceDeviation { get; set; } = null;

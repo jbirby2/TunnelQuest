@@ -13,7 +13,7 @@ class PriceHistoryRepo {
         this.serverCode = serverCode;
     }
 
-    public get(itemName: string, fetchImmediately: boolean = true) {
+    public queue(itemName: string) {
         let priceHistory = this.priceHistories[itemName];
 
         if (priceHistory)
@@ -36,21 +36,22 @@ class PriceHistoryRepo {
             this.priceHistories[itemName] = blankPriceHistory;
             this.pendingItemNames.push(itemName);
 
-            if (fetchImmediately)
-                this.fetchPendingPriceHistories();
-
             return blankPriceHistory;
         }
     }
 
 
-    public fetchPendingPriceHistories() {
-        if (this.pendingItemNames.length == 0)
-            return;
-
+    public fetchQueuedPriceHistories(callback: Function | null = null) {
+        
         // stub
         console.log("PriceHistoryRepo.fetchPendingPriceHistories()");
-        
+
+        if (this.pendingItemNames.length == 0) {
+            if (callback != null)
+                callback();
+            return;
+        }
+
         axios.post('/api/price_history', {
                 itemNames: this.pendingItemNames.splice(0), // splice clears the array here
                 serverCode: this.serverCode
@@ -59,6 +60,7 @@ class PriceHistoryRepo {
                 let result = response.data as Array<PriceHistory>;
 
                 // stub
+                console.log("PriceHistoryRepo.fetchPendingPriceHistories()");
                 console.log(result);
 
                 for (var priceHistory of result) {
@@ -67,17 +69,20 @@ class PriceHistoryRepo {
 
                     if (blankPriceHistory) {
                         blankPriceHistory.isFetched = true;
-                        blankPriceHistory.oneMonthMedian = priceHistory.oneMonthMedian;
-                        blankPriceHistory.threeMonthMedian = priceHistory.threeMonthMedian;
-                        blankPriceHistory.sixMonthMedian = priceHistory.sixMonthMedian;
-                        blankPriceHistory.twelveMonthMedian = priceHistory.twelveMonthMedian;
-                        blankPriceHistory.lifetimeMedian = priceHistory.lifetimeMedian;
+                        blankPriceHistory.oneMonthMedian = priceHistory.oneMonthMedian || null;
+                        blankPriceHistory.threeMonthMedian = priceHistory.threeMonthMedian || null;
+                        blankPriceHistory.sixMonthMedian = priceHistory.sixMonthMedian || null;
+                        blankPriceHistory.twelveMonthMedian = priceHistory.twelveMonthMedian || null;
+                        blankPriceHistory.lifetimeMedian = priceHistory.lifetimeMedian || null;
                         blankPriceHistory.updatedAtString = priceHistory.updatedAtString;
                     }
                     else {
                         console.log("ERROR got back unexpected priceHistory.itemName: " + priceHistory.itemName);
                     }
                 }
+
+                if (callback)
+                    callback();
             })
             .catch(err => {
                 // stub

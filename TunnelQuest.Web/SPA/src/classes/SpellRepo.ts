@@ -38,13 +38,12 @@ class SpellRepo {
 
     public fetchQueuedSpells(callback: Function | null = null) {
         // stub
-        console.log("SpellRepo.fetchPendingSpells()");
+        console.log("SpellRepo.fetchQueuedSpells()");
 
         if (this.pendingSpellNames.length == 0) {
             if (callback != null)
                 callback();
-            else
-                return;
+            return;
         }
 
         axios.post('/api/spells', { spellNames: this.pendingSpellNames.splice(0) }) // splice clears the array here
@@ -52,6 +51,7 @@ class SpellRepo {
                 let result = response.data as Array<Spell>;
 
                 // stub
+                console.log("ItemRepo.fetchQueuedSpells() result:");
                 console.log(result);
 
                 for (var spell of result) {
@@ -59,11 +59,11 @@ class SpellRepo {
                     let blankSpell = this.spells[spell.spellName];
 
                     if (blankSpell) {
-                        blankSpell.iconFileName = spell.iconFileName;
-                        blankSpell.description = spell.description;
-                        blankSpell.requirements = spell.requirements;
-                        blankSpell.details = spell.details;
-                        blankSpell.sources = spell.sources;
+                        blankSpell.iconFileName = spell.iconFileName || null;
+                        blankSpell.description = spell.description || null;
+                        blankSpell.requirements = spell.requirements || {};
+                        blankSpell.details = spell.details || [];
+                        blankSpell.sources = spell.sources || [];
                     }
                     else {
                         console.log("ERROR got back unexpected spell.spellName: " + spell.spellName);

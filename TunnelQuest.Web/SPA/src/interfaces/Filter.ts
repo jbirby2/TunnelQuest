@@ -11,6 +11,9 @@ interface Filter {
         itemNames: Array<string>,
         playerName: string | null,
         isBuying: boolean | null,
+
+        minStrength: number | null,
+
         minPrice: number | null,
         maxPrice: number | null,
         minGoodPriceDeviation: number | null,

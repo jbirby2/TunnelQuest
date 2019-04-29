@@ -108,8 +108,8 @@ namespace TunnelQuest.Core.Models
             modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.IsPermanent, auction.IsBuying, auction.Price, auction.ItemName });
             modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ItemName, auction.IsPermanent });
             // used in ChatLogic
-            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ItemName, auction.IsBuying, auction.PlayerName });
-            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ChatLineId, auction.ItemName, auction.IsBuying, auction.PlayerName });
+            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ItemName, auction.IsBuying, auction.IsKnownItem, auction.PlayerName });
+            modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ChatLineId, auction.ItemName, auction.IsBuying, auction.IsKnownItem, auction.PlayerName });
             modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ItemName, auction.IsPermanent }); // for ItemPage history query
             modelBuilder.Entity<Auction>().HasIndex(auction => new { auction.ServerCode, auction.ChatLineId, auction.ItemName, auction.IsPermanent }); // for ItemPage history query
 

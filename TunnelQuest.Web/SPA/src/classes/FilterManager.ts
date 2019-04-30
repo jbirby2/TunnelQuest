@@ -120,7 +120,20 @@ class FilterManager {
                 itemIsKnown: {}
             },
             settings: {
-                itemNames: new Array<string>()
+                isPermanent: null,
+                playerName: null,
+                isBuying: null,
+                items: {
+                    filterType: "name",
+                    names: new Array<string>(),
+                    stats: {
+                        minStrength: null
+                    }
+                },
+                minPrice: null,
+                maxPrice: null,
+                minGoodPriceDeviation: null,
+                maxBadPriceDeviation: null
             }
         } as Filter;
     }

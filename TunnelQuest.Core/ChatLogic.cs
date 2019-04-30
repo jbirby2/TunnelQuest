@@ -94,8 +94,8 @@ namespace TunnelQuest.Core
 
             if (criteria.FilterSettings != null)
             {
-                if (criteria.FilterSettings.ItemNames != null && criteria.FilterSettings.ItemNames.Length > 0)
-                    auctionQuery = auctionQuery.Where(auction => criteria.FilterSettings.ItemNames.Contains(auction.ItemName));
+                if (criteria.FilterSettings.Items.FilterType == "name" && criteria.FilterSettings.Items.Names.Any())
+                    auctionQuery = auctionQuery.Where(auction => criteria.FilterSettings.Items.Names.Contains(auction.ItemName));
 
                 if (criteria.FilterSettings.IsBuying != null)
                     auctionQuery = auctionQuery.Where(auction => auction.IsBuying == criteria.FilterSettings.IsBuying.Value);
@@ -106,7 +106,7 @@ namespace TunnelQuest.Core
                 if (criteria.FilterSettings.IsPermanent != null)
                     auctionQuery = auctionQuery.Where(auction => auction.IsPermanent == criteria.FilterSettings.IsPermanent.Value);
 
-                if (criteria.FilterSettings.MinStrength != null) // STUB add lots of ||'s here for other stats
+                if (criteria.FilterSettings.Items.FilterType == "stats")
                 {
                     var auctionItemQuery = auctionQuery
                         .Where(auction => auction.IsKnownItem == true)
@@ -116,8 +116,8 @@ namespace TunnelQuest.Core
                             (auction, item) => new { Auction = auction, Item = item })
                         .Where(auctionItem => auctionItem.Item != null); // technically this null check shouldn't be necessary since we're already filtering isKnownItem = true
 
-                    if (criteria.FilterSettings.MinStrength != null)
-                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Strength != null && auctionItem.Item.Strength.Value >= criteria.FilterSettings.MinStrength.Value);
+                    if (criteria.FilterSettings.Items.Stats.MinStrength != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Strength != null && auctionItem.Item.Strength.Value >= criteria.FilterSettings.Items.Stats.MinStrength.Value);
 
                     // ... STUB other filters go here
 

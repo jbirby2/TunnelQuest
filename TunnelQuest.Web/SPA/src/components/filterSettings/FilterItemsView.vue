@@ -22,44 +22,90 @@
         background-color: rgba(120, 120, 120, 0.7);
         color: #efefef;
     }
+
+    .tqFilterItemsViewStatsTable {
+        display: table;
+    }
+
+    .tqFilterItemsViewStatsTable > div {
+        display: table-row;
+    }
+
+    .tqFilterItemsViewStatsTable > div > span {
+        display: table-cell;
+    }
+
+    .tqFilterItemsStatBox {
+        width: 35px;
+    }
+
+    .tqFilterItemsStatBoxEmpty {
+        background-color: #555 !important;
+    }
+
+    .tqFilterItemsStatBoxEmpty:focus {
+        background-color: #edfeff !important;
+    }
+
 </style>
 
 <template>
     <div>
-        <div class="tqFilterItemsViewSearchPanel">
-            <span>
-                <input type="text" v-model="searchText" @keyup="doSearch" placeholder="Start typing an item name here" />
-            </span>
-            <span>
-                <input type="button" @click="onToggleSearchOptionsClicked" :value="showSearchOptions ? 'Hide Options' : 'Show Options'" />
-            </span>
-        </div>
-        <div v-if="showSearchOptions" class="tqFilterItemsViewSearchOptions">
-            <label>
-                <input type="checkbox" v-model="includeUnknownWtb" @change="doSearch" />include unknown WTB
-            </label>
-            &nbsp;
-            <label>
-                <input type="checkbox" v-model="includeUnknownWts" @change="doSearch" />include unknown WTS
-            </label>
-        </div>
         <div>
-            <div v-if="lastSearchedText.length > 0 || results.length > 0" class="tqFilterItemsViewListSeparator">
-                Search Results
-            </div>
-            <div v-if="results.length == 0 && lastSearchedText.length > 0">
-                There are no item names starting with "{{lastSearchedText}}"
-            </div>
-            <div v-else>
-                <filter-items-search-result-view v-for="result in results" :key="result.itemName" :result="result" :filter="filter" @item-added-to-filter="onItemAddedToFilter"></filter-items-search-result-view>
-            </div>
-            <div v-if="lastSearchedText.length > 0 || results.length > 0" class="tqFilterItemsViewListSeparator">
-                Items in Filter
-            </div>
-            <filter-items-record-view v-for="itemName in filter.settings.itemNames" :filter="filter" :itemName="itemName"></filter-items-record-view>
-
+            <input id="tqFilterByNameRadio" type="radio" value="name" v-model="filter.settings.items.filterType" @change="onFilterChanged" />
+            <label for="tqFilterByNameRadio">
+                Filter by Name
+            </label>
+            <input id="tqFilterByStatsRadio" type="radio" value="stats" v-model="filter.settings.items.filterType" @change="onFilterChanged" />
+            <label for="tqFilterByStatsRadio">
+                Filter by Stats
+            </label>
         </div>
+        <div v-if="filter.settings.items.filterType == 'name'">
+            <div class="tqFilterItemsViewSearchPanel">
+                <span>
+                    <input type="text" v-model="searchText" @keyup="doSearch" placeholder="Start typing an item name here" />
+                </span>
+                <span>
+                    <input type="button" @click="onToggleSearchOptionsClicked" :value="showSearchOptions ? 'Hide Options' : 'Show Options'" />
+                </span>
+            </div>
+            <div v-if="showSearchOptions" class="tqFilterItemsViewSearchOptions">
+                <label>
+                    <input type="checkbox" v-model="includeUnknownWtb" @change="doSearch" />include unknown WTB
+                </label>
+                &nbsp;
+                <label>
+                    <input type="checkbox" v-model="includeUnknownWts" @change="doSearch" />include unknown WTS
+                </label>
+            </div>
+            <div>
+                <div v-if="lastSearchedText.length > 0 || results.length > 0" class="tqFilterItemsViewListSeparator">
+                    Search Results
+                </div>
+                <div v-if="results.length == 0 && lastSearchedText.length > 0">
+                    There are no item names starting with "{{lastSearchedText}}"
+                </div>
+                <div v-else>
+                    <filter-items-search-result-view v-for="result in results" :key="result.itemName" :result="result" :filter="filter" @item-added-to-filter="onItemAddedToFilter"></filter-items-search-result-view>
+                </div>
+                <div v-if="lastSearchedText.length > 0 || results.length > 0" class="tqFilterItemsViewListSeparator">
+                    Items in Filter
+                </div>
+                <filter-items-record-view v-for="itemName in filter.settings.items.names" :filter="filter" :itemName="itemName"></filter-items-record-view>
+            </div>
         </div>
+        <div v-else>
+            <div class="tqFilterItemsViewStatsTable">
+                <div>
+                    <span>Strength</span>
+                    <span>
+                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minStrength" class="tqFilterItemsStatBox" @change="onFilterChanged" />
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -100,9 +146,15 @@
         },
 
         mounted: function () {
+            this.updateStatBackgrounds();
         },
 
         methods: {
+            onFilterChanged: function () {
+                this.updateStatBackgrounds();
+                TQGlobals.filterManager.saveUserFilters();
+            },
+
             onToggleSearchOptionsClicked: function() {
                 this.showSearchOptions = !this.showSearchOptions;
             },
@@ -112,6 +164,17 @@
                 this.searchText = "";
                 this.lastSearchedText = "";
                 this.results = [];
+            },
+
+            updateStatBackgrounds: function () {
+                let statBoxElements = document.getElementsByClassName("tqFilterItemsStatBox");
+                for (let i = 0; i < statBoxElements.length; i++) {
+                    let statBoxElem = statBoxElements.item(i) as HTMLInputElement;
+                    if (statBoxElem.value.trim().length == 0)
+                        statBoxElem.classList.add("tqFilterItemsStatBoxEmpty");
+                    else
+                        statBoxElem.classList.remove("tqFilterItemsStatBoxEmpty");
+                }
             },
 
             doSearch: _.debounce(function (this: any) {

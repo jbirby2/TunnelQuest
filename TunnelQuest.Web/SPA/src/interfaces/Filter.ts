@@ -8,12 +8,15 @@ interface Filter {
     },
     settings: {
         isPermanent: boolean | null,
-        itemNames: Array<string>,
         playerName: string | null,
         isBuying: boolean | null,
-
-        minStrength: number | null,
-
+        items: {
+            filterType: string, // valid values: "name", "stats"
+            names: Array<string>,
+            stats: {
+                minStrength: number | null,
+            }
+        },
         minPrice: number | null,
         maxPrice: number | null,
         minGoodPriceDeviation: number | null,

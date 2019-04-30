@@ -23,15 +23,19 @@
         padding-left: 3px;
     }
 
-    input[type=text], select {
+    input[type=text], input[type=tel], select {
         background-color: #f2f2f2;
         border: solid 1px #000;
         color: #000;
     }
 
-    input[type=text]:focus, select:focus {
+    input[type=text]:focus, input[type=tel]:focus, select:focus {
         background-color: #edfeff;
         color: #000000;
+    }
+
+    input[type=radio]:checked + label {
+        color: #f2a800;
     }
 
     input[type=button], button {

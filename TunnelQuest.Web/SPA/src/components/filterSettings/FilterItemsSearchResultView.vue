@@ -62,18 +62,18 @@
 
         watch: {
             filterItemNames: function (newValue, oldValue) {
-                this.showAddButton = (this.filter.settings.itemNames.indexOf(this.result.itemName) < 0);
+                this.showAddButton = (this.filter.settings.items.names.indexOf(this.result.itemName) < 0);
             }
         },
 
         mounted: function () {
-            this.filterItemNames = this.filter.settings.itemNames;
+            this.filterItemNames = this.filter.settings.items.names;
         },
 
         methods: {
             onAddClicked: function () {
-                if (this.filter.settings.itemNames.indexOf(this.result.itemName) < 0) {
-                    this.filter.settings.itemNames.push(this.result.itemName);
+                if (this.filter.settings.items.names.indexOf(this.result.itemName) < 0) {
+                    this.filter.settings.items.names.push(this.result.itemName);
                     this.filter.metaData.itemIsKnown[this.result.itemName] = this.result.isKnownItem;
                     TQGlobals.filterManager.saveUserFilters();
                     this.$emit("item-added-to-filter")
@@ -81,9 +81,9 @@
             },
 
             onRemoveClicked: function () {
-                let index = this.filter.settings.itemNames.indexOf(this.result.itemName);
+                let index = this.filter.settings.items.names.indexOf(this.result.itemName);
                 if (index >= 0) {
-                    this.filter.settings.itemNames.splice(index, 1);
+                    this.filter.settings.items.names.splice(index, 1);
                     delete this.filter.metaData.itemIsKnown[this.result.itemName];
                     TQGlobals.filterManager.saveUserFilters();
                 }

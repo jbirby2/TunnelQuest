@@ -139,18 +139,9 @@ export default Vue.extend({
 
         // called by extending components
         loadLatestFilteredChatLines: function () {
-            //let minId: number | null = null;
-            //if (this.chatLines.length > 0)
-            //    minId = this.chatLines[this.chatLines.length - 1].id + 1;
-
-            // JOESTUB
-            var joestub = this.getChatFilterSettings();
-            joestub.minStrength = 6;
-
             axios.post('/api/chat_query', {
                 serverCode: TQGlobals.serverCode,
-                //minimumId: minId,
-                filterSettings: joestub//this.getChatFilterSettings()
+                filterSettings: this.getChatFilterSettings()
             })
             .then(response => {
                 let result = response.data as ChatLinePayload;

@@ -182,14 +182,20 @@ export default mixins(TqPage).extend({
 
             let fs = TQGlobals.filterManager.selectedFilter.settings; // shortcut
 
-            if (fs.itemNames.length > 0 && fs.itemNames.indexOf(auction.itemName) < 0)
-                passesFilter = false;
+            if (fs.items.filterType == "name") {
+                // filter by names
+                if (fs.items.names.length > 0 && fs.items.names.indexOf(auction.itemName) < 0)
+                    passesFilter = false;
+            }
+            else {
+                // filter by stats
 
-            if (fs.minStrength != null && (auction.item.strength == null || fs.minStrength > auction.item.strength))
-                passesFilter = false;
+                if (fs.items.stats.minStrength != null && (auction.item.strength == null || fs.items.stats.minStrength > auction.item.strength))
+                    passesFilter = false;
 
-            // STUB TODO more filter conditions
-
+                // STUB TODO more filter conditions
+            }
+            
             return passesFilter;
         },
 
@@ -200,7 +206,7 @@ export default mixins(TqPage).extend({
 
             let fs = TQGlobals.filterManager.selectedFilter.settings; // shortcut
 
-            if (fs.minStrength != null) { // STUB TODO add lots more ||'s here
+            if (fs.items.filterType == "stats") {
                 for (let chatLine of liveChatLines) {
                     for (let auctionId in chatLine.auctions) {
                         let auction = chatLine.auctions[auctionId];

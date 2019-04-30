@@ -118,7 +118,10 @@
             getChatFilterSettings: function () {
                 return {
                     isPermanent: true,
-                    itemNames: [ (this.item as Item).itemName ]
+                    items: {
+                        filterType: "name",
+                        names: [(this.item as Item).itemName]
+                    }
                 };
             },
 

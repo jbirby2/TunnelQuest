@@ -58,9 +58,9 @@
         methods: {
 
             onRemoveClicked: function () {
-                let index = this.filter.settings.itemNames.indexOf(this.itemName);
+                let index = this.filter.settings.items.names.indexOf(this.itemName);
                 if (index >= 0) {
-                    this.filter.settings.itemNames.splice(index, 1);
+                    this.filter.settings.items.names.splice(index, 1);
                     TQGlobals.filterManager.saveUserFilters();
                 }
             },

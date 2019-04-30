@@ -60,6 +60,9 @@
         mounted: function () {
             TQGlobals.init(() => {
                 this.filter = TQGlobals.filterManager.get(this.$route.params.id);
+
+                if (this.filter != null && TQGlobals.filterManager.selectedFilter != this.filter)
+                    TQGlobals.filterManager.setSelectedFilter(this.filter);
             });
         },
 

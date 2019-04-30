@@ -145,6 +145,8 @@
 	- probably because emptying the arrays as a separate operation?  or rebuilding view arrays twice as often as necessary?
 
 - i don't think replaced chat lines are being filtered out correctly (see custom filter 1)
+	* i guess it should only show permanent auctions now, since newest is always permanent, and previous are spam
+	* think hard about how previousAuctionId should work in conjunction with this
 
 - include source (i.e. who drops it) in item info, just like we do for spells
 	- will have to scrape wiki again

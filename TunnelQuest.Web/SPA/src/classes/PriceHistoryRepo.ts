@@ -41,10 +41,10 @@ class PriceHistoryRepo {
     }
 
 
-    public fetchQueuedPriceHistories(callback: Function | null = null) {
+    public getQueuedPriceHistoriesAsync(callback: Function | null = null) {
         
         // stub
-        console.log("PriceHistoryRepo.fetchPendingPriceHistories()");
+        console.log("PriceHistoryRepo.getQueuedPriceHistoriesAsync()");
 
         if (this.pendingItemNames.length == 0) {
             if (callback != null)
@@ -60,7 +60,7 @@ class PriceHistoryRepo {
                 let result = response.data as Array<PriceHistory>;
 
                 // stub
-                console.log("PriceHistoryRepo.fetchPendingPriceHistories()");
+                console.log("PriceHistoryRepo.getQueuedPriceHistoriesAsync() result:");
                 console.log(result);
 
                 for (var priceHistory of result) {

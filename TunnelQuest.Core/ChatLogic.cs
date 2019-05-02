@@ -119,6 +119,24 @@ namespace TunnelQuest.Core
                     if (criteria.FilterSettings.Items.Stats.MinStrength != null)
                         auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Strength != null && auctionItem.Item.Strength.Value >= criteria.FilterSettings.Items.Stats.MinStrength.Value);
 
+                    if (criteria.FilterSettings.Items.Stats.MinStamina != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Stamina != null && auctionItem.Item.Stamina.Value >= criteria.FilterSettings.Items.Stats.MinStamina.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinAgility != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Agility != null && auctionItem.Item.Agility.Value >= criteria.FilterSettings.Items.Stats.MinAgility.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinDexterity != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Dexterity != null && auctionItem.Item.Dexterity.Value >= criteria.FilterSettings.Items.Stats.MinDexterity.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinWisdom != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Wisdom != null && auctionItem.Item.Wisdom.Value >= criteria.FilterSettings.Items.Stats.MinWisdom.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinIntelligence != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Intelligence != null && auctionItem.Item.Intelligence.Value >= criteria.FilterSettings.Items.Stats.MinIntelligence.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinCharisma != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Charisma != null && auctionItem.Item.Charisma.Value >= criteria.FilterSettings.Items.Stats.MinCharisma.Value);
+
                     // ... STUB other filters go here
 
                     auctionQuery = auctionItemQuery.Select(auctionItem => auctionItem.Auction);

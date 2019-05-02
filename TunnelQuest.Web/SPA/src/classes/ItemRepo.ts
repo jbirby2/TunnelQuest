@@ -113,9 +113,9 @@ class ItemRepo {
     }
 
 
-    public fetchQueuedItems(callback: Function | null = null) {
+    public getQueuedItemsAsync(callback: Function | null = null) {
         // stub
-        console.log("ItemRepo.fetchQueuedItems()");
+        console.log("ItemRepo.getQueuedItemsAsync()");
 
         if (this.pendingItemNames.length == 0) {
             if (callback != null)
@@ -128,7 +128,7 @@ class ItemRepo {
                 let result = response.data as Array<Item>;
 
                 // stub
-                console.log("ItemRepo.fetchQueuedItems() result:");
+                console.log("ItemRepo.getQueuedItemsAsync() result:");
                 console.log(result);
 
                 for (var item of result) {
@@ -218,7 +218,7 @@ class ItemRepo {
                     }
                 } // end foreach (item)
 
-                this.spellRepo.fetchQueuedSpells(callback);
+                this.spellRepo.getQueuedSpellsAsync(callback);
             })
             .catch(err => {
                 // stub

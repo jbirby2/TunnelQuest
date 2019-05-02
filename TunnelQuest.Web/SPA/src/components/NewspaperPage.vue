@@ -70,7 +70,7 @@
                     if (!auction.item)
                         auction.item = TQGlobals.items.queue(auction.itemName);
                 }
-                TQGlobals.items.fetchQueuedItems();
+                TQGlobals.items.getQueuedItemsAsync();
             },
 
             // inherited from LiveAuctionsPage

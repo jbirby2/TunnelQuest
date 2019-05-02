@@ -15,6 +15,12 @@ interface Filter {
             names: Array<string>,
             stats: {
                 minStrength: number | null,
+                minStamina: number | null,
+                minAgility: number | null,
+                minDexterity: number | null,
+                minWisdom: number | null,
+                minIntelligence: number | null,
+                minCharisma: number | null,
             }
         },
         minPrice: number | null,

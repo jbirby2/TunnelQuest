@@ -126,14 +126,14 @@
         watch: {
             itemName(newName, oldName) {
                 this.priceHistory = TQGlobals.priceHistories.queue(newName);
-                TQGlobals.priceHistories.fetchQueuedPriceHistories();
+                TQGlobals.priceHistories.getQueuedPriceHistoriesAsync();
             }
         },
 
         methods: {
             onInit: function () {
                 this.priceHistory = TQGlobals.priceHistories.queue(this.itemName);
-                TQGlobals.priceHistories.fetchQueuedPriceHistories();
+                TQGlobals.priceHistories.getQueuedPriceHistoriesAsync();
             },
 
             formatPrice: function (price:number) {

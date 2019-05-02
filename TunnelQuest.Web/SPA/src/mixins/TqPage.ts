@@ -112,7 +112,7 @@ export default Vue.extend({
             // (no need to re-sort after enforcing max size because trimming from the start of the array won't change the sort order)
 
             // fetch all price histories at once
-            TQGlobals.priceHistories.fetchQueuedPriceHistories();
+            TQGlobals.priceHistories.getQueuedPriceHistoriesAsync();
         },
 
         onScroll: function () {

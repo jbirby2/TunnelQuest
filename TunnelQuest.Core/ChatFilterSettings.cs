@@ -29,5 +29,11 @@ namespace TunnelQuest.Core
     public class ChatFilterSettingsItemsStats
     {
         public int? MinStrength { get; set; } = null;
+        public int? MinStamina { get; set; } = null;
+        public int? MinAgility { get; set; } = null;
+        public int? MinDexterity { get; set; } = null;
+        public int? MinWisdom { get; set; } = null;
+        public int? MinIntelligence { get; set; } = null;
+        public int? MinCharisma { get; set; } = null;
     }
 }

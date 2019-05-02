@@ -193,6 +193,24 @@ export default mixins(TqPage).extend({
                 if (fs.items.stats.minStrength != null && (auction.item.strength == null || fs.items.stats.minStrength > auction.item.strength))
                     passesFilter = false;
 
+                if (fs.items.stats.minStamina != null && (auction.item.stamina == null || fs.items.stats.minStamina > auction.item.stamina))
+                    passesFilter = false;
+
+                if (fs.items.stats.minAgility != null && (auction.item.agility == null || fs.items.stats.minAgility > auction.item.agility))
+                    passesFilter = false;
+
+                if (fs.items.stats.minDexterity != null && (auction.item.dexterity == null || fs.items.stats.minDexterity > auction.item.dexterity))
+                    passesFilter = false;
+
+                if (fs.items.stats.minWisdom != null && (auction.item.wisdom == null || fs.items.stats.minWisdom > auction.item.wisdom))
+                    passesFilter = false;
+
+                if (fs.items.stats.minIntelligence != null && (auction.item.intelligence == null || fs.items.stats.minIntelligence > auction.item.intelligence))
+                    passesFilter = false;
+
+                if (fs.items.stats.minCharisma != null && (auction.item.charisma == null || fs.items.stats.minCharisma > auction.item.charisma))
+                    passesFilter = false;
+
                 // STUB TODO more filter conditions
             }
             
@@ -214,7 +232,7 @@ export default mixins(TqPage).extend({
                     }
                 }
 
-                TQGlobals.items.fetchQueuedItems(callback);
+                TQGlobals.items.getQueuedItemsAsync(callback);
             }
             else {
                 callback();

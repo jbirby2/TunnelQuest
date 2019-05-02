@@ -95,7 +95,7 @@
             // so that we can navigate from one item page to another, and everything will update
             $route (to, from) {
                 this.item = TQGlobals.items.queue(this.$route.params.itemName);
-                TQGlobals.items.fetchQueuedItems();
+                TQGlobals.items.getQueuedItemsAsync();
                 this.loadLatestFilteredChatLines();
             }
         },
@@ -109,7 +109,7 @@
                 }
                 else {
                     this.item = TQGlobals.items.queue(this.$route.params.itemName);
-                    TQGlobals.items.fetchQueuedItems();
+                    TQGlobals.items.getQueuedItemsAsync();
                     this.loadLatestFilteredChatLines();
                 }
             },

@@ -154,3 +154,9 @@
 		- refactor so spells and items use the same table
 
 - include wiki links on item pages
+
+- handle chat pattern "WTS item item item price price price"
+	- "Ayeb auctions, 'WTS Shield of the Stalwart Seas = Wakizashi of the Frozen Skies = Spell: Call of Bones = 650,500,100'"
+
+- background color of stat boxes buggy (try toggling, etc)
+

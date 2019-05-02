@@ -3,8 +3,10 @@ import Filter from "../interfaces/Filter";
 
 class FilterManager {
 
-    private readonly LOCALSTORAGE_KEY = "TQCustomFilters";
+    private readonly LOCALSTORAGE_KEY = "TQCustomFilters_v";
+    private readonly LOCALSTORAGE_KEY_VERSION = 2;
     private readonly FILTER_NAME_BASE = "Custom Filter ";
+
     private selectedFilterChangedCallbacks: Array<Function>;
     private selectedFilterEditedCallbacks: Array<Function>;
 
@@ -25,7 +27,7 @@ class FilterManager {
         this.filters.push(goodDealsFilter);
 
         // load previously saved custom filters
-        let existingCustomFiltersJsonString = localStorage.getItem(this.LOCALSTORAGE_KEY);
+        let existingCustomFiltersJsonString = localStorage.getItem(this.LOCALSTORAGE_KEY + this.LOCALSTORAGE_KEY_VERSION.toString());
         if (existingCustomFiltersJsonString != null) {
             let existingCustomFilters = JSON.parse(existingCustomFiltersJsonString) as Array<Filter>;
             for (let existingFilter of existingCustomFilters) {
@@ -35,6 +37,11 @@ class FilterManager {
 
         // select the initial filter
         this.selectedFilter = this.filters[0];
+
+        // delete any old deprecated filters from user storage
+        for (let i = 0; i < this.LOCALSTORAGE_KEY_VERSION; i++) {
+            localStorage.removeItem(this.LOCALSTORAGE_KEY + i.toString());
+        }
     }
 
     // public
@@ -100,9 +107,9 @@ class FilterManager {
         }
 
         if (customFilters.length > 0)
-            localStorage.setItem(this.LOCALSTORAGE_KEY, JSON.stringify(customFilters));
+            localStorage.setItem(this.LOCALSTORAGE_KEY + this.LOCALSTORAGE_KEY_VERSION.toString(), JSON.stringify(customFilters));
         else
-            localStorage.removeItem(this.LOCALSTORAGE_KEY);
+            localStorage.removeItem(this.LOCALSTORAGE_KEY + this.LOCALSTORAGE_KEY_VERSION.toString());
 
         for (let callback of this.selectedFilterEditedCallbacks) {
             callback();
@@ -127,7 +134,13 @@ class FilterManager {
                     filterType: "name",
                     names: new Array<string>(),
                     stats: {
-                        minStrength: null
+                        minStrength: null,
+                        minStamina: null,
+                        minAgility: null,
+                        minDexterity: null,
+                        minWisdom: null,
+                        minIntelligence: null,
+                        minCharisma: null,
                     }
                 },
                 minPrice: null,

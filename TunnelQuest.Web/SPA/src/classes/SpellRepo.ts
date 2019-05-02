@@ -36,9 +36,9 @@ class SpellRepo {
     }
 
 
-    public fetchQueuedSpells(callback: Function | null = null) {
+    public getQueuedSpellsAsync(callback: Function | null = null) {
         // stub
-        console.log("SpellRepo.fetchQueuedSpells()");
+        console.log("SpellRepo.getQueuedSpellsAsync()");
 
         if (this.pendingSpellNames.length == 0) {
             if (callback != null)
@@ -51,7 +51,7 @@ class SpellRepo {
                 let result = response.data as Array<Spell>;
 
                 // stub
-                console.log("ItemRepo.fetchQueuedSpells() result:");
+                console.log("ItemRepo.getQueuedSpellsAsync() result:");
                 console.log(result);
 
                 for (var spell of result) {

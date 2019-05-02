@@ -102,6 +102,36 @@
                     <span>
                         <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minStrength" class="tqFilterItemsStatBox" @change="onFilterChanged" />
                     </span>
+
+                    <span>Stamina</span>
+                    <span>
+                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minStamina" class="tqFilterItemsStatBox" @change="onFilterChanged" />
+                    </span>
+
+                    <span>Agility</span>
+                    <span>
+                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minAgility" class="tqFilterItemsStatBox" @change="onFilterChanged" />
+                    </span>
+
+                    <span>Dexterity</span>
+                    <span>
+                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minDexterity" class="tqFilterItemsStatBox" @change="onFilterChanged" />
+                    </span>
+
+                    <span>Wisdom</span>
+                    <span>
+                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minWisdom" class="tqFilterItemsStatBox" @change="onFilterChanged" />
+                    </span>
+
+                    <span>Intelligence</span>
+                    <span>
+                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minIntelligence" class="tqFilterItemsStatBox" @change="onFilterChanged" />
+                    </span>
+
+                    <span>Charisma</span>
+                    <span>
+                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minCharisma" class="tqFilterItemsStatBox" @change="onFilterChanged" />
+                    </span>
                 </div>
             </div>
         </div>

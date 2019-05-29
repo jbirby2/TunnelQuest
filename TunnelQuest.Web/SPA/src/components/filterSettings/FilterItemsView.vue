@@ -132,6 +132,26 @@
                     <span>
                         <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minCharisma" class="tqFilterItemsStatBox" @change="onFilterChanged" />
                     </span>
+
+                    <span>HP</span>
+                    <span>
+                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minHitPoints" class="tqFilterItemsStatBox" @change="onFilterChanged" />
+                    </span>
+
+                    <span>Mana</span>
+                    <span>
+                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minMana" class="tqFilterItemsStatBox" @change="onFilterChanged" />
+                    </span>
+
+                    <span>AC</span>
+                    <span>
+                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minArmorClass" class="tqFilterItemsStatBox" @change="onFilterChanged" />
+                    </span>
+
+                    <span>Magic Resist</span>
+                    <span>
+                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minMagicResist" class="tqFilterItemsStatBox" @change="onFilterChanged" />
+                    </span>
                 </div>
             </div>
         </div>

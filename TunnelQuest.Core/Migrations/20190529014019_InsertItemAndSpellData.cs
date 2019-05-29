@@ -619,6 +619,7 @@ namespace TunnelQuest.Core.Migrations
                             if (item.Mana != null)
                                 throw new Exception("Multiple MANA values for " + wikiItem.ToString());
 
+                            item.Mana = manaValue;
                             isChunkHandled = true;
                         }
 

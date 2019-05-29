@@ -211,6 +211,18 @@ export default mixins(TqPage).extend({
                 if (fs.items.stats.minCharisma != null && (auction.item.charisma == null || fs.items.stats.minCharisma > auction.item.charisma))
                     passesFilter = false;
 
+                if (fs.items.stats.minHitPoints != null && (auction.item.hitPoints == null || fs.items.stats.minHitPoints > auction.item.hitPoints))
+                    passesFilter = false;
+
+                if (fs.items.stats.minMana != null && (auction.item.mana == null || fs.items.stats.minMana > auction.item.mana))
+                    passesFilter = false;
+
+                if (fs.items.stats.minArmorClass != null && (auction.item.armorClass == null || fs.items.stats.minArmorClass > auction.item.armorClass))
+                    passesFilter = false;
+
+                if (fs.items.stats.minMagicResist != null && (auction.item.magicResist == null || fs.items.stats.minMagicResist > auction.item.magicResist))
+                    passesFilter = false;
+
                 // STUB TODO more filter conditions
             }
             

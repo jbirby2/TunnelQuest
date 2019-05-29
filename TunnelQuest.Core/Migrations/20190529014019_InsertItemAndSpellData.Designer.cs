@@ -9,8 +9,8 @@ using TunnelQuest.Core.Models;
 namespace TunnelQuest.Core.Migrations
 {
     [DbContext(typeof(TunnelQuestContext))]
-    [Migration("20190423032253_InsertChatLogData")]
-    partial class InsertChatLogData
+    [Migration("20190529014019_InsertItemAndSpellData")]
+    partial class InsertItemAndSpellData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -100,13 +100,13 @@ namespace TunnelQuest.Core.Migrations
 
                     b.HasIndex("ServerCode", "ChatLineId", "ItemName", "IsPermanent");
 
-                    b.HasIndex("ServerCode", "ItemName", "IsBuying", "PlayerName");
-
-                    b.HasIndex("ServerCode", "ChatLineId", "ItemName", "IsBuying", "PlayerName");
-
                     b.HasIndex("ServerCode", "IsPermanent", "IsBuying", "Price", "ItemName");
 
+                    b.HasIndex("ServerCode", "ItemName", "IsBuying", "IsKnownItem", "PlayerName");
+
                     b.HasIndex("ServerCode", "ItemName", "PlayerName", "IsPermanent", "CreatedAt");
+
+                    b.HasIndex("ServerCode", "ChatLineId", "ItemName", "IsBuying", "IsKnownItem", "PlayerName");
 
                     b.ToTable("auction");
                 });

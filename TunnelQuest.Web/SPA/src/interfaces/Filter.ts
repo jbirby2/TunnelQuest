@@ -21,6 +21,10 @@ interface Filter {
                 minWisdom: number | null,
                 minIntelligence: number | null,
                 minCharisma: number | null,
+                minHitPoints: number | null,
+                minMana: number | null,
+                minArmorClass: number | null,
+                minMagicResist: number | null,
             }
         },
         minPrice: number | null,

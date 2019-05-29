@@ -141,6 +141,10 @@ class FilterManager {
                         minWisdom: null,
                         minIntelligence: null,
                         minCharisma: null,
+                        minHitPoints: null,
+                        minMana: null,
+                        minArmorClass: null,
+                        minMagicResist: null,
                     }
                 },
                 minPrice: null,

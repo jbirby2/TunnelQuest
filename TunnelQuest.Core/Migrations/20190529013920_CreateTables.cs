@@ -570,24 +570,24 @@ namespace TunnelQuest.Core.Migrations
                 columns: new[] { "server_code", "chat_line_id", "item_name", "is_permanent" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_auction_server_code_item_name_is_buying_player_name",
-                table: "auction",
-                columns: new[] { "server_code", "item_name", "is_buying", "player_name" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_auction_server_code_chat_line_id_item_name_is_buying_player_~",
-                table: "auction",
-                columns: new[] { "server_code", "chat_line_id", "item_name", "is_buying", "player_name" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_auction_server_code_is_permanent_is_buying_price_item_name",
                 table: "auction",
                 columns: new[] { "server_code", "is_permanent", "is_buying", "price", "item_name" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_auction_server_code_item_name_is_buying_is_known_item_player~",
+                table: "auction",
+                columns: new[] { "server_code", "item_name", "is_buying", "is_known_item", "player_name" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_auction_server_code_item_name_player_name_is_permanent_creat~",
                 table: "auction",
                 columns: new[] { "server_code", "item_name", "player_name", "is_permanent", "created_at" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_auction_server_code_chat_line_id_item_name_is_buying_is_know~",
+                table: "auction",
+                columns: new[] { "server_code", "chat_line_id", "item_name", "is_buying", "is_known_item", "player_name" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_auth_token_auth_token_status_code",

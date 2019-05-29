@@ -35,5 +35,9 @@ namespace TunnelQuest.Core
         public int? MinWisdom { get; set; } = null;
         public int? MinIntelligence { get; set; } = null;
         public int? MinCharisma { get; set; } = null;
+        public int? MinHitPoints { get; set; } = null;
+        public int? MinMana { get; set; } = null;
+        public int? MinArmorClass { get; set; } = null;
+        public int? MinMagicResist { get; set; } = null;
     }
 }

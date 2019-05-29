@@ -98,13 +98,13 @@ namespace TunnelQuest.Core.Migrations
 
                     b.HasIndex("ServerCode", "ChatLineId", "ItemName", "IsPermanent");
 
-                    b.HasIndex("ServerCode", "ItemName", "IsBuying", "PlayerName");
-
-                    b.HasIndex("ServerCode", "ChatLineId", "ItemName", "IsBuying", "PlayerName");
-
                     b.HasIndex("ServerCode", "IsPermanent", "IsBuying", "Price", "ItemName");
 
+                    b.HasIndex("ServerCode", "ItemName", "IsBuying", "IsKnownItem", "PlayerName");
+
                     b.HasIndex("ServerCode", "ItemName", "PlayerName", "IsPermanent", "CreatedAt");
+
+                    b.HasIndex("ServerCode", "ChatLineId", "ItemName", "IsBuying", "IsKnownItem", "PlayerName");
 
                     b.ToTable("auction");
                 });

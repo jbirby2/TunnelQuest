@@ -137,6 +137,18 @@ namespace TunnelQuest.Core
                     if (criteria.FilterSettings.Items.Stats.MinCharisma != null)
                         auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Charisma != null && auctionItem.Item.Charisma.Value >= criteria.FilterSettings.Items.Stats.MinCharisma.Value);
 
+                    if (criteria.FilterSettings.Items.Stats.MinHitPoints != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.HitPoints != null && auctionItem.Item.HitPoints.Value >= criteria.FilterSettings.Items.Stats.MinHitPoints.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinMana != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Mana != null && auctionItem.Item.Mana.Value >= criteria.FilterSettings.Items.Stats.MinMana.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinArmorClass != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.ArmorClass != null && auctionItem.Item.ArmorClass.Value >= criteria.FilterSettings.Items.Stats.MinArmorClass.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinMagicResist != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.MagicResist != null && auctionItem.Item.MagicResist.Value >= criteria.FilterSettings.Items.Stats.MinMagicResist.Value);
+
                     // ... STUB other filters go here
 
                     auctionQuery = auctionItemQuery.Select(auctionItem => auctionItem.Auction);

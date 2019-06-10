@@ -139,10 +139,8 @@
 	- also set passesFilter = null for payloads sent down the hub
 
 - changing filters on newspaper page is laggy, even on pc
-	- other pages are fine thank god
-	- same filter loads instantly if already selected when newspaper page first loads.
-	  definitely the unloading that's causing the lag.
-	- probably because emptying the arrays as a separate operation?  or rebuilding view arrays twice as often as necessary?
+	- got it as best i can; just a lot of vue rendering.
+	- add a "please wait spinner" to make it a little less offensive
 
 - i don't think replaced chat lines are being filtered out correctly (see custom filter 1)
 	* i guess it should only show permanent auctions now, since newest is always permanent, and previous are spam
@@ -159,4 +157,3 @@
 	- "Ayeb auctions, 'WTS Shield of the Stalwart Seas = Wakizashi of the Frozen Skies = Spell: Call of Bones = 650,500,100'"
 
 - background color of stat boxes buggy (try toggling, etc)
-

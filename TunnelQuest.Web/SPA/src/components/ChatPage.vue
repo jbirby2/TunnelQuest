@@ -61,8 +61,13 @@
             },
 
             // inherited from TqPage
-            onChatLinesUnloaded: function (newLines: Array<ChatLine>) {
+            onChatLinesTrimmed: function (trimmedLines: Array<ChatLine>) {
                 this.refreshViewLines();
+            },
+
+            // inherited from TqPage
+            onChatLinesCleared: function () {
+                this.viewLines = new Array<ChatLine>();
             },
 
             refreshViewLines: function () {

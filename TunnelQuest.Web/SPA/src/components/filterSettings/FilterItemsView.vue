@@ -23,45 +23,21 @@
         color: #efefef;
     }
 
-    .tqFilterItemsViewStatsTable {
-        display: table;
-    }
-
-    .tqFilterItemsViewStatsTable > div {
-        display: table-row;
-    }
-
-    .tqFilterItemsViewStatsTable > div > span {
-        display: table-cell;
-    }
-
-    .tqFilterItemsStatBox {
-        width: 35px;
-    }
-
-    .tqFilterItemsStatBoxEmpty {
-        background-color: #555 !important;
-    }
-
-    .tqFilterItemsStatBoxEmpty:focus {
-        background-color: #edfeff !important;
-    }
-
 </style>
 
 <template>
     <div>
         <div>
-            <input id="tqFilterByNameRadio" type="radio" value="name" v-model="filter.settings.items.filterType" @change="onFilterChanged" />
+            <input id="tqFilterByNameRadio" type="radio" value="name" v-model="filter.settings.items.queryType" @change="onFilterChanged" />
             <label for="tqFilterByNameRadio">
                 Filter by Name
             </label>
-            <input id="tqFilterByStatsRadio" type="radio" value="stats" v-model="filter.settings.items.filterType" @change="onFilterChanged" />
+            <input id="tqFilterByStatsRadio" type="radio" value="stats" v-model="filter.settings.items.queryType" @change="onFilterChanged" />
             <label for="tqFilterByStatsRadio">
                 Filter by Stats
             </label>
         </div>
-        <div v-if="filter.settings.items.filterType == 'name'">
+        <div v-if="filter.settings.items.queryType == 'name'">
             <div class="tqFilterItemsViewSearchPanel">
                 <span>
                     <input type="text" v-model="searchText" @keyup="doSearch" placeholder="Start typing an item name here" />
@@ -96,86 +72,26 @@
             </div>
         </div>
         <div v-else>
-            <div class="tqFilterItemsViewStatsTable">
-                <div>
-                    <span>Strength</span>
-                    <span>
-                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minStrength" class="tqFilterItemsStatBox" @change="onFilterChanged" />
-                    </span>
-
-                    <span>Stamina</span>
-                    <span>
-                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minStamina" class="tqFilterItemsStatBox" @change="onFilterChanged" />
-                    </span>
-
-                    <span>Agility</span>
-                    <span>
-                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minAgility" class="tqFilterItemsStatBox" @change="onFilterChanged" />
-                    </span>
-
-                    <span>Dexterity</span>
-                    <span>
-                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minDexterity" class="tqFilterItemsStatBox" @change="onFilterChanged" />
-                    </span>
-
-                    <span>Wisdom</span>
-                    <span>
-                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minWisdom" class="tqFilterItemsStatBox" @change="onFilterChanged" />
-                    </span>
-
-                    <span>Intelligence</span>
-                    <span>
-                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minIntelligence" class="tqFilterItemsStatBox" @change="onFilterChanged" />
-                    </span>
-
-                    <span>Charisma</span>
-                    <span>
-                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minCharisma" class="tqFilterItemsStatBox" @change="onFilterChanged" />
-                    </span>
-
-                    <span>HP</span>
-                    <span>
-                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minHitPoints" class="tqFilterItemsStatBox" @change="onFilterChanged" />
-                    </span>
-
-                    <span>Mana</span>
-                    <span>
-                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minMana" class="tqFilterItemsStatBox" @change="onFilterChanged" />
-                    </span>
-
-                    <span>AC</span>
-                    <span>
-                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minArmorClass" class="tqFilterItemsStatBox" @change="onFilterChanged" />
-                    </span>
-
-                    <span>Magic Resist</span>
-                    <span>
-                        <input type="tel" maxlength="3" v-model="filter.settings.items.stats.minMagicResist" class="tqFilterItemsStatBox" @change="onFilterChanged" />
-                    </span>
-                </div>
-            </div>
+            <item-query-stats-view :stats="filter.settings.items.stats" @stats-changed="onFilterChanged"></item-query-stats-view>
         </div>
     </div>
 </template>
 
 <script lang="ts">
+    import Vue from "vue";
     import * as _ from "lodash";
     import axios from "axios";
 
-    import mixins from 'vue-typed-mixins';
-
     import Filter from "../../interfaces/Filter";
     import FilterItemSearchResult from "../../interfaces/FilterItemSearchResult";
-
-    import FilterSettingView from "../../mixins/FilterSettingView";
 
     import TQGlobals from "../../classes/TQGlobals";
 
     import FilterItemsSearchResultView from "./FilterItemsSearchResultView.vue";
     import FilterItemsRecordView from "./FilterItemsRecordView.vue";
+    import ItemQueryStatsView from "../ItemQueryStatsView.vue";
 
-
-    export default mixins(FilterSettingView).extend({
+    export default Vue.extend({
 
         props: {
             filter: {
@@ -196,12 +112,10 @@
         },
 
         mounted: function () {
-            this.updateStatBackgrounds();
         },
 
         methods: {
             onFilterChanged: function () {
-                this.updateStatBackgrounds();
                 TQGlobals.filterManager.saveUserFilters();
             },
 
@@ -214,17 +128,6 @@
                 this.searchText = "";
                 this.lastSearchedText = "";
                 this.results = [];
-            },
-
-            updateStatBackgrounds: function () {
-                let statBoxElements = document.getElementsByClassName("tqFilterItemsStatBox");
-                for (let i = 0; i < statBoxElements.length; i++) {
-                    let statBoxElem = statBoxElements.item(i) as HTMLInputElement;
-                    if (statBoxElem.value.trim().length == 0)
-                        statBoxElem.classList.add("tqFilterItemsStatBoxEmpty");
-                    else
-                        statBoxElem.classList.remove("tqFilterItemsStatBoxEmpty");
-                }
             },
 
             doSearch: _.debounce(function (this: any) {
@@ -259,7 +162,8 @@
 
         components: {
             FilterItemsSearchResultView,
-            FilterItemsRecordView
+            FilterItemsRecordView,
+            ItemQueryStatsView
         }
     });
 </script>

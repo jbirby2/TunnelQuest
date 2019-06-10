@@ -94,7 +94,7 @@ namespace TunnelQuest.Core
 
             if (criteria.FilterSettings != null)
             {
-                if (criteria.FilterSettings.Items.FilterType == "name" && criteria.FilterSettings.Items.Names.Any())
+                if (criteria.FilterSettings.Items.QueryType == "name" && criteria.FilterSettings.Items.Names.Any())
                     auctionQuery = auctionQuery.Where(auction => criteria.FilterSettings.Items.Names.Contains(auction.ItemName));
 
                 if (criteria.FilterSettings.IsBuying != null)
@@ -106,7 +106,7 @@ namespace TunnelQuest.Core
                 if (criteria.FilterSettings.IsPermanent != null)
                     auctionQuery = auctionQuery.Where(auction => auction.IsPermanent == criteria.FilterSettings.IsPermanent.Value);
 
-                if (criteria.FilterSettings.Items.FilterType == "stats")
+                if (criteria.FilterSettings.Items.QueryType == "stats")
                 {
                     var auctionItemQuery = auctionQuery
                         .Where(auction => auction.IsKnownItem == true)
@@ -148,6 +148,22 @@ namespace TunnelQuest.Core
 
                     if (criteria.FilterSettings.Items.Stats.MinMagicResist != null)
                         auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.MagicResist != null && auctionItem.Item.MagicResist.Value >= criteria.FilterSettings.Items.Stats.MinMagicResist.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinPoisonResist != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.PoisonResist != null && auctionItem.Item.PoisonResist.Value >= criteria.FilterSettings.Items.Stats.MinPoisonResist.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinDiseaseResist != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.DiseaseResist != null && auctionItem.Item.DiseaseResist.Value >= criteria.FilterSettings.Items.Stats.MinDiseaseResist.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinFireResist != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.FireResist != null && auctionItem.Item.FireResist.Value >= criteria.FilterSettings.Items.Stats.MinFireResist.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinColdResist != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.ColdResist != null && auctionItem.Item.ColdResist.Value >= criteria.FilterSettings.Items.Stats.MinColdResist.Value);
+
+                    // add +0.01 to work around an apparent bug where == doesn't seem to work right for floats in the Pomelo Entity Framework package
+                    if (criteria.FilterSettings.Items.Stats.MinHaste != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Haste != null && (auctionItem.Item.Haste.Value + 0.01f) >= criteria.FilterSettings.Items.Stats.MinHaste.Value);
 
                     // ... STUB other filters go here
 

@@ -119,7 +119,7 @@
                 return {
                     isPermanent: true,
                     items: {
-                        filterType: "name",
+                        queryType: "name",
                         names: [(this.item as Item).itemName]
                     }
                 };

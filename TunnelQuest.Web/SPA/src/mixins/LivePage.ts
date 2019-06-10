@@ -182,7 +182,7 @@ export default mixins(TqPage).extend({
 
             let fs = TQGlobals.filterManager.selectedFilter.settings; // shortcut
 
-            if (fs.items.filterType == "name") {
+            if (fs.items.queryType == "name") {
                 // filter by names
                 if (fs.items.names.length > 0 && fs.items.names.indexOf(auction.itemName) < 0)
                     passesFilter = false;
@@ -223,6 +223,21 @@ export default mixins(TqPage).extend({
                 if (fs.items.stats.minMagicResist != null && (auction.item.magicResist == null || fs.items.stats.minMagicResist > auction.item.magicResist))
                     passesFilter = false;
 
+                if (fs.items.stats.minPoisonResist != null && (auction.item.poisonResist == null || fs.items.stats.minPoisonResist > auction.item.poisonResist))
+                    passesFilter = false;
+
+                if (fs.items.stats.minDiseaseResist != null && (auction.item.diseaseResist == null || fs.items.stats.minDiseaseResist > auction.item.diseaseResist))
+                    passesFilter = false;
+
+                if (fs.items.stats.minFireResist != null && (auction.item.fireResist == null || fs.items.stats.minFireResist > auction.item.fireResist))
+                    passesFilter = false;
+
+                if (fs.items.stats.minColdResist != null && (auction.item.coldResist == null || fs.items.stats.minColdResist > auction.item.coldResist))
+                    passesFilter = false;
+
+                if (fs.items.stats.minHaste != null && (auction.item.haste == null || fs.items.stats.minHaste > auction.item.haste))
+                    passesFilter = false;
+
                 // STUB TODO more filter conditions
             }
             
@@ -236,7 +251,7 @@ export default mixins(TqPage).extend({
 
             let fs = TQGlobals.filterManager.selectedFilter.settings; // shortcut
 
-            if (fs.items.filterType == "stats") {
+            if (fs.items.queryType == "stats") {
                 for (let chatLine of liveChatLines) {
                     for (let auctionId in chatLine.auctions) {
                         let auction = chatLine.auctions[auctionId];

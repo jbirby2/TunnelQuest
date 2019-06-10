@@ -72,14 +72,6 @@
                 }
                 TQGlobals.items.getQueuedItemsAsync();
             },
-
-            // inherited from LiveAuctionsPage
-            onAuctionsLoaded: function (newAuctions: Array<Auction>) {
-            },
-
-            // inherited from LiveAuctionsPage
-            onAuctionsUnloaded: function (removedAuctions: Array<Auction>) {
-            },
         },
 
         components: {

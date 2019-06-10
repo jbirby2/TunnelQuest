@@ -50,7 +50,6 @@ export default mixins(LivePage).extend({
             console.log(newChatLines);
 
             // manually set some properties on the auction objects
-            let auctionsArray = new Array<Auction>();
             for (let chatLine of newChatLines) {
                 for (let auctionId in chatLine.auctions) {
                     let auction = chatLine.auctions[auctionId];
@@ -76,7 +75,6 @@ export default mixins(LivePage).extend({
                         else
                             auction.firstSeenDate = new Date();
 
-                        auctionsArray.push(auction);
                         this.auctions.push(auction);
                         this.auctionsDict.set(auction.id, auction);
                     }
@@ -100,36 +98,34 @@ export default mixins(LivePage).extend({
                 }
             });
 
-            this.onAuctionsLoaded(auctionsArray);
-
             this.rebuildAuctionArrays();
         },
 
         // inherited from TqPage
-        onChatLinesUnloaded: function (removedLines: Array<ChatLine>) {
-            let unloadedAuctions = new Array<Auction>();
-
-            for (let chatLine of removedLines) {
+        onChatLinesTrimmed: function (trimmedLines: Array<ChatLine>) {
+            for (let chatLine of trimmedLines) {
                 for (let auctionId in chatLine.auctions) {
                     if (this.auctionsDict.has(chatLine.auctions[auctionId].id)) {
                         let auction = chatLine.auctions[auctionId];
 
                         this.auctionsDict.delete(auction.id);
                         this.auctions.splice(this.auctions.indexOf(auction), 1);
-
-                        unloadedAuctions.push(auction);
                     }
                 }
             }
 
-            // pass along to extending components
-            this.onAuctionsUnloaded(unloadedAuctions);
-
             this.rebuildAuctionArrays();
         },
 
-        rebuildAuctionArrays: function () {
+        // inherited from TqPage
+        onChatLinesCleared: function () {
+            this.auctionsDict.clear();
+            this.auctions = new Array<Auction>();
+            this.recentlyUpdatedAuctions = new Array<Auction>();
+            this.notRecentlyUpdatedAuctions = new Array<Auction>();
+        },
 
+        rebuildAuctionArrays: function () {
             // build recentlyUpdatedAuctions
             this.recentlyUpdatedAuctions = this.auctions
                 .filter(function (auction: Auction, index: number) {
@@ -181,14 +177,6 @@ export default mixins(LivePage).extend({
         },
 
         beforeAuctionsLoaded: function (newAuctions: Array<Auction>) {
-            // overridden by extending components
-        },
-
-        onAuctionsLoaded: function (newAuctions: Array<Auction>) {
-            // overridden by extending components
-        },
-
-        onAuctionsUnloaded: function (removedAuctions: Array<Auction>) {
             // overridden by extending components
         },
     }

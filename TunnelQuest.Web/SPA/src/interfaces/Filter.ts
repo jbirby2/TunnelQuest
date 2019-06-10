@@ -1,4 +1,6 @@
 ﻿
+import ItemQuery from "./ItemQuery";
+
 interface Filter {
     id: string,
     isSystem: boolean,
@@ -10,23 +12,7 @@ interface Filter {
         isPermanent: boolean | null,
         playerName: string | null,
         isBuying: boolean | null,
-        items: {
-            filterType: string, // valid values: "name", "stats"
-            names: Array<string>,
-            stats: {
-                minStrength: number | null,
-                minStamina: number | null,
-                minAgility: number | null,
-                minDexterity: number | null,
-                minWisdom: number | null,
-                minIntelligence: number | null,
-                minCharisma: number | null,
-                minHitPoints: number | null,
-                minMana: number | null,
-                minArmorClass: number | null,
-                minMagicResist: number | null,
-            }
-        },
+        items: ItemQuery,
         minPrice: number | null,
         maxPrice: number | null,
         minGoodPriceDeviation: number | null,

@@ -175,18 +175,25 @@ export default Vue.extend({
         },
 
         trimChatLines(numberToLeave: number) {
-            let removedLines = new Array<ChatLine>();
+            let trimmedLines = new Array<ChatLine>();
             while (this.chatLines.length > numberToLeave) {
-                let removedLine = this.chatLines.shift();
-                if (removedLine) {
-                    this.chatLinesDict.delete(removedLine.id);
-                    removedLines.push(removedLine);
+                let trimmedLine = this.chatLines.shift();
+                if (trimmedLine) {
+                    this.chatLinesDict.delete(trimmedLine.id);
+                    trimmedLines.push(trimmedLine);
                 }
             }
 
             // pass along to extending components
-            if (removedLines.length > 0)
-                this.onChatLinesUnloaded(removedLines);
+            if (trimmedLines.length > 0)
+                this.onChatLinesTrimmed(trimmedLines);
+        },
+
+        // much faster than calling trimChatLines(0)
+        clearChatLines() {
+            this.chatLinesDict.clear();
+            this.chatLines = new Array<ChatLine>();
+            this.onChatLinesCleared();
         },
 
         onInitialized: function () {
@@ -210,9 +217,12 @@ export default Vue.extend({
             // overridden by extending components
         },
 
-        onChatLinesUnloaded: function (removedLines: Array<ChatLine>) {
+        onChatLinesTrimmed: function (trimmedLines: Array<ChatLine>) {
             // overridden by extending components
         },
 
+        onChatLinesCleared: function () {
+            // overridden by extending components
+        },
     }
 });

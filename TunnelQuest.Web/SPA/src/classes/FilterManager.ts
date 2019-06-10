@@ -131,7 +131,7 @@ class FilterManager {
                 playerName: null,
                 isBuying: null,
                 items: {
-                    filterType: "name",
+                    queryType: "name",
                     names: new Array<string>(),
                     stats: {
                         minStrength: null,
@@ -145,6 +145,11 @@ class FilterManager {
                         minMana: null,
                         minArmorClass: null,
                         minMagicResist: null,
+                        minPoisonResist: null,
+                        minDiseaseResist: null,
+                        minFireResist: null,
+                        minColdResist: null,
+                        minHaste: null,
                     }
                 },
                 minPrice: null,

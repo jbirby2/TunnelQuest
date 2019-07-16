@@ -29,5 +29,10 @@ namespace TunnelQuest.Core
         public int? MinFireResist { get; set; } = null;
         public int? MinColdResist { get; set; } = null;
         public float? MinHaste { get; set; } = null;
+        public int? MinSingingModifier { get; set; } = null;
+        public int? MinPercussionModifier { get; set; } = null;
+        public int? MinStringedModifier { get; set; } = null;
+        public int? MinBrassModifier { get; set; } = null;
+        public int? MinWindModifier { get; set; } = null;
     }
 }

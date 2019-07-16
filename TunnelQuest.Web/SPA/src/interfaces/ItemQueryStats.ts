@@ -16,6 +16,11 @@ interface ItemQueryStats {
     minFireResist: number | null,
     minColdResist: number | null,
     minHaste: number | null,
+    minSingingModifier: number | null,
+    minPercussionModifier: number | null,
+    minStringedModifier: number | null,
+    minBrassModifier: number | null,
+    minWindModifier: number | null,
 }
 
 export default ItemQueryStats;

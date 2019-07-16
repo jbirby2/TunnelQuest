@@ -96,7 +96,7 @@ export default mixins(TqPage).extend({
             console.log("LivePage.onSelectedFilterChangedOrEdited");
 
             // clear out all previous chat lines
-            this.trimChatLines(0);
+            this.clearChatLines();
 
             if (this.isActive)
                 this.loadLatestFilteredChatLines();
@@ -238,9 +238,24 @@ export default mixins(TqPage).extend({
                 if (fs.items.stats.minHaste != null && (auction.item.haste == null || fs.items.stats.minHaste > auction.item.haste))
                     passesFilter = false;
 
+                if (fs.items.stats.minSingingModifier != null && (auction.item.singingModifier == null || fs.items.stats.minSingingModifier > auction.item.singingModifier))
+                    passesFilter = false;
+
+                if (fs.items.stats.minPercussionModifier != null && (auction.item.percussionModifier == null || fs.items.stats.minPercussionModifier > auction.item.percussionModifier))
+                    passesFilter = false;
+
+                if (fs.items.stats.minStringedModifier != null && (auction.item.stringedModifier == null || fs.items.stats.minStringedModifier > auction.item.stringedModifier))
+                    passesFilter = false;
+
+                if (fs.items.stats.minBrassModifier != null && (auction.item.brassModifier == null || fs.items.stats.minBrassModifier > auction.item.brassModifier))
+                    passesFilter = false;
+
+                if (fs.items.stats.minWindModifier != null && (auction.item.windModifier == null || fs.items.stats.minWindModifier > auction.item.windModifier))
+                    passesFilter = false;
+
                 // STUB TODO more filter conditions
             }
-            
+                        
             return passesFilter;
         },
 

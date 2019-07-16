@@ -150,6 +150,11 @@ class FilterManager {
                         minFireResist: null,
                         minColdResist: null,
                         minHaste: null,
+                        minSingingModifier: null,
+                        minPercussionModifier: null,
+                        minStringedModifier: null,
+                        minBrassModifier: null,
+                        minWindModifier: null,
                     }
                 },
                 minPrice: null,

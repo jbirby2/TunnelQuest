@@ -141,6 +141,7 @@
 - changing filters on newspaper page is laggy, even on pc
 	- got it as best i can; just a lot of vue rendering.
 	- add a "please wait spinner" to make it a little less offensive
+	*** let individual pages set their own max_lines and max_auctions limits, and just set it lower for NewspaperPage
 
 - i don't think replaced chat lines are being filtered out correctly (see custom filter 1)
 	* i guess it should only show permanent auctions now, since newest is always permanent, and previous are spam
@@ -156,4 +157,7 @@
 - handle chat pattern "WTS item item item price price price"
 	- "Ayeb auctions, 'WTS Shield of the Stalwart Seas = Wakizashi of the Frozen Skies = Spell: Call of Bones = 650,500,100'"
 
-- background color of stat boxes buggy (try toggling, etc)
+- test javascript filters for EVERYTHING (for example "brass modifier 1" filters out everything live)
+	- (looks like the boxes v-modeled to the object are setting the values as strings instead of numbers)
+	- (also, empty textboxes written as empty string instead of null)
+	** probably can't use v-model; have to write boilerplate code

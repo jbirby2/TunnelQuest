@@ -165,6 +165,21 @@ namespace TunnelQuest.Core
                     if (criteria.FilterSettings.Items.Stats.MinHaste != null)
                         auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.Haste != null && (auctionItem.Item.Haste.Value + 0.01f) >= criteria.FilterSettings.Items.Stats.MinHaste.Value);
 
+                    if (criteria.FilterSettings.Items.Stats.MinSingingModifier != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.SingingModifier != null && auctionItem.Item.SingingModifier.Value >= criteria.FilterSettings.Items.Stats.MinSingingModifier.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinPercussionModifier != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.PercussionModifier != null && auctionItem.Item.PercussionModifier.Value >= criteria.FilterSettings.Items.Stats.MinPercussionModifier.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinStringedModifier != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.StringedModifier != null && auctionItem.Item.StringedModifier.Value >= criteria.FilterSettings.Items.Stats.MinStringedModifier.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinBrassModifier != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.BrassModifier != null && auctionItem.Item.BrassModifier.Value >= criteria.FilterSettings.Items.Stats.MinBrassModifier.Value);
+
+                    if (criteria.FilterSettings.Items.Stats.MinWindModifier != null)
+                        auctionItemQuery = auctionItemQuery.Where(auctionItem => auctionItem.Item.WindModifier != null && auctionItem.Item.WindModifier.Value >= criteria.FilterSettings.Items.Stats.MinWindModifier.Value);
+
                     // ... STUB other filters go here
 
                     auctionQuery = auctionItemQuery.Select(auctionItem => auctionItem.Auction);

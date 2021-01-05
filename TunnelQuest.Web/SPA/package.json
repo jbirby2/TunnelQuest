@@ -11,7 +11,7 @@
   "dependencies": {
     "@aspnet/signalr": "^1.1.0",
     "@types/lodash": "^4.14.120",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "iisexpress-proxy": "^1.4.4",
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
